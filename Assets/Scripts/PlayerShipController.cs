@@ -1,32 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerShipController : MonoBehaviour {
-	public Planet currentPlanet;
-	public float acceleration = 30f;
-	public float maxSpeed = 60f;
+// Inherits from ShipOrbitBehavior
+public class PlayerShipController : ShipOrbitBehavior {
 
-	float turnSpeed = 2f;
-	float maxTurnSpeed = 4f;
+	float acceleration = 30f;
+	float maxSpeed = 90f;
+	float turnAcceleration = 4f;
+	float maxTurnSpeed = 8f;
+	float laserSpeed = 20f;
+
+	GameObject Laser;
 
 	float currentSpeed = 0f;
 	float currentTurningSpeed = 0f;
 
-	ConfigurableJoint shipJoint;
-
 	// Use this for initialization
 	void Start () {
-		transform.parent.position = currentPlanet.transform.position;
-		transform.position = currentPlanet.transform.position + (currentPlanet.transform.position - transform.position).normalized * currentPlanet.orbitLength;
-		transform.up = transform.position - currentPlanet.transform.position;
+		currentPlanet = GameObject.Find("Planet");
+		startingDirection = (transform.position - currentPlanet.transform.position).normalized;
+		OrbitSetup();
 
-
-		shipJoint = transform.GetComponent<ConfigurableJoint>();
-		shipJoint.xMotion = ConfigurableJointMotion.Locked;
-		shipJoint.yMotion = ConfigurableJointMotion.Locked;
-		shipJoint.zMotion = ConfigurableJointMotion.Locked;
-		Vector3 toCenter = -transform.localPosition;
-		shipJoint.anchor = transform.InverseTransformDirection(toCenter);
+		// load prefab
+		Laser = (GameObject)Resources.Load("Player_Laser");
 	}
 	
 	// Update is called once per frame
@@ -36,75 +32,36 @@ public class PlayerShipController : MonoBehaviour {
 			Application.LoadLevel(0);
 		}
 
-
-//		// moving
-//		if(Input.GetKey(KeyCode.W)){
-//			if(currentSpeed < maxSpeed){
-//				currentSpeed += Time.deltaTime * acceleration;
-//				if(currentSpeed < 0){
-//					currentSpeed += Time.deltaTime * acceleration;
-//				}
-//			}
-//		} else if(Input.GetKey(KeyCode.S)){
-//			if(currentSpeed > -maxSpeed){
-//				currentSpeed -= Time.deltaTime * acceleration;
-//				if(currentSpeed > 0){
-//					currentSpeed -= Time.deltaTime * acceleration;
-//				}
-//			}
-//		} else{
-//			// drag = maxSpeed * 0.5
-//			if(currentSpeed != 0f){
-//				currentSpeed = Mathf.Lerp(currentSpeed, 0f, Time.deltaTime * maxSpeed * 0.5f / Mathf.Abs(currentSpeed));
-//			}
-//		}
-//		transform.RotateAround(currentPlanet.transform.position, transform.right, Time.deltaTime * currentSpeed);
-//		
-//		
-//		// turning
-//		if(Input.GetKey(KeyCode.D)){
-//			if(currentTurningSpeed < maxTurnSpeed){
-//				currentTurningSpeed += Time.deltaTime * turnSpeed;
-//				if(currentTurningSpeed < 0f){
-//					currentTurningSpeed += Time.deltaTime * turnSpeed;
-//				}
-//			}
-//		} else if(Input.GetKey(KeyCode.A)){
-//			if(currentTurningSpeed > -maxTurnSpeed){
-//				currentTurningSpeed -= Time.deltaTime * turnSpeed;
-//				if(currentTurningSpeed > 0f){
-//					currentTurningSpeed -= Time.deltaTime * turnSpeed;
-//				}
-//			}
-//		} else{
-//			// drag = maxSpeed * 0.5
-//			if(currentTurningSpeed != 0f){
-//				currentTurningSpeed = Mathf.Lerp(currentTurningSpeed, 0f, Time.deltaTime * maxTurnSpeed * 0.5f / Mathf.Abs(currentTurningSpeed));
-//			}
-//		}
-//		transform.RotateAround(transform.up, Time.deltaTime * currentTurningSpeed);
+		// shooting
+		if (Input.GetKeyDown(KeyCode.Space)){
+			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
+			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+			nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
+			nextLaser.GetComponent<LaserBehavior>().laserType = "Player";
+		}
 	}
 
-
 	void FixedUpdate () {
-
+		// moving and turning
 		if (Input.GetKey(KeyCode.W)){
-			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+			if(rigidbody.velocity.z < maxSpeed){
+				rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+			}
 		}
 		if (Input.GetKey(KeyCode.S)){
-			rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+			if(rigidbody.velocity.z > -maxSpeed){
+				rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+			}
 		}
 		if (Input.GetKey(KeyCode.D)){
-			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed, ForceMode.VelocityChange);
+			if(rigidbody.angularVelocity.y < maxTurnSpeed){
+				rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
+			}
 		}
 		if (Input.GetKey(KeyCode.A)){
-			rigidbody.AddTorque(-transform.up.normalized * Time.deltaTime * turnSpeed, ForceMode.VelocityChange);
+			if(rigidbody.angularVelocity.y > -maxTurnSpeed){
+				rigidbody.AddTorque(-transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
+			}
 		}
-		
-//		rigidbody.AddForce(-Vector3.Project(rigidbody.velocity, transform.up));
-//		
-//		rigidbody.MovePosition(transform.position);
-//		rigidbody.MoveRotation(transform.rotation);
-
 	}
 }
