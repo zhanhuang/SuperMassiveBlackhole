@@ -19,11 +19,18 @@ public class LaserBehavior : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider other) {
 //		Debug.Log("trigger enter");
-		if(other.tag == "Player" && laserType == "Enemy"){
-			Debug.Log("player hit");
-		} else if(other.tag == "Enemy" && laserType == "Player"){
-			Debug.Log("enemy hit");
-			Destroy(other.gameObject);
+		if(other.tag == "Player"){
+			if(laserType == "Enemy"){
+				Debug.Log("player hit");
+			}
+		} else if(other.tag == "Enemy"){
+			if(laserType == "Player"){
+				Debug.Log("enemy hit");
+				Destroy(other.gameObject);
+				Destroy(gameObject);
+			}
+		} else{
+			// disappear upon hitting structure
 			Destroy(gameObject);
 		}
 	}

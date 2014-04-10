@@ -10,6 +10,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float maxTurnSpeed = 8f;
 	float laserSpeed = 20f;
 
+	float cameraRotateAngle = 10f;
+
 	GameObject Laser;
 
 	float currentSpeed = 0f;
@@ -39,6 +41,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 			nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
 			nextLaser.GetComponent<LaserBehavior>().laserType = "Player";
 		}
+
+		// TODO: rotate camera according to speed
+		transform.GetChild(0).transform.localRotation = Quaternion.Euler(new Vector3(35f + cameraRotateAngle * rigidbody.velocity.z/maxSpeed, 0f, 0f));
 	}
 
 	void FixedUpdate () {
