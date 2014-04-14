@@ -2,11 +2,11 @@
 using System.Collections;
 
 // Inherits from ShipOrbitBehavior
-public class EnemyAI : ShipOrbitBehavior {
+public class EnemyShipAI : ShipOrbitBehavior {
 	public float speed = 10f;
 	public float turnSpeed = 10f;
 	float fireCoolDown = 1f;
-	float fireCoolDownRemaining = 1f;
+	float fireCoolDownRemaining = 0f;
 
 	GameObject player;
 	GameObject Laser;
@@ -16,34 +16,36 @@ public class EnemyAI : ShipOrbitBehavior {
 	void Start () {
 		OrbitSetup();
 		
+		StartCoroutine(AvoidObstacle());
+		
 		// load prefab
-		Laser = (GameObject)Resources.Load("Enemy_Laser");
+		Laser = (GameObject)Resources.Load("Laser_Red");
 
 		// set player
 		player = GameObject.FindGameObjectWithTag("Player");
 
-		fireCoolDownRemaining = 0f;
-		StartCoroutine(AvoidObstacle());
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		RaycastHit hit = new RaycastHit();
-		if(Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 20f)){
-			// check if the player is in front
-			if(hit.transform.tag == "Player" && Vector3.Angle(player.transform.position - transform.position, transform.forward) < 15f){
-				fireCoolDownRemaining -= Time.deltaTime;
-				// player seen, fire laser
+		fireCoolDownRemaining -= Time.deltaTime;
+
+//		RaycastHit hit = new RaycastHit();
+//		if(Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 20f)){
+//			// check if the player is in front
+//			if(hit.transform.tag == "Player" && Vector3.Angle(player.transform.position - transform.position, transform.forward) < 15f){
+//				// player seen, fire laser
 				if(fireCoolDownRemaining < 0f){
 					GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
 					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+					nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 					nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-					nextLaser.GetComponent<LaserBehavior>().laserType = "Enemy";
-					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 0.5f;
+					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
 					fireCoolDownRemaining = fireCoolDown;
 				}
-			}
-		}
+//			}
+//		}
 	}
 
 	void FixedUpdate () {

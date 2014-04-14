@@ -2,30 +2,33 @@
 using System.Collections;
 
 public class LaserBehavior : MonoBehaviour {
-	public string laserType;
+	public string laserOrigin;
+	public string laserPath;
 	public float laserSpeed;
 	public Vector3 gravityCenter;
 
 	// Use this for initialization
 	void Start () {
-		Destroy(gameObject, 2f / laserSpeed);
+		Destroy(gameObject, 120f / laserSpeed);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(gravityCenter != null){
-			transform.RotateAround(gravityCenter,transform.right, laserSpeed);
+		if(laserPath == "orbit"  &&  gravityCenter != null){
+			transform.RotateAround(gravityCenter,transform.right, laserSpeed * Time.deltaTime);
+		} else if(laserPath == "straight"){
+			transform.Translate(transform.up.normalized * laserSpeed * Time.deltaTime);
 		}
 	}
 	
 	void OnTriggerEnter(Collider other) {
 //		Debug.Log("trigger enter");
 		if(other.tag == "Player"){
-			if(laserType == "Enemy"){
+			if(laserOrigin == "Enemy"){
 				Debug.Log("player hit");
 			}
 		} else if(other.tag == "Enemy"){
-			if(laserType == "Player"){
+			if(laserOrigin == "Player"){
 				Debug.Log("enemy hit");
 				Destroy(other.gameObject);
 				Destroy(gameObject);
