@@ -9,7 +9,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public float turnAcceleration = 4f;
 	public float maxTurnSpeed = 8f;
 
-	float cameraRotateAngle = 10f;
+	GameObject playerCamera;
+	Quaternion cameraStartingRotation;
+	float cameraRotateAngle = 45f;
+	float cameraStartingRotationX;
 
 	GameObject Laser;
 	GameObject Bomb;
@@ -32,9 +35,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 		OrbitSetup();
 
 		// load prefab
-		Laser = (GameObject)Resources.Load("Player_Laser");
 		Bomb = (GameObject)Resources.Load ("Player_Bomb");
+		Laser = (GameObject)Resources.Load("Laser_Blue");
 
+		// set camera
+		playerCamera = transform.GetChild(0).gameObject;
+		cameraStartingRotationX = playerCamera.transform.localRotation.eulerAngles.x;
 
 		// set variables to initial value
 		damageCoolDownRemaining = 0f;
@@ -64,15 +70,16 @@ public class PlayerShipController : ShipOrbitBehavior {
 			if(fireCoolDownRemaining < 0f){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
 				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+				nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-				nextLaser.GetComponent<LaserBehavior>().laserType = "Player";
-				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 1f;
+				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
+				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
 				fireCoolDownRemaining = fireCoolDown;
 			}
 		}
 
-		// TODO: rotate camera according to speed and turning speed
-		transform.GetChild(0).transform.localRotation = Quaternion.Euler(new Vector3(35f + cameraRotateAngle * rigidbody.velocity.z/maxSpeed, 0f, 0f));
+		// rotate camera according to speed and TODO: turning speed
+		transform.GetChild(0).transform.localRotation = Quaternion.Euler(new Vector3(cameraStartingRotationX - cameraRotateAngle * rigidbody.velocity.z/maxSpeed, 0f, 0f));
 	}
 
 	void FixedUpdate () {

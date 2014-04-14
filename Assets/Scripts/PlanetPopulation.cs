@@ -4,7 +4,8 @@ using System.Collections;
 public class PlanetPopulation : MonoBehaviour {
 	public string planetType;
 	public float orbitLength;
-	public GameObject Enemy;
+	public GameObject EnemyShip;
+	public GameObject EnemyTurret;
 	public GameObject Player;
 	//Material
 	
@@ -25,13 +26,20 @@ public class PlanetPopulation : MonoBehaviour {
 	}
 
 	public void GenerateEnemies(){
-		Enemy = (GameObject)Resources.Load("Enemy");
+		EnemyShip = (GameObject)Resources.Load("Enemy");
+		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
 		for(int i = 0; i < 10; i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
-			GameObject nextEnemy = (GameObject)Instantiate(Enemy, transform.position + startDir * orbitLength, transform.rotation);
-			EnemyAI enemyOrbit = nextEnemy.transform.GetComponent<EnemyAI>();
+			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
+			EnemyShipAI enemyOrbit = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			enemyOrbit.currentPlanet = gameObject;
 			enemyOrbit.startingDirection = startDir;
+		}
+		
+		for(int i = 0; i < 5; i++){
+			Vector3 startDir = Random.insideUnitSphere.normalized;
+			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * transform.localScale.x / 2, transform.rotation);
+			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
 		}
 	}
 }
