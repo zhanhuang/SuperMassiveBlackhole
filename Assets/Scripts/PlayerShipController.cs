@@ -11,6 +11,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float laserSpeed = 20f;
 
 	GameObject Laser;
+	GameObject Bomb;
+
+	private bool bombactivate = false;
 
 	float currentSpeed = 0f;
 	float currentTurningSpeed = 0f;
@@ -23,6 +26,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		// load prefab
 		Laser = (GameObject)Resources.Load("Player_Laser");
+		Bomb = (GameObject)Resources.Load ("Player_Bomb");
+
 	}
 	
 	// Update is called once per frame
@@ -31,7 +36,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if (Input.GetKey(KeyCode.R)){
 			Application.LoadLevel(0);
 		}
+		//if (bombactivate = false) {
+				if (Input.GetKeyDown (KeyCode.Tab)) {
+						bombactivate = true;
+						GameObject nextbomb = (GameObject)Instantiate (Bomb, transform.position, transform.rotation);
+			nextbomb.transform.Rotate (new Vector3(0f, 0f, 0f));
+			nextbomb.GetComponent<bombscript>().gravityCenter = currentPlanet.transform.position;
 
+						}
+				//}
+		//if (bombactivate = true) {
+				//}
 		// shooting
 		if (Input.GetKeyDown(KeyCode.Space)){
 			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
@@ -63,5 +78,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 				rigidbody.AddTorque(-transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
 			}
 		}
+
 	}
 }
