@@ -3,17 +3,18 @@ using System.Collections;
 
 public class LaserBehavior : MonoBehaviour {
 	public string laserType;
+	public float laserSpeed;
 	public Vector3 gravityCenter;
 
 	// Use this for initialization
 	void Start () {
-		Destroy(gameObject, 2f);
+		Destroy(gameObject, 2f / laserSpeed);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(gravityCenter != null){
-			transform.RotateAround(gravityCenter,transform.right, 1f);
+			transform.RotateAround(gravityCenter,transform.right, laserSpeed);
 		}
 	}
 	
@@ -31,7 +32,9 @@ public class LaserBehavior : MonoBehaviour {
 			}
 		} else{
 			// disappear upon hitting structure
-			Destroy(gameObject);
+			if(!other.isTrigger){
+				Destroy(gameObject);
+			}
 		}
 	}
 }
