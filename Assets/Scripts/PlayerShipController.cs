@@ -4,11 +4,12 @@ using System.Collections;
 // Inherits from ShipOrbitBehavior
 public class PlayerShipController : ShipOrbitBehavior {
 
-	float acceleration = 30f;
-	float maxSpeed = 90f;
-	float turnAcceleration = 4f;
-	float maxTurnSpeed = 8f;
-	float laserSpeed = 20f;
+	public float acceleration = 30f;
+	public float maxSpeed = 90f;
+	public float turnAcceleration = 4f;
+	public float maxTurnSpeed = 8f;
+
+	float cameraRotateAngle = 10f;
 
 	GameObject Laser;
 	GameObject Bomb;
@@ -17,6 +18,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	float currentSpeed = 0f;
 	float currentTurningSpeed = 0f;
+	
+	float damageCoolDown = 1f;
+	float damageCoolDownRemaining = 1f;
+	
+	public float fireCoolDown = 0.5f;
+	float fireCoolDownRemaining = 5f;
 
 	// Use this for initialization
 	void Start () {
@@ -28,6 +35,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		Laser = (GameObject)Resources.Load("Player_Laser");
 		Bomb = (GameObject)Resources.Load ("Player_Bomb");
 
+
+		// set variables to initial value
+		damageCoolDownRemaining = 0f;
+		fireCoolDownRemaining = 0f;
 	}
 	
 	// Update is called once per frame
@@ -48,12 +59,20 @@ public class PlayerShipController : ShipOrbitBehavior {
 		//if (bombactivate = true) {
 				//}
 		// shooting
+		fireCoolDownRemaining -= Time.deltaTime;
 		if (Input.GetKeyDown(KeyCode.Space)){
-			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-			nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-			nextLaser.GetComponent<LaserBehavior>().laserType = "Player";
+			if(fireCoolDownRemaining < 0f){
+				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
+				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
+				nextLaser.GetComponent<LaserBehavior>().laserType = "Player";
+				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 1f;
+				fireCoolDownRemaining = fireCoolDown;
+			}
 		}
+
+		// TODO: rotate camera according to speed and turning speed
+		transform.GetChild(0).transform.localRotation = Quaternion.Euler(new Vector3(35f + cameraRotateAngle * rigidbody.velocity.z/maxSpeed, 0f, 0f));
 	}
 
 	void FixedUpdate () {
@@ -78,6 +97,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 				rigidbody.AddTorque(-transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
 			}
 		}
-
+		
+		//TODO: tilt on turning
+//		transform.rotation =  (rigidbody.angularVelocity.y / maxTurnSpeed * tilt);
 	}
 }
