@@ -36,10 +36,10 @@ public class PlanetPopulation : MonoBehaviour {
 			enemyOrbit.startingDirection = startDir;
 		}
 		
-		for(int i = 0; i < 5; i++){
-			Vector3 startDir = Random.insideUnitSphere.normalized;
-			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * transform.localScale.x / 2, transform.rotation);
-			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
-		}
+//		for(int i = 0; i < 5; i++){
+//			Vector3 startDir = Random.insideUnitSphere.normalized;
+//			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * transform.localScale.x / 2, transform.rotation);
+//			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
+//		}
 	}
 }

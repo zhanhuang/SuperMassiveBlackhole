@@ -10,6 +10,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public float maxTurnSpeed = 8f;
 
 	GameObject playerCamera;
+	GameObject Explosion;
 	Quaternion cameraStartingRotation;
 	float cameraRotateAngle = 45f;
 	float cameraStartingRotationX;
@@ -23,10 +24,13 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float currentTurningSpeed = 0f;
 	
 	float damageCoolDown = 1f;
-	float damageCoolDownRemaining = 1f;
+	float damageCoolDownRemaining = 0f;
 	
 	public float fireCoolDown = 0.5f;
-	float fireCoolDownRemaining = 5f;
+	float fireCoolDownRemaining = 0f;
+
+	int health = 3;
+	GUIText healthText;
 
 	// Use this for initialization
 	void Start () {
@@ -37,22 +41,37 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// load prefab
 		Bomb = (GameObject)Resources.Load ("Player_Bomb");
 		Laser = (GameObject)Resources.Load("Laser_Blue");
+		Explosion = (GameObject)Resources.Load ("Explosion05");
 
 		// set camera
 		playerCamera = transform.GetChild(0).gameObject;
 		cameraStartingRotationX = playerCamera.transform.localRotation.eulerAngles.x;
 
-		// set variables to initial value
-		damageCoolDownRemaining = 0f;
-		fireCoolDownRemaining = 0f;
+		
+		// ammo counter 
+		GameObject ammoTextObj = new GameObject("ammoCounter");
+		ammoTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		healthText = (GUIText)ammoTextObj.AddComponent(typeof(GUIText));
+		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40, -Screen.height/2 + 40);
+		healthText.fontSize = 18;
+		healthText.color = Color.white;
+		healthText.text = "HEALTH: " + health;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		
 		// reset
 		if (Input.GetKey(KeyCode.R)){
 			Application.LoadLevel(0);
 		}
+
+		if(transform.renderer.enabled == false){
+			return;
+		}
+
+		damageCoolDownRemaining -= Time.deltaTime;
+		fireCoolDownRemaining -= Time.deltaTime;
 		//if (bombactivate = false) {
 				if (Input.GetKeyDown (KeyCode.Tab)) {
 						bombactivate = true;
@@ -65,7 +84,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		//if (bombactivate = true) {
 				//}
 		// shooting
-		fireCoolDownRemaining -= Time.deltaTime;
 		if (Input.GetKeyDown(KeyCode.Space)){
 			if(fireCoolDownRemaining < 0f){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
@@ -74,7 +92,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
 				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
 				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
-				fireCoolDownRemaining = fireCoolDown;
+//				fireCoolDownRemaining = fireCoolDown;
 			}
 		}
 
@@ -83,6 +101,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	void FixedUpdate () {
+		if(transform.renderer.enabled == false){
+			return;
+		}
+
+
 		// moving and turning
 		if (Input.GetKey(KeyCode.W)){
 			if(rigidbody.velocity.z < maxSpeed){
@@ -107,5 +130,24 @@ public class PlayerShipController : ShipOrbitBehavior {
 		
 		//TODO: tilt on turning
 //		transform.rotation =  (rigidbody.angularVelocity.y / maxTurnSpeed * tilt);
+	}
+
+	public void TakeDamage(int damage){
+		if(transform.renderer.enabled == false){
+			return;
+		}
+		if(damageCoolDownRemaining < 0f){
+			health -= damage;
+			damageCoolDownRemaining = damageCoolDown;
+			healthText.text = "HEALTH: " + health;
+		}
+		if(health <= 0){
+			Die();
+		}
+	}
+
+	public void Die(){
+		transform.renderer.enabled = false;
+		Instantiate (Explosion, transform.position, transform.rotation);
 	}
 }

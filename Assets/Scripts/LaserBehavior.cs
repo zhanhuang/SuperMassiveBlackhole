@@ -26,6 +26,7 @@ public class LaserBehavior : MonoBehaviour {
 		if(other.tag == "Player"){
 			if(laserOrigin == "Enemy"){
 				Debug.Log("player hit");
+				other.transform.GetComponent<PlayerShipController>().TakeDamage(1);
 			}
 		} else if(other.tag == "Enemy"){
 			if(laserOrigin == "Player"){
