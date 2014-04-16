@@ -2,10 +2,10 @@
 using System.Collections;
 
 public class EnemyTurretAI : MonoBehaviour {
-	public float fireCoolDown = 0.5f;
-	public float fireCoolDownRemaining = 0f;
+	float fireCoolDown = 0.5f;
+	float fireCoolDownRemaining = 0f;
 	
-	public GameObject player;
+	GameObject player;
 	GameObject Laser;
 	GameObject Explosion;
 	Vector3 LaserStartPosition;

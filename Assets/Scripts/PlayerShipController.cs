@@ -10,7 +10,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GameObject playerCamera;
 	GameObject Explosion;
 
-
 	Vector3 cameraStartingLocalPosition;
 
 	GameObject Laser;
@@ -22,11 +21,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float damageCoolDown = 1f;
 	float damageCoolDownRemaining = 0f;
 	
-	public float fireCoolDown = 0.5f;
-	float fireCoolDownRemaining = 0f;
+	float overHeatLimit = 10f;
+	float overHeatMeter = 0f;
+	float coolOffCounter = 0f;
 
 	int health = 3;
 	GUIText healthText;
+	GUIText heatText;
+	GUIText weaponText;
 
 	// Use this for initialization
 	void Start () {
@@ -43,14 +45,34 @@ public class PlayerShipController : ShipOrbitBehavior {
 		playerCamera = transform.GetChild(0).gameObject;
 		cameraStartingLocalPosition = playerCamera.transform.localPosition;
 		
-		// ammo counter 
+		// health counter 
 		GameObject healthTextObj = new GameObject("ammoCounter");
 		healthTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		healthText = (GUIText)healthTextObj.AddComponent(typeof(GUIText));
-		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40, Screen.height/2 - 40);
+		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40, Screen.height/2 - 30);
 		healthText.fontSize = 18;
-		healthText.color = Color.white;
+		healthText.color = Color.green;
 		healthText.text = "HEALTH: " + health;
+		
+		// overheat counter 
+		GameObject heatTextObj = new GameObject("ammoCounter");
+		heatTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		heatText = (GUIText)heatTextObj.AddComponent(typeof(GUIText));
+		heatText.anchor = TextAnchor.UpperRight;
+		heatText.pixelOffset = new Vector2(Screen.width/2 - 40, Screen.height/2 - 30);
+		heatText.fontSize = 18;
+		heatText.color = Color.white;
+		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
+		
+		// weapon text
+		GameObject weaponTextObj = new GameObject("ammoCounter");
+		weaponTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		weaponText = (GUIText)weaponTextObj.AddComponent(typeof(GUIText));
+		weaponText.anchor = TextAnchor.LowerRight;
+		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40, -Screen.height/2 + 30);
+		weaponText.fontSize = 18;
+		weaponText.color = Color.blue;
+		weaponText.text = "[J]: Laser \n[K]: Bomb";
 	}
 	
 	// Update is called once per frame
@@ -66,30 +88,47 @@ public class PlayerShipController : ShipOrbitBehavior {
 		}
 
 		damageCoolDownRemaining -= Time.deltaTime;
-		fireCoolDownRemaining -= Time.deltaTime;
 
-		// shooting
-		if (Input.GetKeyDown(KeyCode.J)){
-			if(fireCoolDownRemaining < 0f){
+
+		coolOffCounter += Time.deltaTime;
+		if(overHeatMeter > 0){
+			overHeatMeter -= Time.deltaTime * Mathf.Clamp(coolOffCounter, 1f, Mathf.Infinity);
+			overHeatMeter = Mathf.Clamp(overHeatMeter, 0f, overHeatLimit*2);
+		}
+		
+		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
+
+		if(overHeatMeter < overHeatLimit){
+			heatText.color = Color.white;
+			// shooting
+			if (Input.GetKeyDown(KeyCode.J)){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
 				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 				nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
 				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
 				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
-//				fireCoolDownRemaining = fireCoolDown;
+
+				overHeatMeter += 1f;
+				coolOffCounter = 0f;
 			}
-		}
+			
+			// bombing
+			if (Input.GetKeyDown (KeyCode.K)) {
+				GameObject nextbomb = (GameObject)Instantiate (Bomb, transform.position, transform.rotation);
+				nextbomb.transform.Rotate (new Vector3(180f, 0f, 0f));
+				nextbomb.GetComponent<BombMovement>().gravityCenter = currentPlanet.transform.position;
+				nextbomb.GetComponent<BombMovement>().bombForwardSpeed += forwardVelocity;
 
-		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z;
-
-		// bombing
-		if (Input.GetKeyDown (KeyCode.K)) {
-			GameObject nextbomb = (GameObject)Instantiate (Bomb, transform.position, transform.rotation);
-			nextbomb.transform.Rotate (new Vector3(180f, 0f, 0f));
-			nextbomb.GetComponent<BombMovement>().gravityCenter = currentPlanet.transform.position;
-			nextbomb.GetComponent<BombMovement>().bombForwardSpeed += forwardVelocity;
+				overHeatMeter += 1f;
+				coolOffCounter = 0f;
+			}
+		} else{
+			//TODO: show overheat meter
+			heatText.color = Color.red;
 		}
+		
+		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
 
 //		// zoom camera according to speed. TODO: decide if we want this in or not	
 //		Vector3 adjustedCameraRotation = new Vector3(cameraStartingLocalPosition.x, cameraStartingLocalPosition.y - forwardVelocity, cameraStartingLocalPosition.z + forwardVelocity);
@@ -132,6 +171,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			healthText.text = "HEALTH: " + health;
 		}
 		if(health <= 0){
+			healthText.color = Color.red;
 			Die();
 		}
 	}

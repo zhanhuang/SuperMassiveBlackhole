@@ -3,7 +3,7 @@ using System.Collections;
 
 // Inherits from ShipOrbitBehavior
 public class EnemyShipAI : ShipOrbitBehavior {
-	public string EnemyType = "randomWalk";
+	public string EnemyType;	// random, chase
 	public float speed = 10f;
 	public float turnSpeed = 10f;
 	float fireCoolDown = 1f;
