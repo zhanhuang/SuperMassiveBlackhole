@@ -33,24 +33,34 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	// Update is called once per frame
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
+		if(fireCoolDownRemaining < 0f){
+			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
+			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+			nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
+			nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
+			nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+			nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
+			fireCoolDownRemaining = fireCoolDown;
+		}
 
-//		RaycastHit hit = new RaycastHit();
-//		if(Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 20f)){
-//			// check if the player is in front
-//			if(hit.transform.tag == "Player" && Vector3.Angle(player.transform.position - transform.position, transform.forward) < 15f){
-//				// player seen, fire laser
-				if(fireCoolDownRemaining < 0f){
-					GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-					nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
-					nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
-					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
-					fireCoolDownRemaining = fireCoolDown;
-				}
+//		// chasing fire pattern
+//		fireCoolDownRemaining -= Time.deltaTime;
+//		if(fireCoolDownRemaining < 0f){
+//			RaycastHit hit = new RaycastHit();
+//			Vector3 raycastDir = player.transform.position - transform.position;
+//			if(Physics.Raycast(transform.position + raycastDir.normalized * 2f, raycastDir, out hit, 20f)){
+//				// check if the player is in front
+//				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.forward) < 15f){
+//					// player seen, fire laser
+//					GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, Quaternion.LookRotation(player.transform.position - transform.position));
+//					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+//					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
+//					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+//					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
+//					fireCoolDownRemaining = fireCoolDown;
+//				}
 //			}
 //		}
-
 
 	}
 
@@ -84,6 +94,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 
 	public void Die(){
 		Destroy(gameObject);
-		Instantiate (Explosion, transform.position, transform.rotation);
+		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
 }

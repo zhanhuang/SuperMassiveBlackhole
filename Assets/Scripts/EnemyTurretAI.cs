@@ -2,10 +2,10 @@
 using System.Collections;
 
 public class EnemyTurretAI : MonoBehaviour {
-	float fireCoolDown = 0.5f;
-	float fireCoolDownRemaining = 0f;
+	public float fireCoolDown = 0.5f;
+	public float fireCoolDownRemaining = 0f;
 	
-	GameObject player;
+	public GameObject player;
 	GameObject Laser;
 	GameObject Explosion;
 	Vector3 LaserStartPosition;
@@ -29,12 +29,13 @@ public class EnemyTurretAI : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
-		RaycastHit hit = new RaycastHit();
-		if(Physics.Raycast(transform.position, player.transform.position - transform.position, out hit, 20f)){
-			// check if the player is in front
-			if(hit.transform.tag == "Player" && Vector3.Angle(player.transform.position - transform.position, transform.up) < 60f){
-				// player seen, fire laser
-				if(fireCoolDownRemaining < 0f){
+		if(fireCoolDownRemaining < 0f){
+			RaycastHit hit = new RaycastHit();
+			Vector3 raycastDir = player.transform.position - transform.position;
+			if(Physics.Raycast(transform.position + raycastDir.normalized * 2f, raycastDir, out hit, 20f)){
+				// check if the player is above
+				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.up) < 60f){
+					// player seen, fire laser
 					GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(player.transform.position - LaserStartPosition));
 					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
@@ -55,6 +56,6 @@ public class EnemyTurretAI : MonoBehaviour {
 	
 	public void Die(){
 		Destroy(gameObject);
-		Instantiate (Explosion, transform.position, transform.rotation);
+		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
 }

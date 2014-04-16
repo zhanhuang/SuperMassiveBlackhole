@@ -28,8 +28,8 @@ public class LaserBehavior : MonoBehaviour {
 		if(other.tag == "Player"){
 			if(laserOrigin == "Enemy"){
 				Debug.Log("player hit");
+				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				other.gameObject.SendMessage("TakeDamage", 1);
-				Instantiate (Explosion, transform.position, transform.rotation);
 			}
 		} else if(other.tag == "Enemy"){
 			if(laserOrigin == "Player"){
@@ -40,7 +40,7 @@ public class LaserBehavior : MonoBehaviour {
 			}
 		} else{
 			// disappear upon hitting structure
-			if(!other.isTrigger){
+			if(!other.isTrigger && other.tag != "Planet"){
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				Destroy(gameObject);
 			} else if(other.transform.GetComponent<LaserBehavior>() != null && other.transform.GetComponent<LaserBehavior>().laserOrigin != laserOrigin){

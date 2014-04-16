@@ -30,7 +30,7 @@ public class PlanetPopulation : MonoBehaviour {
 	public void GenerateEnemies(){
 		EnemyShip = (GameObject)Resources.Load("Enemy");
 		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 0; i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
 			EnemyShipAI enemyOrbit = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
