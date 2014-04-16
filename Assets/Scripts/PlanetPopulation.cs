@@ -4,6 +4,7 @@ using System.Collections;
 public class PlanetPopulation : MonoBehaviour {
 	public string planetType;
 	public float orbitLength;
+	public float surfaceLength;
 	public GameObject EnemyShip;
 	public GameObject EnemyTurret;
 	public GameObject Player;
@@ -12,7 +13,8 @@ public class PlanetPopulation : MonoBehaviour {
 	void Awake (){
 		float scale = Random.Range(40,100);
 		transform.localScale = new Vector3(scale, scale, scale);
-		orbitLength = transform.localScale.x / 2 + 3f;
+		orbitLength = transform.localScale.x / 2 + 5f;
+		surfaceLength = transform.localScale.x / 2;
 	}
 	
 	// Use this for initialization
@@ -36,10 +38,10 @@ public class PlanetPopulation : MonoBehaviour {
 			enemyOrbit.startingDirection = startDir;
 		}
 		
-//		for(int i = 0; i < 5; i++){
-//			Vector3 startDir = Random.insideUnitSphere.normalized;
-//			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * transform.localScale.x / 2, transform.rotation);
-//			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
-//		}
+		for(int i = 0; i < 10; i++){
+			Vector3 startDir = Random.insideUnitSphere.normalized;
+			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
+			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
+		}
 	}
 }

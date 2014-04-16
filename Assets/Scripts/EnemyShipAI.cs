@@ -3,6 +3,7 @@ using System.Collections;
 
 // Inherits from ShipOrbitBehavior
 public class EnemyShipAI : ShipOrbitBehavior {
+	public string EnemyType = "randomWalk";
 	public float speed = 10f;
 	public float turnSpeed = 10f;
 	float fireCoolDown = 1f;
@@ -10,7 +11,9 @@ public class EnemyShipAI : ShipOrbitBehavior {
 
 	GameObject player;
 	GameObject Laser;
-
+	GameObject Explosion;
+	
+	int health = 1;
 
 	// Use this for initialization
 	void Start () {
@@ -18,8 +21,9 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		
 		StartCoroutine(AvoidObstacle());
 		
-		// load prefab
+		// load prefabs
 		Laser = (GameObject)Resources.Load("Laser_Red");
+		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
 		// set player
 		player = GameObject.FindGameObjectWithTag("Player");
@@ -46,6 +50,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 				}
 //			}
 //		}
+
+
 	}
 
 	void FixedUpdate () {
@@ -59,7 +65,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	IEnumerator AvoidObstacle(){
 		while(true){
 			RaycastHit hit = new RaycastHit();
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 5f)){
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 10f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Player"){
 					rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * 100f, ForceMode.VelocityChange);
@@ -67,5 +73,17 @@ public class EnemyShipAI : ShipOrbitBehavior {
 			}
 			yield return new WaitForSeconds(1f);
 		}
+	}
+	
+	public void TakeDamage(int damage){
+		health -= damage;
+		if(health <= 0){
+			Die();
+		}
+	}
+
+	public void Die(){
+		Destroy(gameObject);
+		Instantiate (Explosion, transform.position, transform.rotation);
 	}
 }
