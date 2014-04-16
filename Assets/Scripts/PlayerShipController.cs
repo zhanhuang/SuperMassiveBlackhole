@@ -46,7 +46,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		cameraStartingLocalPosition = playerCamera.transform.localPosition;
 		
 		// health counter 
-		GameObject healthTextObj = new GameObject("ammoCounter");
+		GameObject healthTextObj = new GameObject("healthCounter");
 		healthTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		healthText = (GUIText)healthTextObj.AddComponent(typeof(GUIText));
 		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40, Screen.height/2 - 30);
@@ -55,7 +55,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		healthText.text = "HEALTH: " + health;
 		
 		// overheat counter 
-		GameObject heatTextObj = new GameObject("ammoCounter");
+		GameObject heatTextObj = new GameObject("heatCounter");
 		heatTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		heatText = (GUIText)heatTextObj.AddComponent(typeof(GUIText));
 		heatText.anchor = TextAnchor.UpperRight;
@@ -65,7 +65,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
 		
 		// weapon text
-		GameObject weaponTextObj = new GameObject("ammoCounter");
+		GameObject weaponTextObj = new GameObject("weaponText");
 		weaponTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		weaponText = (GUIText)weaponTextObj.AddComponent(typeof(GUIText));
 		weaponText.anchor = TextAnchor.LowerRight;
@@ -128,11 +128,18 @@ public class PlayerShipController : ShipOrbitBehavior {
 			heatText.color = Color.red;
 		}
 		
-		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
+		// tail particle effect
+		if(forwardVelocity > 0f){
+			transform.FindChild("PlayerTailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
+			transform.FindChild("PlayerTailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
+		}
 
 //		// zoom camera according to speed. TODO: decide if we want this in or not	
 //		Vector3 adjustedCameraRotation = new Vector3(cameraStartingLocalPosition.x, cameraStartingLocalPosition.y - forwardVelocity, cameraStartingLocalPosition.z + forwardVelocity);
 //		transform.GetChild(0).transform.localPosition = adjustedCameraRotation;
+
+		// update heat text
+		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
 	}
 
 	void FixedUpdate () {
@@ -179,6 +186,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public void Die(){
 		transform.renderer.enabled = false;
 		transform.collider.enabled = false;
+		transform.FindChild("PlayerTailFlameLeft").GetComponent<ParticleSystem>().enableEmission = false;
+		transform.FindChild("PlayerTailFlameRight").GetComponent<ParticleSystem>().enableEmission = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
 	}
 }
