@@ -13,10 +13,10 @@ public class PlanetPopulation : MonoBehaviour {
 
 	
 	void Awake (){
-		float scale = Random.Range(40,100);
+		float scale = Random.Range(80f,120f);
 		transform.localScale = new Vector3(scale, scale, scale);
 		orbitLength = transform.localScale.x / 2 + 5f;
-		surfaceLength = transform.localScale.x / 2 - 0.5f;
+		surfaceLength = transform.localScale.x / 2 - 0.02f;
 	}
 	
 	// Use this for initialization
@@ -47,6 +47,7 @@ public class PlanetPopulation : MonoBehaviour {
 		for(int i = 0; i < 10; i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
+			EnemyTurretAI enemyOrbit = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
 			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
 		}
 	}

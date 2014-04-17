@@ -25,7 +25,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float overHeatMeter = 0f;
 	float coolOffCounter = 0f;
 
-	int health = 3;
+	int health = 10;
 	GUIText healthText;
 	GUIText heatText;
 	GUIText weaponText;
