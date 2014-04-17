@@ -2,14 +2,21 @@
 using System.Collections;
 
 public class PlanetPopulation : MonoBehaviour {
-	public string planetType; // hostile, friendly, conflicting
+	/* TYPES:
+	 * 1 - Hostile: Enemies, clear to move on
+	 * 2 - Friendly: Shop, free to move on
+	 * 3 - Conflicting: many Enemies and few Allies, clear with at least 1 ally remaining to unlock shop
+	 */
+	public int planetType;
+	// keep track of location in galaxy. later rows have more enemies
+	public int planetRow;
+	public int planetCol;
+
 	public float orbitLength;
 	public float surfaceLength;
 	public GameObject EnemyShip;
 	public GameObject EnemyTurret;
 	public GameObject Player;
-
-	// TODO: Planet Texture
 
 	
 	void Awake (){
@@ -22,7 +29,7 @@ public class PlanetPopulation : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		//TODO: move this call to happen after player reaches the planet
-		GenerateEnemies();
+		//GenerateEnemies();
 	}
 
 	// Update is called once per frame

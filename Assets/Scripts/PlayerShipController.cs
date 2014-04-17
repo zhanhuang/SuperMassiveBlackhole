@@ -3,6 +3,7 @@ using System.Collections;
 
 // Inherits from ShipOrbitBehavior
 public class PlayerShipController : ShipOrbitBehavior {
+	public GameObject Galaxy;
 
 	float acceleration = 50f;
 	float turnAcceleration = 20f;
@@ -25,16 +26,19 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float overHeatMeter = 0f;
 	float coolOffCounter = 0f;
 
-	int health = 10;
+	int health = 3;
 	GUIText healthText;
 	GUIText heatText;
 	GUIText weaponText;
 
 	// Use this for initialization
 	void Start () {
-		currentPlanet = GameObject.Find("Planet");
+//		currentPlanet = GameObject.Find("Planet");
 		startingDirection = (transform.position - currentPlanet.transform.position).normalized;
 		OrbitSetup();
+
+		// set camera culling to spherical
+		transform.GetComponentInChildren<Camera>().layerCullSpherical = true;
 
 		// load prefab
 		Bomb = (GameObject)Resources.Load("Bomb");
@@ -46,7 +50,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		cameraStartingLocalPosition = playerCamera.transform.localPosition;
 		
 		// health counter 
-		GameObject healthTextObj = new GameObject("healthCounter");
+		// TODO: Have a bar for this
+		GameObject healthTextObj = new GameObject("HUD_healthCounter");
 		healthTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		healthText = (GUIText)healthTextObj.AddComponent(typeof(GUIText));
 		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40, Screen.height/2 - 30);
@@ -54,24 +59,25 @@ public class PlayerShipController : ShipOrbitBehavior {
 		healthText.color = Color.green;
 		healthText.text = "HEALTH: " + health;
 		
-		// overheat counter 
-		GameObject heatTextObj = new GameObject("heatCounter");
+		// overheat meter
+		// TODO: Have a bar for this
+		GameObject heatTextObj = new GameObject("HUD_heatMeter");
 		heatTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		heatText = (GUIText)heatTextObj.AddComponent(typeof(GUIText));
 		heatText.anchor = TextAnchor.UpperRight;
 		heatText.pixelOffset = new Vector2(Screen.width/2 - 40, Screen.height/2 - 30);
 		heatText.fontSize = 18;
 		heatText.color = Color.white;
-		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
+		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
 		
 		// weapon text
-		GameObject weaponTextObj = new GameObject("weaponText");
+		GameObject weaponTextObj = new GameObject("HUD_weaponText");
 		weaponTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		weaponText = (GUIText)weaponTextObj.AddComponent(typeof(GUIText));
 		weaponText.anchor = TextAnchor.LowerRight;
 		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40, -Screen.height/2 + 30);
 		weaponText.fontSize = 18;
-		weaponText.color = Color.blue;
+		weaponText.color = Color.yellow;
 		weaponText.text = "[J]: Laser \n[K]: Bomb";
 	}
 	
@@ -99,7 +105,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
 
 		if(overHeatMeter < overHeatLimit){
-			heatText.color = Color.white;
+			// color to cyan when cooldown is high to signify faster heat reduction
+			if(coolOffCounter > 2f && overHeatMeter > 0f){
+				heatText.color = Color.cyan;
+			} else{
+				heatText.color = Color.white;
+			}
 			// shooting
 			if (Input.GetKeyDown(KeyCode.J)){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
