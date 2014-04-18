@@ -112,7 +112,7 @@ public class GalaxyPopulation : MonoBehaviour {
 		
 		planetTypeArray[1,startCol - 1] = 1;
 		planetTypeArray[1,startCol] = 1;
-		planetTypeArray[1,startCol - 1] = 1;
+		planetTypeArray[1,startCol + 1] = 1;
 		
 		// remove 1 planet from row 1 ...or not
 		int toRemove = Random.Range(-2,2);
@@ -121,27 +121,45 @@ public class GalaxyPopulation : MonoBehaviour {
 		}
 		
 		// Populate row 2 - 4
-		for(int r = 2; r < 5; r++){
-			toRemove = Random.Range(-1,5);
-			int remove2 = Random.Range(0,5);
-			int remove3 = Random.Range(0,5);
+		for(int r = 1; r < 4; r++){
+			// start from previous row
+			int rowPlanetCount = 0;
+			// mark all reachable spots in next row as planet
 			for(int c = 0; c < 5; c++){
-				if(c != toRemove){
-					planetTypeArray[r,c] = 1;
+				if(planetTypeArray[r,c] == 1){
+					// left
+					if(c != 0){
+						if(planetTypeArray[r+1,c-1] == 0){
+							planetTypeArray[r+1,c-1] = 1;
+							rowPlanetCount++;
+						}
+					}
+					// middle
+					if(planetTypeArray[r,c] == 0){
+						planetTypeArray[r+1,c] = 1;
+						rowPlanetCount++;
+					}
+					// right
+					if(c != 4){
+						if(planetTypeArray[r+1,c+1] == 0){
+							planetTypeArray[r+1,c+1] = 1;
+							rowPlanetCount++;
+						}
+					}
 				}
-				if(c == remove2 && r < 4){
-					planetTypeArray[r,c] = 0;
-				} else if(c == remove3 && r == 3){
-					planetTypeArray[r,c] = 0;
-				}
+			}
+			// if too many planets in row, delete some
+			for(int k = 0; k < (rowPlanetCount - (r + 2)); k++){
+				planetTypeArray[r+1,Random.Range(0,5)] = 0;
 			}
 		}
 		
 		// Select an exit planet from last row
-		int exit = Random.Range(0,5);
-		while(exit == toRemove){
+		bool validExit = false;
+		int exit;
+		do{
 			exit = Random.Range(0,5);
-		}
+		} while(planetTypeArray[4,exit] == 0);
 		planetTypeArray[4, exit] = -2;
 
 		
