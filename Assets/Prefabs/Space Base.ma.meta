@@ -1,0 +1,294 @@
+fileFormatVersion: 2
+guid: 2b2bcf354d744cd45b2a6150804c1757
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: BaseOutline
+    100002: Extension1
+    100004: Extension1_Base
+    100006: Extension1_BaseOutline
+    100008: Extension1_Glass
+    100010: Extension1_GlassOutline
+    100012: Extension1_Hallway
+    100014: Extension1_HallwayOutline
+    100016: Extension2
+    100018: Extension2_Base
+    100020: Extension2_BaseOutline
+    100022: Extension2_Glass
+    100024: Extension2_GlassOutline
+    100026: Extension2_Hallway
+    100028: Extension2_HallwayOutline
+    100030: Extension3
+    100032: Extension3_Base
+    100034: Extension3_BaseOutline
+    100036: Extension3_Glass
+    100038: Extension3_GlassOutline
+    100040: Extension3_Hallway
+    100042: Extension3_HallwayOutline
+    100044: Extension4
+    100046: Extension4_Base
+    100048: Extension4_BaseOutline
+    100050: Extension4_Glass
+    100052: Extension4_GlassOutline
+    100054: Extension4_Hallway
+    100056: Extension4_HallwayOutline
+    100058: LightBeam
+    100060: MainBase
+    100062: //RootNode
+    100064: Main
+    100066: Main 1
+    100068: Main 2
+    100070: MeshGroup
+    100072: MeshGroup1
+    100074: MeshGroup2
+    100076: Main1
+    100078: Main2
+    100080: LightBeamOutline
+    100082: MainBase1
+    100084: pfxToon1
+    100086: pfxToon1ProfileMeshes
+    100088: polySurface1
+    100090: pfxToon2
+    100092: pfxToon3
+    100094: Extension4_Base 1
+    100096: Extension4_Base 2
+    100098: Extension4_Base 3
+    100100: Extension4_Glass 1
+    100102: Extension4_Glass 2
+    100104: Extension4_Glass 3
+    100106: Extension4_Hallway 1
+    100108: Extension4_Hallway 2
+    100110: Extension4_Hallway 3
+    100112: Extension4_HallwayOutline 1
+    100114: Extension4_HallwayOutline 2
+    100116: Extension4_HallwayOutline 3
+    100118: Extension5
+    100120: Extension6
+    100122: Extension7
+    400000: BaseOutline
+    400002: Extension1
+    400004: Extension1_Base
+    400006: Extension1_BaseOutline
+    400008: Extension1_Glass
+    400010: Extension1_GlassOutline
+    400012: Extension1_Hallway
+    400014: Extension1_HallwayOutline
+    400016: Extension2
+    400018: Extension2_Base
+    400020: Extension2_BaseOutline
+    400022: Extension2_Glass
+    400024: Extension2_GlassOutline
+    400026: Extension2_Hallway
+    400028: Extension2_HallwayOutline
+    400030: Extension3
+    400032: Extension3_Base
+    400034: Extension3_BaseOutline
+    400036: Extension3_Glass
+    400038: Extension3_GlassOutline
+    400040: Extension3_Hallway
+    400042: Extension3_HallwayOutline
+    400044: Extension4
+    400046: Extension4_Base
+    400048: Extension4_BaseOutline
+    400050: Extension4_Glass
+    400052: Extension4_GlassOutline
+    400054: Extension4_Hallway
+    400056: Extension4_HallwayOutline
+    400058: LightBeam
+    400060: MainBase
+    400062: //RootNode
+    400064: Main
+    400066: Main 1
+    400068: Main 2
+    400070: MeshGroup
+    400072: MeshGroup1
+    400074: MeshGroup2
+    400076: Main1
+    400078: Main2
+    400080: LightBeamOutline
+    400082: MainBase1
+    400084: pfxToon1
+    400086: pfxToon1ProfileMeshes
+    400088: polySurface1
+    400090: pfxToon2
+    400092: pfxToon3
+    400094: Extension4_Base 1
+    400096: Extension4_Base 2
+    400098: Extension4_Base 3
+    400100: Extension4_Glass 1
+    400102: Extension4_Glass 2
+    400104: Extension4_Glass 3
+    400106: Extension4_Hallway 1
+    400108: Extension4_Hallway 2
+    400110: Extension4_Hallway 3
+    400112: Extension4_HallwayOutline 1
+    400114: Extension4_HallwayOutline 2
+    400116: Extension4_HallwayOutline 3
+    400118: Extension5
+    400120: Extension6
+    400122: Extension7
+    2300000: Extension1_Base
+    2300002: Extension1_Glass
+    2300004: Extension1_Hallway
+    2300006: Extension2_Base
+    2300008: Extension2_Glass
+    2300010: Extension2_Hallway
+    2300012: Extension3_Base
+    2300014: Extension3_Glass
+    2300016: Extension3_Hallway
+    2300018: Extension4_Base
+    2300020: Extension4_Glass
+    2300022: Extension4_Hallway
+    2300024: LightBeam
+    2300026: MainBase
+    2300028: Main
+    2300030: Main 1
+    2300032: Main 2
+    2300034: Main1
+    2300036: Main2
+    2300038: Extension1_BaseOutline
+    2300040: Extension1_GlassOutline
+    2300042: Extension1_HallwayOutline
+    2300044: MainBase1
+    2300046: polySurface1
+    2300048: Extension4_HallwayOutline
+    2300050: Extension4_Base 1
+    2300052: Extension4_Base 2
+    2300054: Extension4_Base 3
+    2300056: Extension4_Glass 1
+    2300058: Extension4_Glass 2
+    2300060: Extension4_Glass 3
+    2300062: Extension4_Hallway 1
+    2300064: Extension4_Hallway 2
+    2300066: Extension4_Hallway 3
+    2300068: Extension4_HallwayOutline 1
+    2300070: Extension4_HallwayOutline 2
+    2300072: Extension4_HallwayOutline 3
+    3300000: Extension1_Base
+    3300002: Extension1_Glass
+    3300004: Extension1_Hallway
+    3300006: Extension2_Base
+    3300008: Extension2_Glass
+    3300010: Extension2_Hallway
+    3300012: Extension3_Base
+    3300014: Extension3_Glass
+    3300016: Extension3_Hallway
+    3300018: Extension4_Base
+    3300020: Extension4_Glass
+    3300022: Extension4_Hallway
+    3300024: LightBeam
+    3300026: MainBase
+    3300028: Main
+    3300030: Main 1
+    3300032: Main 2
+    3300034: Main1
+    3300036: Main2
+    3300038: Extension1_BaseOutline
+    3300040: Extension1_GlassOutline
+    3300042: Extension1_HallwayOutline
+    3300044: MainBase1
+    3300046: polySurface1
+    3300048: Extension4_HallwayOutline
+    3300050: Extension4_Base 1
+    3300052: Extension4_Base 2
+    3300054: Extension4_Base 3
+    3300056: Extension4_Glass 1
+    3300058: Extension4_Glass 2
+    3300060: Extension4_Glass 3
+    3300062: Extension4_Hallway 1
+    3300064: Extension4_Hallway 2
+    3300066: Extension4_Hallway 3
+    3300068: Extension4_HallwayOutline 1
+    3300070: Extension4_HallwayOutline 2
+    3300072: Extension4_HallwayOutline 3
+    4300000: Extension4_Glass
+    4300002: Extension4_Hallway
+    4300004: Extension4_Base
+    4300006: Extension3_Glass
+    4300008: Extension3_Hallway
+    4300010: Extension3_Base
+    4300012: Extension2_Glass
+    4300014: Extension2_Hallway
+    4300016: Extension2_Base
+    4300018: Extension1_Glass
+    4300020: Extension1_Hallway
+    4300022: Extension1_Base
+    4300024: MainBase
+    4300026: LightBeam
+    4300028: Main
+    4300030: Main
+    4300032: Main
+    4300034: Main1
+    4300036: Main2
+    4300038: Extension1_HallwayOutline
+    4300040: Extension1_GlassOutline
+    4300042: Extension1_BaseOutline
+    4300044: MainBase1
+    4300046: polySurface1
+    4300048: Extension4_HallwayOutline
+    4300050: Extension4_Glass
+    4300052: Extension4_Hallway
+    4300054: Extension4_Base
+    4300056: Extension4_HallwayOutline
+    4300058: Extension4_Glass
+    4300060: Extension4_Hallway
+    4300062: Extension4_Base
+    4300064: Extension4_HallwayOutline
+    4300066: Extension4_Glass
+    4300068: Extension4_Hallway
+    4300070: Extension4_Base
+    4300072: Extension4_HallwayOutline
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
