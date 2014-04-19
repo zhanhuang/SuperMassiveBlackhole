@@ -164,6 +164,8 @@ ModelImporter:
     2300068: Extension4_HallwayOutline 1
     2300070: Extension4_HallwayOutline 2
     2300072: Extension4_HallwayOutline 3
+    2300074: Extension2_HallwayOutline
+    2300076: Extension3_HallwayOutline
     3300000: Extension1_Base
     3300002: Extension1_Glass
     3300004: Extension1_Hallway
@@ -201,6 +203,8 @@ ModelImporter:
     3300068: Extension4_HallwayOutline 1
     3300070: Extension4_HallwayOutline 2
     3300072: Extension4_HallwayOutline 3
+    3300074: Extension2_HallwayOutline
+    3300076: Extension3_HallwayOutline
     4300000: Extension4_Glass
     4300002: Extension4_Hallway
     4300004: Extension4_Base
@@ -238,6 +242,8 @@ ModelImporter:
     4300068: Extension4_Hallway
     4300070: Extension4_Base
     4300072: Extension4_HallwayOutline
+    4300074: Extension2_HallwayOutline
+    4300076: Extension3_HallwayOutline
     9500000: //RootNode
   materials:
     importMaterials: 1

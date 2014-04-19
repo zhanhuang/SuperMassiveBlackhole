@@ -15,6 +15,12 @@ ModelImporter:
     100018: //RootNode
     100020: transform1
     100022: transform2
+    100024: Intake1
+    100026: Intake2
+    100028: ShipBody
+    100030: ShipBody1
+    100032: pCylinder2
+    100034: polySurface2
     400000: pCube1
     400002: pCube1SmoothProxyGroup
     400004: pCube2
@@ -27,24 +33,42 @@ ModelImporter:
     400018: //RootNode
     400020: transform1
     400022: transform2
+    400024: Intake1
+    400026: Intake2
+    400028: ShipBody
+    400030: ShipBody1
+    400032: pCylinder2
+    400034: polySurface2
     2300000: pCube4
     2300002: pCube5
     2300004: pCube6
     2300006: pCube7
     2300008: pCylinder1
     2300010: polySurface1
+    2300012: Intake1
+    2300014: Intake2
+    2300016: ShipBody
+    2300018: polySurface2
     3300000: pCube4
     3300002: pCube5
     3300004: pCube6
     3300006: pCube7
     3300008: pCylinder1
     3300010: polySurface1
+    3300012: Intake1
+    3300014: Intake2
+    3300016: ShipBody
+    3300018: polySurface2
     4300000: polySurface1
     4300002: pCube4
     4300004: pCylinder1
     4300006: pCube5
     4300008: pCube6
     4300010: pCube7
+    4300012: ShipBody
+    4300014: Intake1
+    4300016: Intake2
+    4300018: polySurface2
     9500000: //RootNode
   materials:
     importMaterials: 1
