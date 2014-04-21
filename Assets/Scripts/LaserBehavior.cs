@@ -29,14 +29,18 @@ public class LaserBehavior : MonoBehaviour {
 			if(laserOrigin == "Enemy"){
 				Debug.Log("player hit");
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
-				other.gameObject.SendMessage("TakeDamage", 1);
+				if(other.transform.GetComponent<PlayerShipController>() != null){
+					other.gameObject.SendMessage("TakeDamage", 1);
+				}
 			}
 		} else if(other.tag == "Enemy"){
 			if(laserOrigin == "Player"){
 				Debug.Log("enemy hit");
 				Destroy(other.gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
-				other.gameObject.SendMessage("TakeDamage", 1);
+				if(other.transform.GetComponent<EnemyShipAI>() != null || other.transform.GetComponent<EnemyTurretAI>() != null){
+					other.gameObject.SendMessage("TakeDamage", 1);
+				}
 			}
 		} else{
 			// disappear upon hitting structure

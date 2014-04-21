@@ -15,7 +15,7 @@ public class GalaxyPopulation : MonoBehaviour {
 	Material[] planetMats = new Material[10];
 
 	float planetDistance = 800f;
-	float planetHeightVariation = 800f;
+	float planetHeightVariation = 400f;
 
 
 	// Use this for initialization
@@ -50,8 +50,10 @@ public class GalaxyPopulation : MonoBehaviour {
 				Vector3 nextLocation = new Vector3(planetDistance * r, Random.Range(-planetHeightVariation, planetHeightVariation), planetDistance * c);
 				GameObject nextPlanet = Instantiate(planet, nextLocation, Quaternion.identity) as GameObject;
 				PlanetPopulation nextPlanetScript = nextPlanet.GetComponent<PlanetPopulation>();
+				nextPlanetScript.planetType = planetTypeArray[r,c];
 				nextPlanetScript.planetRow = r;
 				nextPlanetScript.planetCol = c;
+				nextPlanetScript.GenerateBase();
 
 				// set textures
 				switch(planetTypeArray[r,c]){
@@ -59,15 +61,20 @@ public class GalaxyPopulation : MonoBehaviour {
 					// starting planet, earth texture
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[0];
 					startingPlanet = nextPlanet;
-					nextPlanetScript.GenerateEnemies();
+					nextPlanetScript.ActivateBeam();
 					break;
 				case -2:
 					// ending planet, Seredipity texture
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[9];
+					nextPlanetScript.ActivateBeam();
 					break;
-				case 1:
 				case 2:
+					// friendly planet, no ships or turrets
+					nextPlanetScript.ActivateBeam();
+					goto default;
+				case 1:
 				case 3:
+				default:
 					// other planet
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[Random.Range(1,9)];
 					break;
@@ -80,12 +87,72 @@ public class GalaxyPopulation : MonoBehaviour {
 		// CREATE PLAYER
 		GameObject thePlayer = Instantiate(player, startingPlanet.transform.position + new Vector3(0f,200f,0f), Quaternion.identity) as GameObject;
 		PlayerShipController playerCtrl =  thePlayer.transform.GetComponent<PlayerShipController>();
+		playerCtrl.Galaxy = this;
 		playerCtrl.currentPlanet = startingPlanet;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	// check all 8 accessible places on grid and return a list of planets
+	public GameObject[] GetSurroundingPlanets(PlanetPopulation currentPlanet){
+		GameObject[] planets = new GameObject[8];
+		int currentRow = currentPlanet.planetRow;
+		int currentCol = currentPlanet.planetCol;
+		int next = 0;
+
+		if(currentRow < 4){
+			if(currentCol < 4){
+				if(planetGrid[currentRow + 1, currentCol + 1] != null){
+					planets[next] = planetGrid[currentRow + 1, currentCol + 1];
+					next ++;
+				}
+			}
+			if(planetGrid[currentRow + 1, currentCol] != null){
+				planets[next] = planetGrid[currentRow + 1, currentCol];
+				next ++;
+			}
+			if(currentCol > 0){
+				if(planetGrid[currentRow + 1, currentCol - 1] != null){
+					planets[next] = planetGrid[currentRow + 1, currentCol - 1];
+					next ++;
+				}
+			}
+		}
+		if(currentCol > 0){
+			if(planetGrid[currentRow, currentCol - 1] != null){
+				planets[next] = planetGrid[currentRow, currentCol - 1];
+				next ++;
+			}
+		}
+		if(currentRow > 0){
+			if(currentCol > 0){
+				if(planetGrid[currentRow - 1, currentCol - 1] != null){
+					planets[next] = planetGrid[currentRow - 1, currentCol - 1];
+					next ++;
+				}
+			}
+			if(planetGrid[currentRow - 1, currentCol] != null){
+				planets[next] = planetGrid[currentRow - 1, currentCol];
+				next ++;
+			}
+			if(currentCol < 4){
+				if(planetGrid[currentRow - 1, currentCol + 1] != null){
+					planets[next] = planetGrid[currentRow - 1, currentCol + 1];
+					next ++;
+				}
+			}
+		}
+		if(currentCol < 4){
+			if(planetGrid[currentRow, currentCol + 1] != null){
+				planets[next] = planetGrid[currentRow, currentCol + 1];
+				next ++;
+			}
+		}
+
+		return planets;
 	}
 
 	void MarkPlanetTypes (){
