@@ -234,4 +234,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 		restartText.fontSize = 14;
 		restartText.enabled = true;
 	}
+	void OnTriggerEnter(Collider other){
+		if (other.tag == "Health") {
+			health += 1;
+			healthText.text = "HEALTH: " + health;
+			Destroy (other.gameObject);
+				}
+		}
 }

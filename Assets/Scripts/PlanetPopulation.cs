@@ -69,6 +69,7 @@ public class PlanetPopulation : MonoBehaviour {
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
+			nextShipScript.enemyDrop = Random.Range (0,5);
 			nextShipScript.currentPlanet = gameObject;
 			nextShipScript.enemyLevel = planetRow;
 			EnemyCounter++;

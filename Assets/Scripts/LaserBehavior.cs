@@ -7,10 +7,12 @@ public class LaserBehavior : MonoBehaviour {
 	public float laserSpeed;
 	public Vector3 gravityCenter;
 	GameObject Explosion;
+	GameObject Health;
 
 	// Use this for initialization
 	void Start () {
 		Explosion = (GameObject)Resources.Load ("Explosion_Laser");
+		Health = (GameObject)Resources.Load ("Health");
 		Destroy(gameObject, 120f / laserSpeed);
 	}
 	
@@ -37,6 +39,9 @@ public class LaserBehavior : MonoBehaviour {
 		} else if(other.tag == "Enemy"){
 			if(laserOrigin == "Player"){
 				Debug.Log("enemy hit");
+				if(other.transform.GetComponent<EnemyShipAI>().enemyDrop == (0)||other.transform.GetComponent<EnemyShipAI>().enemyDrop == (1)){
+					Instantiate (Health, transform.position, transform.rotation);
+				}
 				Destroy(gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				if(other.transform.GetComponent<EnemyShipAI>() != null || other.transform.GetComponent<EnemyTurretAI>() != null){

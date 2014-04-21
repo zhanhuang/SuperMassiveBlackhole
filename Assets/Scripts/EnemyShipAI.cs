@@ -9,6 +9,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	
 	public int health = 1;
 	public int enemyLevel = 0;
+	public int enemyDrop;
 
 	float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
