@@ -246,6 +246,7 @@ public class GalaxyPopulation : MonoBehaviour {
 						if(friendlyCount == 0 && totalCount >= 6){
 							// too few friendlies
 							specificType = 2;
+							friendlyCount ++;
 						} else{
 							specificType = 1;
 						}
