@@ -3,7 +3,6 @@ using System.Collections;
 
 public class ShipOrbitBehavior : MonoBehaviour {
 	public GameObject currentPlanet;
-	public Vector3 startingDirection;
 	ConfigurableJoint shipJoint;
 
 	// Use this for initialization
@@ -13,16 +12,12 @@ public class ShipOrbitBehavior : MonoBehaviour {
 	}
 
 	public void OrbitSetup () {
-		if(startingDirection == Vector3.zero){
-			Debug.Log("Missing starting direction, generating random one instead");
-			startingDirection = Random.insideUnitSphere.normalized;
-		}
-		
 		// set up ship to orbit around planet
+		Vector3 startingDirection = (transform.position - currentPlanet.transform.position).normalized;
 		transform.position = currentPlanet.transform.position + startingDirection.normalized * currentPlanet.GetComponent<PlanetPopulation>().orbitLength;
 		transform.up = transform.position - currentPlanet.transform.position;
-		
-		shipJoint = transform.GetComponent<ConfigurableJoint>();
+
+		shipJoint = gameObject.AddComponent<ConfigurableJoint>();
 		shipJoint.xMotion = ConfigurableJointMotion.Locked;
 		shipJoint.yMotion = ConfigurableJointMotion.Locked;
 		shipJoint.zMotion = ConfigurableJointMotion.Locked;

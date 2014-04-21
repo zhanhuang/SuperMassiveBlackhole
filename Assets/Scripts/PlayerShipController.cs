@@ -3,8 +3,9 @@ using System.Collections;
 
 // Inherits from ShipOrbitBehavior
 public class PlayerShipController : ShipOrbitBehavior {
-	public GameObject Galaxy;
+	public GalaxyPopulation Galaxy;
 
+	// ship stat variables
 	float acceleration = 50f;
 	float turnAcceleration = 20f;
 
@@ -30,11 +31,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GUIText healthText;
 	GUIText heatText;
 	GUIText weaponText;
+	GUIText enemyText;
+
 
 	// Use this for initialization
 	void Start () {
 //		currentPlanet = GameObject.Find("Planet");
-		startingDirection = (transform.position - currentPlanet.transform.position).normalized;
 		OrbitSetup();
 
 		// set camera culling to spherical
@@ -54,7 +56,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		GameObject healthTextObj = new GameObject("HUD_healthCounter");
 		healthTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		healthText = (GUIText)healthTextObj.AddComponent(typeof(GUIText));
-		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40, Screen.height/2 - 30);
+		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 30f);
 		healthText.fontSize = 18;
 		healthText.color = Color.green;
 		healthText.text = "HEALTH: " + health;
@@ -65,7 +67,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		heatTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		heatText = (GUIText)heatTextObj.AddComponent(typeof(GUIText));
 		heatText.anchor = TextAnchor.UpperRight;
-		heatText.pixelOffset = new Vector2(Screen.width/2 - 40, Screen.height/2 - 30);
+		heatText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 30f);
 		heatText.fontSize = 18;
 		heatText.color = Color.white;
 		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
@@ -75,17 +77,27 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		weaponText = (GUIText)weaponTextObj.AddComponent(typeof(GUIText));
 		weaponText.anchor = TextAnchor.LowerRight;
-		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40, -Screen.height/2 + 30);
+		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40f, -Screen.height/2 + 30f);
 		weaponText.fontSize = 18;
 		weaponText.color = Color.yellow;
 		weaponText.text = "[J]: Laser \n[K]: Bomb";
+		
+		// enemy counter for current planet
+		GameObject enemyTextObj = new GameObject("HUD_enemyCounter");
+		enemyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		enemyText = (GUIText)enemyTextObj.AddComponent(typeof(GUIText));
+		enemyText.anchor = TextAnchor.MiddleCenter;
+		enemyText.pixelOffset = new Vector2(0f, -Screen.height/2 + 30f);
+		enemyText.fontSize = 18;
+		enemyText.color = Color.red;
+		enemyText.text = "Enemies Left: 0";
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 		// reset
-		if (Input.GetKey(KeyCode.R)){
+		if (health == 0 && Input.GetKey(KeyCode.R)){
 			Application.LoadLevel(0);
 		}
 
@@ -151,6 +163,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		// update heat text
 		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
+		enemyText.text = "Enemies Left: " + currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
 	}
 
 	void FixedUpdate () {
@@ -200,5 +213,25 @@ public class PlayerShipController : ShipOrbitBehavior {
 		transform.FindChild("PlayerTailFlameLeft").GetComponent<ParticleSystem>().enableEmission = false;
 		transform.FindChild("PlayerTailFlameRight").GetComponent<ParticleSystem>().enableEmission = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
+		
+		GameObject loseTextObj = new GameObject("HUD_loseText");
+		loseTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		GUIText loseText = (GUIText)loseTextObj.AddComponent(typeof(GUIText));
+		loseText.pixelOffset = new Vector2(0f, 100f);
+		loseText.anchor = TextAnchor.LowerCenter;
+		loseText.text = "YOU DIED...";
+		loseText.color = Color.red;
+		loseText.fontSize = 48;
+		loseText.enabled = true;
+		
+		GameObject restartTextObj = new GameObject("HUD_restartText");
+		restartTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		GUIText restartText = (GUIText)restartTextObj.AddComponent(typeof(GUIText));
+		restartText.pixelOffset = new Vector2(0f, 80f);
+		restartText.anchor = TextAnchor.MiddleCenter;
+		restartText.text = "(Press [R] To Restart)";
+		restartText.color = Color.white;
+		restartText.fontSize = 14;
+		restartText.enabled = true;
 	}
 }

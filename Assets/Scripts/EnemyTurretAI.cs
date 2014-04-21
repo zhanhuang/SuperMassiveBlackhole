@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class EnemyTurretAI : MonoBehaviour {
+	public GameObject currentPlanet;
 	float fireCoolDown = 0.5f;
 	float fireCoolDownRemaining = 0f;
 	
@@ -50,6 +51,7 @@ public class EnemyTurretAI : MonoBehaviour {
 	public void TakeDamage(int damage){
 		health -= damage;
 		if(health <= 0){
+			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 			Die();
 		}
 	}

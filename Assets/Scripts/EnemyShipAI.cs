@@ -88,6 +88,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	public void TakeDamage(int damage){
 		health -= damage;
 		if(health <= 0){
+			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 			Die();
 		}
 	}
