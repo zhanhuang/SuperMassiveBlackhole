@@ -93,7 +93,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Player"){
 			if(shopEnabled){
-				beamText.text = "Press [Space] To Engage Planar Drive\nPress [Q] To Open Shop";
+//				beamText.text = "Press [Space] To Engage Planar Drive\nPress [P] To Open Shop";
+				beamText.text = "Press [Space] To Engage Planar Drive\n(Shop Temporarily Closed)";
 			}
 			beamText.enabled = true;
 			player = other.transform;
