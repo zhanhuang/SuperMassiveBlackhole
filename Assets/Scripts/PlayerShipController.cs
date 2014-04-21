@@ -180,6 +180,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 				rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
 		}
 
+		// strafe
+		if (Input.GetKey(KeyCode.E)){
+			rigidbody.AddForce(transform.right.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+		}
+		if (Input.GetKey(KeyCode.Q)){
+			rigidbody.AddForce(-transform.right.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+		}
+
 		// turning
 		if (Input.GetKey(KeyCode.D)){
 				rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
