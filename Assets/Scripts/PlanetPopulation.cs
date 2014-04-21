@@ -62,22 +62,27 @@ public class PlanetPopulation : MonoBehaviour {
 		// TODO: generate some destructable structures
 
 
-		// generate enemy ships. Max 20
-		for(int i = 0; i < planetRow * 3; i++){
+
+		// generate enemy ships. Max 20 or will lag
+		int rand = Random.Range(-2,3);
+		for(int i = 0; i < planetRow * 3 + rand; i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
-			EnemyShipAI enemyOrbit = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
-			enemyOrbit.currentPlanet = gameObject;
+			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
+			nextShipScript.currentPlanet = gameObject;
+			nextShipScript.enemyLevel = planetRow;
 			EnemyCounter++;
 		}
 		
-		// generate enemy turrets. Max 20
+		// generate enemy turrets.
 		// TODO: make sure turrets don't overlap
-		for(int i = 0; i < planetRow * 3; i++){
+		rand = Random.Range(-2,3);
+		for(int i = 0; i < planetRow * 3 + rand; i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
-			EnemyTurretAI enemyTurret = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
-			enemyTurret.currentPlanet = gameObject;
+			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
+			nextTurretScript.currentPlanet = gameObject;
+			nextTurretScript.enemyLevel = planetRow;
 			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
 			EnemyCounter++;
 		}

@@ -2,16 +2,18 @@
 using System.Collections;
 
 public class EnemyTurretAI : MonoBehaviour {
+	public int health = 1;
+	public int enemyLevel = 0;
+
 	public GameObject currentPlanet;
 	float fireCoolDown = 0.5f;
 	float fireCoolDownRemaining = 0f;
-	
+
 	GameObject player;
 	GameObject Laser;
 	GameObject Explosion;
 	Vector3 LaserStartPosition;
-	
-	int health = 1;
+
 
 	// Use this for initialization
 	void Start () {
@@ -45,10 +47,34 @@ public class EnemyTurretAI : MonoBehaviour {
 					fireCoolDownRemaining = fireCoolDown;
 				}
 			}
+			if(fireCoolDownRemaining < -2f * fireCoolDown){
+				if(enemyLevel < 2){
+					// fires straight up when idle
+					GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
+					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
+					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
+				} else{
+					// fires at 45 degree angles when idle
+					for(int i = 0; i < 4; i++){
+						GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
+						nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+						nextLaser.transform.Rotate(new Vector3(45f,90f*i,0f));
+						nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
+						nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+						nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
+					}
+				}
+				fireCoolDownRemaining = fireCoolDown;
+			}
 		}
 	}
 	
 	public void TakeDamage(int damage){
+		if(health <= 0){
+			return;
+		}
 		health -= damage;
 		if(health <= 0){
 			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();

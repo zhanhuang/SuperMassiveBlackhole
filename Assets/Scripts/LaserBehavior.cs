@@ -28,6 +28,7 @@ public class LaserBehavior : MonoBehaviour {
 		if(other.tag == "Player"){
 			if(laserOrigin == "Enemy"){
 				Debug.Log("player hit");
+				Destroy(gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				if(other.transform.GetComponent<PlayerShipController>() != null){
 					other.gameObject.SendMessage("TakeDamage", 1);
@@ -36,7 +37,7 @@ public class LaserBehavior : MonoBehaviour {
 		} else if(other.tag == "Enemy"){
 			if(laserOrigin == "Player"){
 				Debug.Log("enemy hit");
-				Destroy(other.gameObject);
+				Destroy(gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				if(other.transform.GetComponent<EnemyShipAI>() != null || other.transform.GetComponent<EnemyTurretAI>() != null){
 					other.gameObject.SendMessage("TakeDamage", 1);
