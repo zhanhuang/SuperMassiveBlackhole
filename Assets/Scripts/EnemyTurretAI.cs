@@ -48,24 +48,7 @@ public class EnemyTurretAI : MonoBehaviour {
 				}
 			}
 			if(fireCoolDownRemaining < -2f * fireCoolDown){
-				if(enemyLevel < 2){
-					// fires straight up when idle
-					GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
-					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
-					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
-					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
-				} else{
-					// fires at 45 degree angles when idle
-					for(int i = 0; i < 4; i++){
-						GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
-						nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-						nextLaser.transform.Rotate(new Vector3(45f,90f*i,0f));
-						nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
-						nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
-						nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
-					}
-				}
+				AutoFire();
 				fireCoolDownRemaining = fireCoolDown;
 			}
 		}
@@ -85,5 +68,26 @@ public class EnemyTurretAI : MonoBehaviour {
 	public void Die(){
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
+	}
+
+	void AutoFire(){
+		if(enemyLevel < 2){
+			// fires straight up when idle
+			GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
+			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+			nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
+			nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+			nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
+		} else{
+			// fires at 45 degree angles when idle
+			for(int i = 0; i < 4; i++){
+				GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
+				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+				nextLaser.transform.Rotate(new Vector3(45f,90f*i,0f));
+				nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
+				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
+			}
+		}
 	}
 }

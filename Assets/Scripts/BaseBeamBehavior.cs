@@ -40,6 +40,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			playerScript.enabled = false;
 			player.rigidbody.velocity = Vector3.zero;
 			player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
+			playerScript.shipTransform.localRotation = Quaternion.identity;
 			StartCoroutine(BeamMeUp());
 		}
 

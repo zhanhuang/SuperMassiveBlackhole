@@ -89,7 +89,7 @@ public class GalaxyPopulation : MonoBehaviour {
 		}
 
 		// CREATE PLAYER
-		GameObject thePlayer = Instantiate(player, startingPlanet.transform.position + new Vector3(0f,200f,0f), Quaternion.identity) as GameObject;
+		GameObject thePlayer = Instantiate(player, startingPlanet.transform.position + new Vector3(0f,200f,-100f), Quaternion.identity) as GameObject;
 		PlayerShipController playerCtrl =  thePlayer.transform.GetComponent<PlayerShipController>();
 		playerCtrl.Galaxy = this;
 		playerCtrl.currentPlanet = startingPlanet;

@@ -9,7 +9,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float acceleration = 50f;
 	float turnAcceleration = 20f;
 
-	Transform shipTransform;
+	public Transform shipTransform;
 	GameObject playerCamera;
 	GameObject Explosion;
 
@@ -29,10 +29,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float coolOffCounter = 0f;
 	
 	int shieldCharges = 2;
-	float shieldLimit = 5f;
+	float shieldLimit = 3f;
 	float shieldTimeRemaining = 0f;
 
-	int health = 10;
+	int health = 5;
 	GUIText healthText;
 	GUIText heatText;
 	GUIText shieldText;
@@ -274,10 +274,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		transform.Find("Ship").renderer.enabled = false;
+		Destroy(transform.Find("Ship").gameObject);
 		transform.collider.enabled = false;
-		transform.FindChild("PlayerTailFlameLeft").GetComponent<ParticleSystem>().enableEmission = false;
-		transform.FindChild("PlayerTailFlameRight").GetComponent<ParticleSystem>().enableEmission = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
 		
 		GameObject loseTextObj = new GameObject("HUD_loseText");
@@ -305,6 +303,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 			health += 1;
 			healthText.text = "HEALTH: " + health;
 			Destroy (other.gameObject);
-				}
 		}
+	}
 }

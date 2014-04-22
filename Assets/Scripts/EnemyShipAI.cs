@@ -9,7 +9,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	
 	public int health = 1;
 	public int enemyLevel = 0;
-	public int enemyDrop;
 
 	float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
@@ -17,6 +16,9 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	GameObject player;
 	GameObject Laser;
 	GameObject Explosion;
+
+	// Loot
+	GameObject Loot;
 
 
 	// Use this for initialization
@@ -32,13 +34,17 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		// set player
 		player = GameObject.FindGameObjectWithTag("Player");
 
+		// set loot
+		if(Random.Range(0f,100f) < 20f){
+			Loot = (GameObject)Resources.Load("Health");
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
 		if(fireCoolDownRemaining < 0f){
-			Fire();
+			AutoFire();
 			fireCoolDownRemaining = fireCoolDown;
 		}
 
@@ -96,11 +102,14 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	public void Die(){
+		if(Loot != null){
+			Instantiate (Loot, transform.position, transform.rotation);
+		}
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
 
-	void Fire(){
+	void AutoFire(){
 		if(enemyLevel < 4){
 			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
 			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
