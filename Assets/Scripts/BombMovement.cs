@@ -27,6 +27,10 @@ public class BombMovement : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		// explode upon hitting structure or planet surface, explosion deals damage
 		if(other.tag != "Player" && !other.isTrigger){
+			if(other.tag == "Shield"){
+				// hit player's shield
+				return;
+			}
 			Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 			Destroy(gameObject);
 		}

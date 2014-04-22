@@ -141,9 +141,9 @@ public class PlanetPopulation : MonoBehaviour {
 			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
 			BaseBeam.collider.enabled = false;
 		} else if(shopEnabled){
-			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
-		} else{
 			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
+		} else{
+			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
 			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 200f, BaseBeam.localPosition.z);

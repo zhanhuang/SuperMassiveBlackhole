@@ -9,7 +9,7 @@ public class EnemyTurretAI : MonoBehaviour {
 	float fireCoolDown = 0.5f;
 	float fireCoolDownRemaining = 0f;
 
-	GameObject player;
+	public GameObject player;
 	GameObject Laser;
 	GameObject Explosion;
 	Vector3 LaserStartPosition;
@@ -23,7 +23,7 @@ public class EnemyTurretAI : MonoBehaviour {
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
 		// set player
-		player = GameObject.FindGameObjectWithTag("Player");
+		player = GameObject.Find("Player(Clone)");
 
 		// set laser to fire above turret to avoid collision with planet itself
 		LaserStartPosition = transform.position + transform.up.normalized * 1f;
@@ -37,7 +37,7 @@ public class EnemyTurretAI : MonoBehaviour {
 			Vector3 raycastDir = player.transform.position - transform.position;
 			if(Physics.Raycast(transform.position + raycastDir.normalized * 2f, raycastDir, out hit, 20f)){
 				// check if the player is above
-				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.up) < 60f){
+				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.up) < 75f){
 					// player seen, fire laser
 					GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(player.transform.position - LaserStartPosition));
 					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));

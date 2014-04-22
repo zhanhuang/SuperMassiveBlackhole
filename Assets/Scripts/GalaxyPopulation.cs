@@ -67,6 +67,10 @@ public class GalaxyPopulation : MonoBehaviour {
 					// ending planet, Seredipity texture
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[9];
 					nextPlanetScript.ActivateBeam();
+
+//					// testing purposes. start at the last planet
+//					startingPlanet = nextPlanet;
+//					nextPlanetScript.PopulatePlanet();
 					break;
 				case 2:
 					// friendly planet, no ships or turrets

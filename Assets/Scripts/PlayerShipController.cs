@@ -9,6 +9,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float acceleration = 50f;
 	float turnAcceleration = 20f;
 
+	Transform shipTransform;
 	GameObject playerCamera;
 	GameObject Explosion;
 
@@ -23,13 +24,18 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float damageCoolDown = 1f;
 	float damageCoolDownRemaining = 0f;
 	
-	float overHeatLimit = 10f;
+	float overHeatLimit = 5f;
 	float overHeatMeter = 0f;
 	float coolOffCounter = 0f;
+	
+	int shieldCharges = 2;
+	float shieldLimit = 5f;
+	float shieldTimeRemaining = 0f;
 
 	int health = 10;
 	GUIText healthText;
 	GUIText heatText;
+	GUIText shieldText;
 	GUIText weaponText;
 	GUIText enemyText;
 
@@ -48,6 +54,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
 		// set camera
+		shipTransform = transform.FindChild("Ship");
 		playerCamera = transform.GetChild(0).gameObject;
 		cameraStartingLocalPosition = playerCamera.transform.localPosition;
 		
@@ -72,6 +79,20 @@ public class PlayerShipController : ShipOrbitBehavior {
 		heatText.color = Color.white;
 		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
 		
+		// shield meter
+		// TODO: Have a bar for this
+		GameObject shieldTextObj = new GameObject("HUD_shieldMeter");
+		shieldTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		shieldText = (GUIText)shieldTextObj.AddComponent(typeof(GUIText));
+		shieldText.anchor = TextAnchor.UpperLeft;
+		shieldText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 60f);
+		shieldText.fontSize = 18;
+		shieldText.color = Color.green;
+		shieldText.text = "";
+		if(shieldCharges > 0){
+			shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+		}
+		
 		// weapon text
 		GameObject weaponTextObj = new GameObject("HUD_weaponText");
 		weaponTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
@@ -79,15 +100,15 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.anchor = TextAnchor.LowerRight;
 		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40f, -Screen.height/2 + 30f);
 		weaponText.fontSize = 18;
-		weaponText.color = Color.yellow;
-		weaponText.text = "[J]: Laser \n[K]: Bomb";
+		weaponText.color = Color.magenta;
+		weaponText.text = "[J]: Laser\n[K]: Bomb\n[L]: Shield";
 		
 		// enemy counter for current planet
 		GameObject enemyTextObj = new GameObject("HUD_enemyCounter");
 		enemyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		enemyText = (GUIText)enemyTextObj.AddComponent(typeof(GUIText));
 		enemyText.anchor = TextAnchor.MiddleCenter;
-		enemyText.pixelOffset = new Vector2(0f, -Screen.height/2 + 30f);
+		enemyText.pixelOffset = new Vector2(0f, Screen.height/2 - 30f);
 		enemyText.fontSize = 18;
 		enemyText.color = Color.red;
 		enemyText.text = "Enemies Left: 0";
@@ -101,7 +122,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			Application.LoadLevel(0);
 		}
 
-		if(transform.renderer.enabled == false){
+		if(transform.collider.enabled == false){
 			return;
 		}
 
@@ -112,6 +133,21 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(overHeatMeter > 0){
 			overHeatMeter -= Time.deltaTime * Mathf.Clamp(coolOffCounter, 1f, Mathf.Infinity);
 			overHeatMeter = Mathf.Clamp(overHeatMeter, 0f, overHeatLimit*2);
+		}
+
+		if(shieldTimeRemaining > 0f){
+			shieldTimeRemaining -= Time.deltaTime;
+			shieldText.text = "SHIELD ENGAGED. TIME LEFT: " + shieldTimeRemaining.ToString("F2");
+			if(shieldTimeRemaining <= 0f){
+				transform.FindChild("Shield").renderer.enabled = false;
+				transform.FindChild("Shield").collider.enabled = false;
+				shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+				if(shieldCharges == 0){
+					shieldText.color = Color.red;
+				} else{
+					shieldText.color = Color.green;
+				}
+			}
 		}
 		
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
@@ -146,6 +182,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 				overHeatMeter += 1f;
 				coolOffCounter = 0f;
 			}
+			
+			// shielding
+			if (Input.GetKeyDown (KeyCode.L)) {
+				if(shieldCharges > 0 && shieldTimeRemaining <= 0f){
+					shieldCharges --;
+					shieldText.color = Color.cyan;
+					transform.FindChild("Shield").renderer.enabled = true;
+					transform.FindChild("Shield").collider.enabled = true;
+					shieldTimeRemaining = shieldLimit;
+				}
+			}
 		} else{
 			//TODO: show overheat meter
 			heatText.color = Color.red;
@@ -153,9 +200,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 		
 		// tail particle effect
 		if(forwardVelocity > 0f){
-			transform.FindChild("PlayerTailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
-			transform.FindChild("PlayerTailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
+			shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
+			shipTransform.FindChild("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
 		}
+		
+
 
 //		// zoom camera according to speed. TODO: decide if we want this in or not	
 //		Vector3 adjustedCameraRotation = new Vector3(cameraStartingLocalPosition.x, cameraStartingLocalPosition.y - forwardVelocity, cameraStartingLocalPosition.z + forwardVelocity);
@@ -167,7 +216,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	void FixedUpdate () {
-		if(transform.renderer.enabled == false){
+		if(transform.collider.enabled == false){
 			return;
 		}
 
@@ -195,13 +244,22 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if (Input.GetKey(KeyCode.A)){
 				rigidbody.AddTorque(-transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
 		}
-		
-		//TODO: tilt on turning
 
+		
+		// tilt on turning
+		if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q)){
+			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, 30f));
+			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
+		} else if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.E)){
+			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, -30f));
+			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
+		} else{
+			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, Quaternion.identity, 5f * Time.deltaTime);
+		}
 	}
 
 	public void TakeDamage(int damage){
-		if(transform.renderer.enabled == false){
+		if(transform.collider.enabled == false){
 			return;
 		}
 		if(damageCoolDownRemaining < 0f){
@@ -216,7 +274,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		transform.renderer.enabled = false;
+		transform.Find("Ship").renderer.enabled = false;
 		transform.collider.enabled = false;
 		transform.FindChild("PlayerTailFlameLeft").GetComponent<ParticleSystem>().enableEmission = false;
 		transform.FindChild("PlayerTailFlameRight").GetComponent<ParticleSystem>().enableEmission = false;
