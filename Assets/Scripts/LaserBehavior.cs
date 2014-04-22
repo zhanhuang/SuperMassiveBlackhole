@@ -51,12 +51,16 @@ public class LaserBehavior : MonoBehaviour {
 		} else{
 			// disappear upon hitting structure
 			if(!other.isTrigger && other.tag != "Planet"){
+				if(other.tag == "Shield" && laserOrigin == "Player"){
+					// hit player's shield
+					return;
+				}
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				Destroy(gameObject);
 			} else if(other.transform.GetComponent<LaserBehavior>() != null && other.transform.GetComponent<LaserBehavior>().laserOrigin != laserOrigin){
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				Destroy(gameObject);
-			}
+			} 
 		}
 	}
 }
