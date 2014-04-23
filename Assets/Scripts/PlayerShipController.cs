@@ -27,7 +27,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float overHeatLimit = 5f;
 	float overHeatMeter = 0f;
 	float coolOffCounter = 0f;
-	
+
 	int shieldCharges = 2;
 	float shieldLimit = 3f;
 	float shieldTimeRemaining = 0f;
@@ -187,10 +187,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			if (Input.GetKeyDown (KeyCode.L)) {
 				if(shieldCharges > 0 && shieldTimeRemaining <= 0f){
 					shieldCharges --;
-					shieldText.color = Color.cyan;
-					transform.FindChild("Shield").renderer.enabled = true;
-					transform.FindChild("Shield").collider.enabled = true;
-					shieldTimeRemaining = shieldLimit;
+					ActivateShield(shieldLimit);
 				}
 			}
 		} else{
@@ -298,6 +295,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 		restartText.fontSize = 14;
 		restartText.enabled = true;
 	}
+	
+	public void ActivateShield(float shieldTime){
+		shieldText.color = Color.cyan;
+		transform.FindChild("Shield").renderer.enabled = true;
+		transform.FindChild("Shield").collider.enabled = true;
+		shieldTimeRemaining = shieldTime;
+	}
+
 	void OnTriggerEnter(Collider other){
 		if (other.tag == "Health") {
 			health += 1;
