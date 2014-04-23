@@ -1,0 +1,353 @@
+fileFormatVersion: 2
+guid: d8bb8100faa61414a9809554806d2a4a
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: Guns
+    100002: //RootNode
+    100004: Tank_Body
+    100006: Tank_Flap_R
+    100008: Tank_Flap_R1
+    100010: Tank_Gun_R
+    100012: Tank_Missile_L
+    100014: Tank_Missile_R
+    100016: Tank_Top
+    100018: Tank_Wheel_L1
+    100020: Tank_Wheel_L2
+    100022: Tank_Wheel_L3
+    100024: Tank_Wheel_L4
+    100026: Tank_Wheel_L5
+    100028: Tank_Wheel_R1
+    100030: Tank_Wheel_R2
+    100032: Tank_Wheel_R3
+    100034: Tank_Wheel_R4
+    100036: Tank_Wheel_R5
+    100038: Tank_Flap_L
+    100040: Tank_Flap_L1
+    400000: Guns
+    400002: //RootNode
+    400004: Tank_Body
+    400006: Tank_Flap_R
+    400008: Tank_Flap_R1
+    400010: Tank_Gun_R
+    400012: Tank_Missile_L
+    400014: Tank_Missile_R
+    400016: Tank_Top
+    400018: Tank_Wheel_L1
+    400020: Tank_Wheel_L2
+    400022: Tank_Wheel_L3
+    400024: Tank_Wheel_L4
+    400026: Tank_Wheel_L5
+    400028: Tank_Wheel_R1
+    400030: Tank_Wheel_R2
+    400032: Tank_Wheel_R3
+    400034: Tank_Wheel_R4
+    400036: Tank_Wheel_R5
+    400038: Tank_Flap_L
+    400040: Tank_Flap_L1
+    2300000: Tank_Body
+    2300002: Tank_Flap_R
+    2300004: Tank_Flap_R1
+    2300006: Tank_Gun_R
+    2300008: Tank_Missile_L
+    2300010: Tank_Missile_R
+    2300012: Tank_Top
+    2300014: Tank_Wheel_L1
+    2300016: Tank_Wheel_L2
+    2300018: Tank_Wheel_L3
+    2300020: Tank_Wheel_L4
+    2300022: Tank_Wheel_L5
+    2300024: Tank_Wheel_R1
+    2300026: Tank_Wheel_R2
+    2300028: Tank_Wheel_R3
+    2300030: Tank_Wheel_R4
+    2300032: Tank_Wheel_R5
+    2300034: Tank_Flap_L
+    2300036: Tank_Flap_L1
+    3300000: Tank_Body
+    3300002: Tank_Flap_R
+    3300004: Tank_Flap_R1
+    3300006: Tank_Gun_R
+    3300008: Tank_Missile_L
+    3300010: Tank_Missile_R
+    3300012: Tank_Top
+    3300014: Tank_Wheel_L1
+    3300016: Tank_Wheel_L2
+    3300018: Tank_Wheel_L3
+    3300020: Tank_Wheel_L4
+    3300022: Tank_Wheel_L5
+    3300024: Tank_Wheel_R1
+    3300026: Tank_Wheel_R2
+    3300028: Tank_Wheel_R3
+    3300030: Tank_Wheel_R4
+    3300032: Tank_Wheel_R5
+    3300034: Tank_Flap_L
+    3300036: Tank_Flap_L1
+    4300000: Tank_Body
+    4300002: Tank_Flap_R
+    4300004: Tank_Top
+    4300006: Tank_Missile_L
+    4300008: Tank_Gun_R
+    4300010: Tank_Wheel_L2
+    4300012: Tank_Flap_R1
+    4300014: Tank_Wheel_L1
+    4300016: Tank_Wheel_L3
+    4300018: Tank_Wheel_L4
+    4300020: Tank_Wheel_R4
+    4300022: Tank_Wheel_R3
+    4300024: Tank_Wheel_R2
+    4300026: Tank_Wheel_R1
+    4300028: Tank_Missile_R
+    4300030: Tank_Wheel_R5
+    4300032: Tank_Wheel_L5
+    4300034: Tank_Flap_L
+    4300036: Tank_Flap_L1
+    7400000: Raise Cannon
+    7400002: Lower Cannon
+    7400004: THEY SEE ME ROLLIN
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Raise Cannon
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Guns
+        weight: 1
+      - path: Guns/Tank_Gun_R
+        weight: 1
+      - path: Tank_Body
+        weight: 1
+      - path: Tank_Flap_L
+        weight: 1
+      - path: Tank_Flap_L1
+        weight: 1
+      - path: Tank_Missile_L
+        weight: 1
+      - path: Tank_Missile_R
+        weight: 1
+      - path: Tank_Top
+        weight: 1
+      - path: Tank_Wheel_L1
+        weight: 1
+      - path: Tank_Wheel_L2
+        weight: 1
+      - path: Tank_Wheel_L3
+        weight: 1
+      - path: Tank_Wheel_L4
+        weight: 1
+      - path: Tank_Wheel_L5
+        weight: 1
+      - path: Tank_Wheel_R1
+        weight: 1
+      - path: Tank_Wheel_R2
+        weight: 1
+      - path: Tank_Wheel_R3
+        weight: 1
+      - path: Tank_Wheel_R4
+        weight: 1
+      - path: Tank_Wheel_R5
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Lower Cannon
+      takeName: Take 001
+      firstFrame: 30
+      lastFrame: 50
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Guns
+        weight: 1
+      - path: Guns/Tank_Gun_R
+        weight: 1
+      - path: Tank_Body
+        weight: 1
+      - path: Tank_Flap_L
+        weight: 1
+      - path: Tank_Flap_L1
+        weight: 1
+      - path: Tank_Missile_L
+        weight: 1
+      - path: Tank_Missile_R
+        weight: 1
+      - path: Tank_Top
+        weight: 1
+      - path: Tank_Wheel_L1
+        weight: 1
+      - path: Tank_Wheel_L2
+        weight: 1
+      - path: Tank_Wheel_L3
+        weight: 1
+      - path: Tank_Wheel_L4
+        weight: 1
+      - path: Tank_Wheel_L5
+        weight: 1
+      - path: Tank_Wheel_R1
+        weight: 1
+      - path: Tank_Wheel_R2
+        weight: 1
+      - path: Tank_Wheel_R3
+        weight: 1
+      - path: Tank_Wheel_R4
+        weight: 1
+      - path: Tank_Wheel_R5
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: THEY SEE ME ROLLIN
+      takeName: Take 001
+      firstFrame: 60
+      lastFrame: 100
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Guns
+        weight: 1
+      - path: Guns/Tank_Gun_R
+        weight: 1
+      - path: Tank_Body
+        weight: 1
+      - path: Tank_Flap_L
+        weight: 1
+      - path: Tank_Flap_L1
+        weight: 1
+      - path: Tank_Missile_L
+        weight: 1
+      - path: Tank_Missile_R
+        weight: 1
+      - path: Tank_Top
+        weight: 1
+      - path: Tank_Wheel_L1
+        weight: 1
+      - path: Tank_Wheel_L2
+        weight: 1
+      - path: Tank_Wheel_L3
+        weight: 1
+      - path: Tank_Wheel_L4
+        weight: 1
+      - path: Tank_Wheel_L5
+        weight: 1
+      - path: Tank_Wheel_R1
+        weight: 1
+      - path: Tank_Wheel_R2
+        weight: 1
+      - path: Tank_Wheel_R3
+        weight: 1
+      - path: Tank_Wheel_R4
+        weight: 1
+      - path: Tank_Wheel_R5
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
