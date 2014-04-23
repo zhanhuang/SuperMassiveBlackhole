@@ -71,6 +71,11 @@ public class PlanetPopulation : MonoBehaviour {
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
 			nextShipScript.enemyLevel = planetRow;
+			if(planetType == 1){
+				nextShipScript.enemyType = "chase";
+			} else{
+				nextShipScript.enemyType = "random";
+			}
 			EnemyCounter++;
 		}
 		

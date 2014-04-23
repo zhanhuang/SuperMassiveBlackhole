@@ -3,7 +3,6 @@ using System.Collections;
 
 // Inherits from ShipOrbitBehavior
 public class EnemyShipAI : ShipOrbitBehavior {
-	public string EnemyType;	// random, chase
 	public float speed = 10f;
 	public float turnSpeed = 10f;
 	
@@ -16,6 +15,10 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	GameObject player;
 	GameObject Laser;
 	GameObject Explosion;
+
+	// AI types
+	public string enemyType;	// random, chase
+	bool chasing = false;
 
 	// Loot
 	GameObject Loot;
@@ -43,29 +46,30 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	// Update is called once per frame
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
-		if(fireCoolDownRemaining < 0f){
-			AutoFire();
-			fireCoolDownRemaining = fireCoolDown;
-		}
 
-//		// chasing fire pattern
-//		fireCoolDownRemaining -= Time.deltaTime;
-//		if(fireCoolDownRemaining < 0f){
-//			RaycastHit hit = new RaycastHit();
-//			Vector3 raycastDir = player.transform.position - transform.position;
-//			if(Physics.Raycast(transform.position + raycastDir.normalized * 2f, raycastDir, out hit, 20f)){
-//				// check if the player is in front
-//				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.forward) < 15f){
-//					// player seen, fire laser
-//					GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, Quaternion.LookRotation(player.transform.position - transform.position));
-//					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-//					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
-//					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
-//					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
-//					fireCoolDownRemaining = fireCoolDown;
-//				}
-//			}
-//		}
+		if(enemyType == "random"){
+			if(fireCoolDownRemaining < 0f){
+				AutoFire();
+				fireCoolDownRemaining = fireCoolDown;
+			}
+			return;
+		}else if(enemyType == "chase"){
+			// chasing fire pattern
+			RaycastHit hit = new RaycastHit();
+			Vector3 raycastDir = player.transform.position - transform.position;
+			if(Physics.Raycast(transform.position + raycastDir.normalized * 2f, raycastDir, out hit, 60f)){
+				// check if the player is in front
+				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.forward) < 80f){
+					chasing = true;
+					if(fireCoolDownRemaining < 0f){
+						AutoFire();
+						fireCoolDownRemaining = fireCoolDown;
+					}
+				} else{
+					chasing = false;
+				}
+			}
+		}
 
 	}
 
@@ -73,7 +77,22 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		if(rigidbody.velocity.z < 10f){
 			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
 		}
-		rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
+		if(chasing){
+			// chase player
+			Vector3 playerDir = player.transform.position - transform.position;
+			Vector2 forwardDirection = new Vector3(transform.forward.x,transform.forward.z);
+			float angle = 30f;
+			Vector3 cross = Vector3.Cross(playerDir,transform.forward);
+			if(Vector3.Dot(cross, transform.up) > 0f){
+				angle = -angle;
+			} else if(Vector3.Dot(cross, transform.up) == 0f){
+				angle = 0f;
+			}
+			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * angle, ForceMode.Force);
+		} else{
+			// random walk
+			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
+		}
 	}
 
 
