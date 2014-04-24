@@ -10,7 +10,7 @@ public class LaserBehavior : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		Explosion = (GameObject)Resources.Load ("Explosion_Laser");
-		Destroy(gameObject, 120f / laserSpeed);
+		Destroy(gameObject, 80f / laserSpeed);
 	}
 	
 	// Update is called once per frame

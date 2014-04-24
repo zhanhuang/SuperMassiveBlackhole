@@ -209,7 +209,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		// update heat text
 		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
-		enemyText.text = "Enemies Left: " + currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
+		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
+		if(enemyCounter > 0){
+			enemyText.color = Color.red;
+			enemyText.text = "Enemies Left: " + currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
+		} else{
+			enemyText.color = Color.cyan;
+			enemyText.text = "Planet Cleared!";
+		}
 	}
 
 	void FixedUpdate () {

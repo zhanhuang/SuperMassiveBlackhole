@@ -28,7 +28,7 @@ public class PlanetPopulation : MonoBehaviour {
 	void Awake (){
 		float scale = Random.Range(80f,120f);
 		transform.localScale = new Vector3(scale, scale, scale);
-		orbitLength = transform.localScale.x / 2 + 5f;
+		orbitLength = transform.localScale.x / 2 + 6f;
 		surfaceLength = transform.localScale.x / 2 - 0.02f;
 	}
 	
@@ -151,8 +151,8 @@ public class PlanetPopulation : MonoBehaviour {
 			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
-			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 200f, BaseBeam.localPosition.z);
-			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 400f, BaseBeam.localScale.z);
+			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 150f, BaseBeam.localPosition.z);
+			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 300f, BaseBeam.localScale.z);
 			yield return null;
 		}
 		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){

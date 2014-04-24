@@ -19,6 +19,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	// AI types
 	public string enemyType;	// random, chase
 	bool chasing = false;
+	float chaseTimeLimit = 8f;
+	float chaseCountDown = 0f;
 
 	// Loot
 	GameObject Loot;
@@ -61,12 +63,21 @@ public class EnemyShipAI : ShipOrbitBehavior {
 				// check if the player is in front
 				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.forward) < 80f){
 					chasing = true;
+					chaseCountDown = -1f;
 					if(fireCoolDownRemaining < 0f){
 						AutoFire();
 						fireCoolDownRemaining = fireCoolDown;
 					}
 				} else{
-					chasing = false;
+					if(chasing && chaseCountDown <= 0f){
+						if(chaseCountDown <= 0f){
+							chaseCountDown =chaseTimeLimit;
+						}
+						chaseCountDown -= Time.deltaTime;
+						if(chaseCountDown <= 0f){
+							chasing = false;
+						}
+					}
 				}
 			}
 		}
