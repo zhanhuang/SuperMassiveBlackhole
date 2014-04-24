@@ -85,8 +85,10 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	void FixedUpdate () {
-		if(rigidbody.velocity.z < 10f){
-			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
+		if(!chasing || (player.transform.position - transform.position).magnitude > 15f){
+			if(rigidbody.velocity.z < 10f){
+				rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
+			}
 		}
 		if(chasing){
 			// chase player

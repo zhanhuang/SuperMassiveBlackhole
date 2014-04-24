@@ -5,17 +5,14 @@ public class BombMovement : MonoBehaviour {
 	public Vector3 gravityCenter;
 	public float bombForwardSpeed = 30f;
 	GameObject Explosion;
-	// Use this for initialization
 
+	// Note: bomb prefab is rotated 180f on z axis, which is why we move it up instead of down.
+
+	// Use this for initialization
 	void Start () {
 		Explosion = (GameObject)Resources.Load ("Explosion_Bomb");
-		StartCoroutine (bombroutine());
 	}
-	IEnumerator bombroutine(){
-		yield return new WaitForSeconds (2f);
-		Instantiate (Explosion, transform.position, transform.rotation);
-		Destroy (gameObject);
-	}
+
 	// Update is called once per frame
 	void Update () {
 		if(gravityCenter != null){
