@@ -23,6 +23,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	
 	float damageCoolDown = 1f;
 	float damageCoolDownRemaining = 0f;
+	bool flashing = false;
 	
 	float overHeatLimit = 5f;
 	float overHeatMeter = 0f;
@@ -270,11 +271,31 @@ public class PlayerShipController : ShipOrbitBehavior {
 			health -= damage;
 			damageCoolDownRemaining = damageCoolDown;
 			healthText.text = "HEALTH: " + health;
+		} else{
+			return;
 		}
 		if(health <= 0){
 			healthText.color = Color.red;
 			Die();
+		} else{
+			if(!flashing){
+				flashing = true;
+				StartCoroutine(DamageFlash());
+			}
 		}
+	}
+
+	IEnumerator DamageFlash(){
+		Material targetMat = transform.FindChild("Ship").FindChild("MainBody").renderer.material;
+		Color origColor = targetMat.color;
+		targetMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		targetMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		targetMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		targetMat.color = origColor;
+		flashing = false;
 	}
 
 	public void Die(){
