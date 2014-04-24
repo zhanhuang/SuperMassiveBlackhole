@@ -39,6 +39,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GUIText weaponText;
 	GUIText enemyText;
 
+	public AudioClip gunSound;
+	public AudioClip bombSound;
+
 
 	// Use this for initialization
 	void Start () {
@@ -168,6 +171,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
 				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
 
+				audio.PlayOneShot (gunSound);
+
 				overHeatMeter += 1f;
 				coolOffCounter = 0f;
 			}
@@ -175,6 +180,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			// bombing
 			if (Input.GetKeyDown (KeyCode.K)) {
 				GameObject nextbomb = (GameObject)Instantiate (Bomb, transform.position, transform.rotation);
+				audio.PlayOneShot (bombSound);
 				nextbomb.transform.Rotate (new Vector3(180f, 0f, 0f));
 				nextbomb.GetComponent<BombMovement>().gravityCenter = currentPlanet.transform.position;
 				nextbomb.GetComponent<BombMovement>().bombForwardSpeed += forwardVelocity;

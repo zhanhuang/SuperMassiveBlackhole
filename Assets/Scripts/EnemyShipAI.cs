@@ -9,6 +9,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	public int health = 1;
 	public int enemyLevel = 0;
 
+	public AudioClip enemyGunSound;
+
 	float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
 
@@ -131,19 +133,23 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	void AutoFire(){
 		if(enemyLevel < 4){
 			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
+			audio.PlayOneShot(enemyGunSound);
 			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 			nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 			nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
 			nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
 			nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
+
 		} else{
 			for(int i = -1; i < 2; i++){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
+				audio.PlayOneShot(enemyGunSound);
 				nextLaser.transform.Rotate(new Vector3(90f,45f * i,0f));
 				nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
 				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
 				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
+
 			}
 		}
 	}

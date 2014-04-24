@@ -14,6 +14,8 @@ public class EnemyTurretAI : MonoBehaviour {
 	GameObject Explosion;
 	Vector3 LaserStartPosition;
 
+	public AudioClip turretGunSound;
+
 
 	// Use this for initialization
 	void Start () {
@@ -40,6 +42,7 @@ public class EnemyTurretAI : MonoBehaviour {
 				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.up) < 75f){
 					// player seen, fire laser
 					GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(player.transform.position - LaserStartPosition));
+					audio.PlayOneShot(turretGunSound);
 					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
 					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
@@ -74,6 +77,7 @@ public class EnemyTurretAI : MonoBehaviour {
 		if(enemyLevel < 2){
 			// fires straight up when idle
 			GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
+			audio.PlayOneShot(turretGunSound);
 			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 			nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
 			nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
@@ -82,6 +86,7 @@ public class EnemyTurretAI : MonoBehaviour {
 			// fires at 45 degree angles when idle
 			for(int i = 0; i < 4; i++){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
+				audio.PlayOneShot(turretGunSound);
 				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 				nextLaser.transform.Rotate(new Vector3(45f,90f*i,0f));
 				nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";

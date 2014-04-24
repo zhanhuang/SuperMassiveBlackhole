@@ -41,6 +41,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			player.rigidbody.velocity = Vector3.zero;
 			player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
 			playerScript.shipTransform.localRotation = Quaternion.identity;
+			audio.Play ();
 			StartCoroutine(BeamMeUp());
 		}
 
@@ -73,6 +74,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>().PopulatePlanet();
 				liftOff = false;
 				inSpace = false;
+				audio.Stop();
 			}
 		}
 
@@ -89,6 +91,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 		surroundingPlanets = galaxy.GetSurroundingPlanets(currentPlanet);
 		lookingPlanet = 0;
 		inSpace = true;
+
 	}
 
 	void OnTriggerEnter(Collider other){
