@@ -28,7 +28,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 		StartCoroutine(AvoidObstacle());
 		
 		// load prefabs
-		Laser = (GameObject)Resources.Load("Laser_Blue");
+		Laser = (GameObject)Resources.Load("Laser_Green");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 		
 		// set loot
