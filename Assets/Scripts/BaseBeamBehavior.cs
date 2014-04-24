@@ -70,6 +70,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				playerScript.enabled = true;
 				playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
 				playerScript.OrbitSetup();
+				playerScript.ActivateShield(3f);
 				surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>().PopulatePlanet();
 				liftOff = false;
 				inSpace = false;

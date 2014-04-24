@@ -3,11 +3,13 @@ using System.Collections;
 
 public class EnemyTurretAI : MonoBehaviour {
 	public int health = 1;
-	public int enemyLevel = 0;
+	public int level = 0;
 
 	public GameObject currentPlanet;
 	float fireCoolDown = 0.5f;
 	float fireCoolDownRemaining = 0f;
+	
+	bool flashing = false;
 
 	public GameObject player;
 	GameObject Laser;
@@ -62,6 +64,11 @@ public class EnemyTurretAI : MonoBehaviour {
 		if(health <= 0){
 			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 			Die();
+		} else{
+			if(!flashing){
+				flashing = true;
+				StartCoroutine(DamageFlash());
+			}
 		}
 	}
 	
@@ -69,9 +76,29 @@ public class EnemyTurretAI : MonoBehaviour {
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
+	
+	IEnumerator DamageFlash(){
+		Material targetMat1 = transform.FindChild("TurretBase").renderer.material;
+		Material targetMat2 = transform.FindChild("TurretHead").renderer.material;
+
+		Color origColor1 = targetMat1.color;
+		Color origColor2 = targetMat2.color;
+		targetMat1.color = Color.white;
+		targetMat2.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		targetMat1.color = origColor1;
+		targetMat2.color = origColor2;
+		yield return new WaitForSeconds(0.05f);
+		targetMat1.color = Color.white;
+		targetMat2.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		targetMat1.color = origColor1;
+		targetMat2.color = origColor2;
+		flashing = false;
+	}
 
 	void AutoFire(){
-		if(enemyLevel < 2){
+		if(level < 2){
 			// fires straight up when idle
 			GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
 			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
