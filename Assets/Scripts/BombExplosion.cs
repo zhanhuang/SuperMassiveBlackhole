@@ -17,6 +17,9 @@ public class BombExplosion : MonoBehaviour {
 		if(other.tag == "Enemy"){
 			Debug.Log("enemy hit");
 			other.gameObject.SendMessage("TakeDamage", 1);
-		}
+		} else if(other.tag == "Ally"){
+			Debug.Log("ally hit");
+			other.gameObject.SendMessage("TakeDamage", 1);
+		} 
 	}
 }

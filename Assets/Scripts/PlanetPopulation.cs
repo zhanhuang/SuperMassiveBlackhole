@@ -14,7 +14,8 @@ public class PlanetPopulation : MonoBehaviour {
 
 	public float orbitLength;
 	public float surfaceLength;
-
+	
+	GameObject AllyShip;
 	GameObject EnemyShip;
 	GameObject EnemyTurret;
 	GameObject BasePrefab;
@@ -28,7 +29,7 @@ public class PlanetPopulation : MonoBehaviour {
 	void Awake (){
 		float scale = Random.Range(80f,120f);
 		transform.localScale = new Vector3(scale, scale, scale);
-		orbitLength = transform.localScale.x / 2 + 5f;
+		orbitLength = transform.localScale.x / 2 + 6f;
 		surfaceLength = transform.localScale.x / 2 - 0.02f;
 	}
 	
@@ -49,9 +50,7 @@ public class PlanetPopulation : MonoBehaviour {
 
 	// Called From GalaxyPopulation
 	public void PopulatePlanet(){
-		if(planetType == -2){
-			// boss planet
-		} else if(beamActivated){
+		if(beamActivated && planetType != -2){
 			// planet cleared
 			return;
 		}
@@ -70,7 +69,8 @@ public class PlanetPopulation : MonoBehaviour {
 			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
-			nextShipScript.enemyLevel = planetRow;
+			nextShipScript.level = planetRow;
+			nextShipScript.health = (planetRow + 1)/2;
 			if(planetType == 1){
 				nextShipScript.enemyType = "chase";
 			} else{
@@ -87,17 +87,27 @@ public class PlanetPopulation : MonoBehaviour {
 			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
 			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
 			nextTurretScript.currentPlanet = gameObject;
-			nextTurretScript.enemyLevel = planetRow;
+			nextTurretScript.level = planetRow;
+			nextTurretScript.health = (planetRow + 1)/2;
 			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
 			EnemyCounter++;
 		}
 
-		if(planetType == 1){
-			// hostile planet, no allies
-			return;
-		}
 
-		// TODO: generate allies
+		// generate allies for conflicting planets
+		if(planetType == 3){
+			AllyShip = (GameObject)Resources.Load("Ally_Ship");
+
+			for(int i = 0; i < 2; i++){
+				Vector3 startDir = Random.insideUnitSphere.normalized;
+				GameObject nextAllyShip = (GameObject)Instantiate(AllyShip, transform.position + startDir * orbitLength, transform.rotation);
+				AllyShipAI nextShipScript = nextAllyShip.transform.GetComponent<AllyShipAI>();
+				nextShipScript.currentPlanet = gameObject;
+				nextShipScript.level = planetRow;
+				nextShipScript.health = 5;
+				AllyCounter++;
+			}
+		}
 	}
 
 	public void AllyDied(){
@@ -151,10 +161,12 @@ public class PlanetPopulation : MonoBehaviour {
 			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
-			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 200f, BaseBeam.localPosition.z);
-			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 400f, BaseBeam.localScale.z);
+			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 150f, BaseBeam.localPosition.z);
+			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 300f, BaseBeam.localScale.z);
 			yield return null;
 		}
+		transform.FindChild("ClearPulse").renderer.enabled = true;
+		transform.GetComponentInChildren<Animation>().Play();
 		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x + Time.deltaTime * 20f, BaseBeam.localScale.y, BaseBeam.localScale.z + Time.deltaTime * 20f);
 			yield return null;

@@ -7,12 +7,14 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	public float turnSpeed = 10f;
 	
 	public int health = 1;
-	public int enemyLevel = 0;
+	public int level = 0;
 
 	public AudioClip enemyGunSound;
 
 	float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
+	
+	bool flashing = false;
 
 	GameObject player;
 	GameObject Laser;
@@ -21,6 +23,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	// AI types
 	public string enemyType;	// random, chase
 	bool chasing = false;
+	float chaseTimeLimit = 8f;
+	float chaseCountDown = 0f;
 
 	// Loot
 	GameObject Loot;
@@ -63,12 +67,21 @@ public class EnemyShipAI : ShipOrbitBehavior {
 				// check if the player is in front
 				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.forward) < 80f){
 					chasing = true;
+					chaseCountDown = -1f;
 					if(fireCoolDownRemaining < 0f){
 						AutoFire();
 						fireCoolDownRemaining = fireCoolDown;
 					}
 				} else{
-					chasing = false;
+					if(chasing && chaseCountDown <= 0f){
+						if(chaseCountDown <= 0f){
+							chaseCountDown =chaseTimeLimit;
+						}
+						chaseCountDown -= Time.deltaTime;
+						if(chaseCountDown <= 0f){
+							chasing = false;
+						}
+					}
 				}
 			}
 		}
@@ -76,8 +89,10 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	void FixedUpdate () {
-		if(rigidbody.velocity.z < 10f){
-			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
+		if(!chasing || (player.transform.position - transform.position).magnitude > 15f){
+			if(rigidbody.velocity.z < 10f){
+				rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
+			}
 		}
 		if(chasing){
 			// chase player
@@ -119,6 +134,11 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		if(health <= 0){
 			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 			Die();
+		} else{
+			if(!flashing){
+				flashing = true;
+				StartCoroutine(DamageFlash());
+			}
 		}
 	}
 
@@ -129,9 +149,22 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
+	
+	IEnumerator DamageFlash(){
+		Material targetMat = transform.FindChild("Ship").renderer.materials[0];
+		Color origColor = targetMat.color;
+		targetMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		targetMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		targetMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		targetMat.color = origColor;
+		flashing = false;
+	}
 
 	void AutoFire(){
-		if(enemyLevel < 4){
+		if(level < 4){
 			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
 			audio.PlayOneShot(enemyGunSound);
 			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
