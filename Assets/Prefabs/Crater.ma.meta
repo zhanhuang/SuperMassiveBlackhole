@@ -340,6 +340,11 @@ ModelImporter:
     100668: transform97
     100670: transform98
     100672: transform99
+<<<<<<< HEAD
+=======
+    100674: polySurface149_MeshPart0
+    100676: polySurface149_MeshPart1
+>>>>>>> 0370b5287e89849bebdc3a14d61f4fe8b24e228b
     400000: //RootNode
     400002: pCube8
     400004: polySurface37
@@ -677,6 +682,11 @@ ModelImporter:
     400668: transform97
     400670: transform98
     400672: transform99
+<<<<<<< HEAD
+=======
+    400674: polySurface149_MeshPart0
+    400676: polySurface149_MeshPart1
+>>>>>>> 0370b5287e89849bebdc3a14d61f4fe8b24e228b
     2300000: //RootNode
     2300002: pCube8
     2300004: polySurface37
@@ -721,6 +731,11 @@ ModelImporter:
     2300082: polySurface147
     2300084: polySurface148
     2300086: polySurface149
+<<<<<<< HEAD
+=======
+    2300088: polySurface149_MeshPart0
+    2300090: polySurface149_MeshPart1
+>>>>>>> 0370b5287e89849bebdc3a14d61f4fe8b24e228b
     3300000: //RootNode
     3300002: pCube8
     3300004: polySurface37
@@ -765,6 +780,11 @@ ModelImporter:
     3300082: polySurface147
     3300084: polySurface148
     3300086: polySurface149
+<<<<<<< HEAD
+=======
+    3300088: polySurface149_MeshPart0
+    3300090: polySurface149_MeshPart1
+>>>>>>> 0370b5287e89849bebdc3a14d61f4fe8b24e228b
     4300000: pSphere1
     4300002: pCube8
     4300004: polySurface37
@@ -809,6 +829,11 @@ ModelImporter:
     4300082: polySurface147
     4300084: polySurface148
     4300086: polySurface149
+<<<<<<< HEAD
+=======
+    4300088: polySurface149_MeshPart0
+    4300090: polySurface149_MeshPart1
+>>>>>>> 0370b5287e89849bebdc3a14d61f4fe8b24e228b
     9500000: //RootNode
   materials:
     importMaterials: 1
