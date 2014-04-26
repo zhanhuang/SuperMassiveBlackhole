@@ -165,7 +165,9 @@ public class PlanetPopulation : MonoBehaviour {
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 300f, BaseBeam.localScale.z);
 			yield return null;
 		}
-		transform.FindChild("ClearPulse").renderer.enabled = true;
+		if(planetType != -2){
+			transform.FindChild("ClearPulse").renderer.enabled = true;
+		}
 		transform.GetComponentInChildren<Animation>().Play();
 		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x + Time.deltaTime * 20f, BaseBeam.localScale.y, BaseBeam.localScale.z + Time.deltaTime * 20f);

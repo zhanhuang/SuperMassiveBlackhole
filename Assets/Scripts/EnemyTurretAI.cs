@@ -37,22 +37,18 @@ public class EnemyTurretAI : MonoBehaviour {
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
 		if(fireCoolDownRemaining < 0f){
-			RaycastHit hit = new RaycastHit();
-			Vector3 raycastDir = player.transform.position - transform.position;
-			if(Physics.Raycast(transform.position + raycastDir.normalized * 2f, raycastDir, out hit, 20f)){
-				// check if the player is above
-				if(hit.transform.tag == "Player" && Vector3.Angle(raycastDir, transform.up) < 75f){
-					// player seen, fire laser
-					GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(player.transform.position - LaserStartPosition));
-					audio.PlayOneShot(turretGunSound);
-					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
-					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
-					nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
-					fireCoolDownRemaining = fireCoolDown;
-				}
-			}
-			if(fireCoolDownRemaining < -2f * fireCoolDown){
+			// check if the player is above
+			Vector3 playerDir = player.transform.position - transform.position;
+			if((playerDir).magnitude < 20f && Vector3.Angle(playerDir, transform.up) < 75f){
+				// player seen, fire laser
+				GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(player.transform.position - LaserStartPosition));
+				audio.PlayOneShot(turretGunSound);
+				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+				nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
+				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
+				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 20f;
+				fireCoolDownRemaining = fireCoolDown;
+			} else if(fireCoolDownRemaining < -2f * fireCoolDown){
 				AutoFire();
 				fireCoolDownRemaining = fireCoolDown;
 			}

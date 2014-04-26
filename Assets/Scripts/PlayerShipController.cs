@@ -20,9 +20,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	float currentSpeed = 0f;
 	float currentTurningSpeed = 0f;
-	
-	float damageCoolDown = 1f;
-	float damageCoolDownRemaining = 0f;
+
 	bool flashing = false;
 	
 	float overHeatLimit = 5f;
@@ -129,8 +127,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(transform.collider.enabled == false){
 			return;
 		}
-
-		damageCoolDownRemaining -= Time.deltaTime;
 
 
 		coolOffCounter += Time.deltaTime;
@@ -258,10 +254,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		
 		// tilt on turning
-		if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q)){
+		// checks for both directions pressed at once. Less elegant code, but more consistent behavior
+		if(Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)){
 			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, 30f));
 			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
-		} else if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.E)){
+		} else if(Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A)){
+			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, -30f));
+			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
+		} else if(Input.GetKey(KeyCode.Q) && !Input.GetKey(KeyCode.E)){
+			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, 30f));
+			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
+		} else if(Input.GetKey(KeyCode.E) && !Input.GetKey(KeyCode.Q)){
 			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, -30f));
 			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
 		} else{
@@ -270,16 +273,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	public void TakeDamage(int damage){
-		if(transform.collider.enabled == false){
+		if(health <= 0){
 			return;
 		}
-		if(damageCoolDownRemaining < 0f){
-			health -= damage;
-			damageCoolDownRemaining = damageCoolDown;
-			healthText.text = "HEALTH: " + health;
-		} else{
-			return;
-		}
+		health -= damage;
+		healthText.text = "HEALTH: " + health;
+
 		if(health <= 0){
 			healthText.color = Color.red;
 			Die();
