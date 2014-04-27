@@ -64,7 +64,7 @@ public class PlanetPopulation : MonoBehaviour {
 
 		// generate enemy ships. Max 20 or will lag
 		int rand = Random.Range(-2,3);
-		for(int i = 0; i < planetRow * 3 + rand; i++){
+		for(int i = 0; i < planetRow * 2 + rand; i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
@@ -82,7 +82,7 @@ public class PlanetPopulation : MonoBehaviour {
 		// generate enemy turrets.
 		// TODO: make sure turrets don't overlap
 		rand = Random.Range(-2,3);
-		for(int i = 0; i < planetRow * 3 + rand; i++){
+		for(int i = 0; i < planetRow * 2 + rand; i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
 			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
@@ -134,32 +134,30 @@ public class PlanetPopulation : MonoBehaviour {
 	}
 
 	public void ActivateBeam(){
-		// decide whether there is a shop
-		bool shop = false;
-		if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
-			shop = true;
-		}
 
 		if(!beamActivated){
 			// run activation animation only once
 			beamActivated = true;
-			StartCoroutine(ExpandBeam(shop));
+
+			
+			// decide whether there is a shop
+			if(planetType == -2){
+				// boss planet
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
+				BaseBeam.collider.enabled = false;
+			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
+				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
+			} else{
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+			}
+
+			StartCoroutine(ExpandBeam());
 		}
-		BaseBeam.GetComponent<BaseBeamBehavior>().shopEnabled = shop;
 	}
 	
-	IEnumerator ExpandBeam(bool shopEnabled) {
+	IEnumerator ExpandBeam() {
 		// animate the activation of the beam
-		yield return new WaitForSeconds(1f);
-		if(planetType == -2){
-			// boss planet
-			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
-			BaseBeam.collider.enabled = false;
-		} else if(shopEnabled){
-			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
-		} else{
-			BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
-		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
 			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 150f, BaseBeam.localPosition.z);
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 300f, BaseBeam.localScale.z);
