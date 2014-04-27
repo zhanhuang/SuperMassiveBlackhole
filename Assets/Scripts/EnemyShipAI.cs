@@ -73,9 +73,9 @@ public class EnemyShipAI : ShipOrbitBehavior {
 						fireCoolDownRemaining = fireCoolDown;
 					}
 				} else{
-					if(chasing && chaseCountDown <= 0f){
+					if(chasing){
 						if(chaseCountDown <= 0f){
-							chaseCountDown =chaseTimeLimit;
+							chaseCountDown = chaseTimeLimit;
 						}
 						chaseCountDown -= Time.deltaTime;
 						if(chaseCountDown <= 0f){
@@ -116,10 +116,10 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	IEnumerator AvoidObstacle(){
 		while(true){
 			RaycastHit hit = new RaycastHit();
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 10f)){
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 15f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Player"){
-					rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * 100f, ForceMode.VelocityChange);
+					rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * speed * -10f, ForceMode.VelocityChange);
 				}
 			}
 			yield return new WaitForSeconds(1f);

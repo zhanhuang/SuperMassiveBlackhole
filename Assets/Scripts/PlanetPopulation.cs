@@ -19,6 +19,7 @@ public class PlanetPopulation : MonoBehaviour {
 	GameObject EnemyShip;
 	GameObject EnemyTurret;
 	GameObject BasePrefab;
+	GameObject Crater;
 
 	public Transform BaseBeam;
 	bool beamActivated = false;
@@ -54,17 +55,20 @@ public class PlanetPopulation : MonoBehaviour {
 			// planet cleared
 			return;
 		}
-
-		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
-		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
 		
-		// TODO: generate some destructable structures
-
-
-
+		
+		// generate destructable structures
+		Crater = (GameObject)Resources.Load("Crater");
+		for(int i = 0; i < Random.Range(1,3); i++){
+			Vector3 startDir = Random.insideUnitSphere.normalized;
+			GameObject nextCrater = (GameObject)Instantiate(Crater, transform.position + startDir * surfaceLength, transform.rotation);
+			nextCrater.transform.up = nextCrater.transform.position - transform.position;
+			generateLoot(startDir,planetRow + 1);
+		}
+		
 		// generate enemy ships. Max 20 or will lag
-		int rand = Random.Range(-2,3);
-		for(int i = 0; i < planetRow * 2 + rand; i++){
+		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
+		for(int i = 0; i < planetRow * 2 + Random.Range(-2,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
@@ -81,8 +85,8 @@ public class PlanetPopulation : MonoBehaviour {
 		
 		// generate enemy turrets.
 		// TODO: make sure turrets don't overlap
-		rand = Random.Range(-2,3);
-		for(int i = 0; i < planetRow * 2 + rand; i++){
+		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
+		for(int i = 0; i < planetRow * 2 + Random.Range(-2,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
 			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
@@ -171,5 +175,9 @@ public class PlanetPopulation : MonoBehaviour {
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x + Time.deltaTime * 20f, BaseBeam.localScale.y, BaseBeam.localScale.z + Time.deltaTime * 20f);
 			yield return null;
 		}
+	}
+
+	public void generateLoot(Vector3 direction, int level) {
+
 	}
 }
