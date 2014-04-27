@@ -119,6 +119,10 @@ ModelImporter:
     100226: transform7
     100228: transform8
     100230: transform9
+    100232: group9
+    100234: Main1
+    100236: pSphere51
+    100238: pSphere52
     400000: Center_Group
     400002: group1
     400004: group2
@@ -235,6 +239,10 @@ ModelImporter:
     400226: transform7
     400228: transform8
     400230: transform9
+    400232: group9
+    400234: Main1
+    400236: pSphere51
+    400238: pSphere52
     2300000: Center_Group
     2300002: Main
     2300004: Main 1
@@ -249,6 +257,9 @@ ModelImporter:
     2300022: pSphere50 1
     2300024: pTorus1
     2300026: pTorus3
+    2300028: Main1
+    2300030: pSphere51
+    2300032: pSphere52
     3300000: Center_Group
     3300002: Main
     3300004: Main 1
@@ -263,6 +274,9 @@ ModelImporter:
     3300022: pSphere50 1
     3300024: pTorus1
     3300026: pTorus3
+    3300028: Main1
+    3300030: pSphere51
+    3300032: pSphere52
     4300000: pSphere48
     4300002: pSphere47
     4300004: pSphere49
@@ -277,8 +291,12 @@ ModelImporter:
     4300022: Main
     4300024: Main
     4300026: polySurface1
-    7400000: Take 001
+    4300028: pSphere51
+    4300030: pSphere52
+    4300032: Main1
+    7400000: Floating
     9500000: //RootNode
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -291,9 +309,267 @@ ModelImporter:
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
-    animationWrapMode: 0
+    animationWrapMode: 2
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Floating
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 48
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Center_Group
+        weight: 1
+      - path: group1
+        weight: 1
+      - path: group2
+        weight: 1
+      - path: group2/pSphere47
+        weight: 1
+      - path: group2/pSphere48
+        weight: 1
+      - path: group3
+        weight: 1
+      - path: group4
+        weight: 1
+      - path: group5
+        weight: 1
+      - path: group5/pSphere49
+        weight: 1
+      - path: group5/pSphere50
+        weight: 1
+      - path: group6
+        weight: 1
+      - path: group6/pSphere45
+        weight: 1
+      - path: group6/pSphere46
+        weight: 1
+      - path: group6/pTorus1
+        weight: 1
+      - path: group7
+        weight: 1
+      - path: group7/pSphere49 1
+        weight: 1
+      - path: group7/pSphere50 1
+        weight: 1
+      - path: group7/pTorus3
+        weight: 1
+      - path: group8
+        weight: 1
+      - path: group8/pSphere1
+        weight: 1
+      - path: group8/pSphere1/transform43
+        weight: 1
+      - path: group8/pSphere2
+        weight: 1
+      - path: group8/pSphere2/transform42
+        weight: 1
+      - path: group8/pSphere3
+        weight: 1
+      - path: group8/pSphere3/transform41
+        weight: 1
+      - path: group8/pSphere5
+        weight: 1
+      - path: group8/pSphere5/transform40
+        weight: 1
+      - path: group8/pSphere6
+        weight: 1
+      - path: group8/pSphere6/transform39
+        weight: 1
+      - path: group8/pSphere7
+        weight: 1
+      - path: group8/pSphere7/transform38
+        weight: 1
+      - path: group8/pSphere8
+        weight: 1
+      - path: group8/pSphere8/transform37
+        weight: 1
+      - path: group8/pSphere9
+        weight: 1
+      - path: group8/pSphere9/transform36
+        weight: 1
+      - path: group8/pSphere10
+        weight: 1
+      - path: group8/pSphere10/transform35
+        weight: 1
+      - path: group8/pSphere11
+        weight: 1
+      - path: group8/pSphere11/transform34
+        weight: 1
+      - path: group8/pSphere12
+        weight: 1
+      - path: group8/pSphere12/transform33
+        weight: 1
+      - path: group8/pSphere13
+        weight: 1
+      - path: group8/pSphere13/transform32
+        weight: 1
+      - path: group8/pSphere14
+        weight: 1
+      - path: group8/pSphere14/transform31
+        weight: 1
+      - path: group8/pSphere15
+        weight: 1
+      - path: group8/pSphere15/transform30
+        weight: 1
+      - path: group8/pSphere16
+        weight: 1
+      - path: group8/pSphere16/transform29
+        weight: 1
+      - path: group8/pSphere17
+        weight: 1
+      - path: group8/pSphere17/transform28
+        weight: 1
+      - path: group8/pSphere18
+        weight: 1
+      - path: group8/pSphere18/transform27
+        weight: 1
+      - path: group8/pSphere19
+        weight: 1
+      - path: group8/pSphere19/transform26
+        weight: 1
+      - path: group8/pSphere20
+        weight: 1
+      - path: group8/pSphere20/transform25
+        weight: 1
+      - path: group8/pSphere21
+        weight: 1
+      - path: group8/pSphere21/transform24
+        weight: 1
+      - path: group8/pSphere22
+        weight: 1
+      - path: group8/pSphere22/transform23
+        weight: 1
+      - path: group8/pSphere23
+        weight: 1
+      - path: group8/pSphere23/transform22
+        weight: 1
+      - path: group8/pSphere24
+        weight: 1
+      - path: group8/pSphere24/transform21
+        weight: 1
+      - path: group8/pSphere25
+        weight: 1
+      - path: group8/pSphere25/transform20
+        weight: 1
+      - path: group8/pSphere26
+        weight: 1
+      - path: group8/pSphere26/transform19
+        weight: 1
+      - path: group8/pSphere27
+        weight: 1
+      - path: group8/pSphere27/transform18
+        weight: 1
+      - path: group8/pSphere28
+        weight: 1
+      - path: group8/pSphere28/transform17
+        weight: 1
+      - path: group8/pSphere29
+        weight: 1
+      - path: group8/pSphere29/transform16
+        weight: 1
+      - path: group8/pSphere30
+        weight: 1
+      - path: group8/pSphere30/transform15
+        weight: 1
+      - path: group8/pSphere31
+        weight: 1
+      - path: group8/pSphere31/transform14
+        weight: 1
+      - path: group8/pSphere32
+        weight: 1
+      - path: group8/pSphere32/transform13
+        weight: 1
+      - path: group8/pSphere33
+        weight: 1
+      - path: group8/pSphere33/transform12
+        weight: 1
+      - path: group8/pSphere34
+        weight: 1
+      - path: group8/pSphere34/transform11
+        weight: 1
+      - path: group8/pSphere35
+        weight: 1
+      - path: group8/pSphere35/transform10
+        weight: 1
+      - path: group8/pSphere36
+        weight: 1
+      - path: group8/pSphere36/transform9
+        weight: 1
+      - path: group8/pSphere37
+        weight: 1
+      - path: group8/pSphere37/transform8
+        weight: 1
+      - path: group8/pSphere38
+        weight: 1
+      - path: group8/pSphere38/transform7
+        weight: 1
+      - path: group8/pSphere39
+        weight: 1
+      - path: group8/pSphere39/transform6
+        weight: 1
+      - path: group8/pSphere40
+        weight: 1
+      - path: group8/pSphere40/transform5
+        weight: 1
+      - path: group8/pSphere41
+        weight: 1
+      - path: group8/pSphere41/transform4
+        weight: 1
+      - path: group8/pSphere42
+        weight: 1
+      - path: group8/pSphere42/transform3
+        weight: 1
+      - path: group8/pSphere43
+        weight: 1
+      - path: group8/pSphere43/transform2
+        weight: 1
+      - path: group8/pSphere44
+        weight: 1
+      - path: group8/pSphere44/transform1
+        weight: 1
+      - path: MeshGroup
+        weight: 1
+      - path: MeshGroup/Main
+        weight: 1
+      - path: MeshGroup1
+        weight: 1
+      - path: MeshGroup1/Main 1
+        weight: 1
+      - path: MeshGroup2
+        weight: 1
+      - path: MeshGroup2/Main 2
+        weight: 1
+      - path: MeshGroup2/Main 2/pTorus2
+        weight: 1
+      - path: MeshGroup2/Main 2/pTorus2/transform44
+        weight: 1
+      - path: MeshGroup2/Main 2/transform45
+        weight: 1
+      - path: polySurface1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -329,6 +605,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 1
   additionalBone: 0
   userData: 
