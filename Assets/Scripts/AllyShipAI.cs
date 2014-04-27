@@ -72,7 +72,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 		}
 		health -= damage;
 		if(health <= 0){
-			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
+			currentPlanet.GetComponent<PlanetPopulation>().AllyDied();
 			Die();
 		} else{
 			if(!flashing){

@@ -15,7 +15,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 	int lookingPlanet = 0;
 	
 	// TODO: available weapons in shop
-
+	
+	public GUIText[] itemTexts;
 
 	// Use this for initialization
 	void Start () {
@@ -71,15 +72,13 @@ public class BaseBeamBehavior : MonoBehaviour {
 				playerScript.enabled = true;
 				playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
 				playerScript.OrbitSetup();
-				playerScript.ActivateShield(3f);
+				playerScript.ActivateShield(2f);
 				surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>().PopulatePlanet();
 				liftOff = false;
 				inSpace = false;
 				audio.Stop();
 			}
 		}
-
-//		enabled = false;
 	}
 
 	IEnumerator BeamMeUp(){
@@ -95,11 +94,15 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	}
 
+	public void EnableShop(){
+		shopEnabled = true;
+	}
+
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Player"){
 			if(shopEnabled){
-//				beamText.text = "Press [Space] To Engage Planar Drive\nPress [P] To Open Shop";
-				beamText.text = "Press [Space] To Engage Planar Drive\n(Shop Temporarily Closed)";
+				beamText.text = "Press [Space] To Engage Planar Drive\nPress [P] To Open Shop";
+//				beamText.text = "Press [Space] To Engage Planar Drive\n(Shop Temporarily Closed)";
 			}
 			beamText.enabled = true;
 			player = other.transform;

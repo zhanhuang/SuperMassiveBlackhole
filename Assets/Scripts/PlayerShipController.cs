@@ -5,6 +5,26 @@ using System.Collections;
 public class PlayerShipController : ShipOrbitBehavior {
 	public GalaxyPopulation Galaxy;
 
+	// shop
+	public int darkMatterOrbs = 0;		// money
+	public int laserLevelStraight = 0;
+	public int laserLevelSpead = 0;
+	public int bombLevel = 0;
+	public int mineLevel = 0;
+	public int mineCharges = 0;
+	public int deathRayLevel = 0;
+	public int pulseWeaponLevel = 0;
+	public int flamethrowerLevel = 0;
+	
+	public float overHeatLimit = 5f;
+	float overHeatMeter = 0f;
+	float coolOffCounter = 0f;
+
+	public int shieldLevel = 0;
+	public int shieldCharges = 2;
+	float shieldLimit = 3f;
+	float shieldTimeRemaining = 0f;
+
 	// ship stat variables
 	float acceleration = 50f;
 	float turnAcceleration = 20f;
@@ -18,20 +38,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GameObject Laser;
 	GameObject Bomb;
 
-	float currentSpeed = 0f;
-	float currentTurningSpeed = 0f;
-	
-	float damageCoolDown = 1f;
-	float damageCoolDownRemaining = 0f;
 	bool flashing = false;
-	
-	float overHeatLimit = 5f;
-	float overHeatMeter = 0f;
-	float coolOffCounter = 0f;
-
-	int shieldCharges = 2;
-	float shieldLimit = 3f;
-	float shieldTimeRemaining = 0f;
 
 	int health = 5;
 	GUIText healthText;
@@ -39,6 +46,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GUIText shieldText;
 	GUIText weaponText;
 	GUIText enemyText;
+	GUIText allyText;
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
@@ -116,6 +124,16 @@ public class PlayerShipController : ShipOrbitBehavior {
 		enemyText.fontSize = 18;
 		enemyText.color = Color.red;
 		enemyText.text = "Enemies Left: 0";
+		
+		// ally counter for current planet
+		GameObject allyTextObj = new GameObject("HUD_allyCounter");
+		allyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		allyText = (GUIText)allyTextObj.AddComponent(typeof(GUIText));
+		allyText.anchor = TextAnchor.MiddleCenter;
+		allyText.pixelOffset = new Vector2(0f, Screen.height/2 - 50f);
+		allyText.fontSize = 18;
+		allyText.color = Color.green;
+		allyText.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -129,8 +147,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(transform.collider.enabled == false){
 			return;
 		}
-
-		damageCoolDownRemaining -= Time.deltaTime;
 
 
 		coolOffCounter += Time.deltaTime;
@@ -165,14 +181,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			}
 			// shooting
 			if (Input.GetKeyDown(KeyCode.J)){
-				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-				nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
-				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
-				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
-
-				audio.PlayOneShot (gunSound);
+				FireLaser();
 
 				overHeatMeter += 1f;
 				coolOffCounter = 0f;
@@ -216,13 +225,23 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		// update heat text
 		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
+
+		// enemy and ally counters
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
 		if(enemyCounter > 0){
 			enemyText.color = Color.red;
-			enemyText.text = "Enemies Left: " + currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
+			enemyText.text = "Enemies Left: " + enemyCounter;
 		} else{
 			enemyText.color = Color.cyan;
 			enemyText.text = "Planet Cleared!";
+		}
+		
+		int allyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().AllyCounter;
+		if(allyCounter > 0){
+			allyText.enabled = true;
+			allyText.text = "Allies Left: " + allyCounter;
+		} else{
+			allyText.enabled = false;
 		}
 	}
 
@@ -258,10 +277,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		
 		// tilt on turning
-		if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q)){
+		// checks for both directions pressed at once. Less elegant code, but more consistent behavior
+		if(Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)){
 			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, 30f));
 			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
-		} else if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.E)){
+		} else if(Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A)){
+			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, -30f));
+			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
+		} else if(Input.GetKey(KeyCode.Q) && !Input.GetKey(KeyCode.E)){
+			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, 30f));
+			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
+		} else if(Input.GetKey(KeyCode.E) && !Input.GetKey(KeyCode.Q)){
 			Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, 0f, -30f));
 			shipTransform.localRotation = Quaternion.Lerp(shipTransform.localRotation, targetRotation, 5f * Time.deltaTime);
 		} else{
@@ -270,16 +296,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	public void TakeDamage(int damage){
-		if(transform.collider.enabled == false){
+		if(health <= 0){
 			return;
 		}
-		if(damageCoolDownRemaining < 0f){
-			health -= damage;
-			damageCoolDownRemaining = damageCoolDown;
-			healthText.text = "HEALTH: " + health;
-		} else{
-			return;
-		}
+		health -= damage;
+		healthText.text = "HEALTH: " + health;
+
 		if(health <= 0){
 			healthText.color = Color.red;
 			Die();
@@ -343,5 +365,25 @@ public class PlayerShipController : ShipOrbitBehavior {
 			healthText.text = "HEALTH: " + health;
 			Destroy (other.gameObject);
 		}
+	}
+
+	void OnCollisionEnter(Collision collision){
+		// take damage upon hitting a ship
+		if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Ally"){
+			Vector3 collisionDir = (collision.transform.position -  transform.position).normalized;
+			rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
+			TakeDamage(1);
+		}
+	}
+
+	void FireLaser(){
+		audio.PlayOneShot (gunSound);
+
+		GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
+		nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+		nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
+		nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
+		nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
+		nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
 	}
 }
