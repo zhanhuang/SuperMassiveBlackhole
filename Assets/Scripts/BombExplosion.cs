@@ -20,6 +20,10 @@ public class BombExplosion : MonoBehaviour {
 		} else if(other.tag == "Ally"){
 			Debug.Log("ally hit");
 			other.gameObject.SendMessage("TakeDamage", 1);
+		} else if(other.tag == "Destructible"){
+			Debug.Log("destruction!");
+			Destroy(other.gameObject);
+			// TODO: dust puff
 		} 
 	}
 }

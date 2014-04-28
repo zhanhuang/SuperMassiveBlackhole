@@ -62,6 +62,7 @@ public class GalaxyPopulation : MonoBehaviour {
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[0];
 					startingPlanet = nextPlanet;
 					nextPlanetScript.ActivateBeam();
+					nextPlanetScript.ShowBeam();
 					break;
 				case -2:
 					// ending planet, Seredipity texture
@@ -75,9 +76,11 @@ public class GalaxyPopulation : MonoBehaviour {
 				case 2:
 					// friendly planet, no ships or turrets
 					nextPlanetScript.ActivateBeam();
+					nextPlanetScript.HideBeam();
 					goto default;
-				case 1:
 				case 3:
+					nextPlanet.transform.FindChild("Outline").renderer.material.SetColor("_Color", new Color(1f, 0.5f, 0f));
+					goto default;
 				default:
 					// other planet
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[Random.Range(1,9)];

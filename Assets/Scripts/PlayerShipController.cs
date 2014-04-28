@@ -51,8 +51,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public AudioClip gunSound;
 	public AudioClip bombSound;
 	public AudioClip healthSound;
-	public AudioClip deadSound;
-	public AudioClip turretDeadSound;
 	int soundCount = 0;
 
 

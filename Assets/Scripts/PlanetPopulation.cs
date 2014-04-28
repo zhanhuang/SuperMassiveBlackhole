@@ -14,17 +14,24 @@ public class PlanetPopulation : MonoBehaviour {
 
 	public float orbitLength;
 	public float surfaceLength;
-	
-	GameObject AllyShip;
-	GameObject EnemyShip;
-	GameObject EnemyTurret;
-	GameObject BasePrefab;
 
 	public Transform BaseBeam;
 	bool beamActivated = false;
 
 	public int EnemyCounter = 0;
 	public int AllyCounter = 0;
+
+	// Prefabs
+	GameObject AllyShip;
+	GameObject EnemyShip;
+	GameObject EnemyShip2;
+	GameObject EnemyTurret;
+	GameObject BasePrefab;
+	GameObject Crater;
+	// Loot Prefabs
+	GameObject Loot_Currency;
+	GameObject Loot_Health;
+
 	
 	void Awake (){
 		float scale = Random.Range(80f,120f);
@@ -35,6 +42,8 @@ public class PlanetPopulation : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		Loot_Currency = (GameObject)Resources.Load("Currency");
+		Loot_Health = (GameObject)Resources.Load("Health");
 	}
 
 	// Update is called once per frame
@@ -50,23 +59,40 @@ public class PlanetPopulation : MonoBehaviour {
 
 	// Called From GalaxyPopulation
 	public void PopulatePlanet(){
-		if(beamActivated && planetType != -2){
-			// planet cleared
-			return;
+		if(planetType == -2){
+			HideBeam();
+		} else{
+			// turn off outline upon entering planet
+			transform.FindChild("Outline").renderer.enabled = false;
+			if(beamActivated){
+				// planet cleared
+				ShowBeam();
+				return;
+			}
 		}
-
-		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
-		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
 		
-		// TODO: generate some destructable structures
-
-
-
-		// generate enemy ships. Max 20 or will lag
-		int rand = Random.Range(-2,3);
-		for(int i = 0; i < planetRow * 2 + rand; i++){
+		// generate destructable structures
+		Crater = (GameObject)Resources.Load("Crater");
+		for(int i = 0; i < Random.Range(1,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
-			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
+			GameObject nextCrater = (GameObject)Instantiate(Crater, transform.position + startDir * surfaceLength, transform.rotation);
+			nextCrater.transform.up = nextCrater.transform.position - transform.position;
+			GenerateLootAt(nextCrater.transform.position,planetRow + 1);
+		}
+		
+		// generate enemy ships. Max 20 or will lag
+		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
+		EnemyShip2 = (GameObject)Resources.Load("Enemy_Ship_2");
+		for(int i = 0; i < planetRow * 2 + Random.Range(-1,3); i++){
+			Vector3 startDir = Random.insideUnitSphere.normalized;
+			GameObject nextEnemyShip;
+			if(Random.Range(0,2) == 0){
+				nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
+				nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = false;
+			} else{
+				nextEnemyShip = (GameObject)Instantiate(EnemyShip2, transform.position + startDir * orbitLength, transform.rotation);
+				nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = true;
+			}
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
 			nextShipScript.level = planetRow;
@@ -81,8 +107,8 @@ public class PlanetPopulation : MonoBehaviour {
 		
 		// generate enemy turrets.
 		// TODO: make sure turrets don't overlap
-		rand = Random.Range(-2,3);
-		for(int i = 0; i < planetRow * 2 + rand; i++){
+		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
+		for(int i = 0; i < planetRow * 2 + Random.Range(-2,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
 			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
@@ -104,7 +130,7 @@ public class PlanetPopulation : MonoBehaviour {
 				AllyShipAI nextShipScript = nextAllyShip.transform.GetComponent<AllyShipAI>();
 				nextShipScript.currentPlanet = gameObject;
 				nextShipScript.level = planetRow;
-				nextShipScript.health = 5;
+				nextShipScript.health = 3;
 				AllyCounter++;
 			}
 		}
@@ -119,6 +145,9 @@ public class PlanetPopulation : MonoBehaviour {
 		if(EnemyCounter <= 0){
 			if(planetType == -2){
 				// WIN
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
+				ShowBeam();
 				GameObject winTextObj = new GameObject("HUD_winText");
 				winTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 				GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
@@ -134,7 +163,6 @@ public class PlanetPopulation : MonoBehaviour {
 	}
 
 	public void ActivateBeam(){
-
 		if(!beamActivated){
 			// run activation animation only once
 			beamActivated = true;
@@ -145,11 +173,13 @@ public class PlanetPopulation : MonoBehaviour {
 				// boss planet
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
 				BaseBeam.collider.enabled = false;
-			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
+			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0) || planetType == -1){
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
+				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
 			} else{
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 
 			StartCoroutine(ExpandBeam());
@@ -158,18 +188,46 @@ public class PlanetPopulation : MonoBehaviour {
 	
 	IEnumerator ExpandBeam() {
 		// animate the activation of the beam
+		if(planetType != -2){
+			transform.FindChild("ClearPulse").renderer.enabled = true;
+		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
 			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 150f, BaseBeam.localPosition.z);
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 300f, BaseBeam.localScale.z);
 			yield return null;
-		}
-		if(planetType != -2){
-			transform.FindChild("ClearPulse").renderer.enabled = true;
 		}
 		transform.GetComponentInChildren<Animation>().Play();
 		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x + Time.deltaTime * 20f, BaseBeam.localScale.y, BaseBeam.localScale.z + Time.deltaTime * 20f);
 			yield return null;
 		}
+	}
+	
+	public void HideBeam(){
+		BaseBeam.renderer.enabled = false;
+		transform.FindChild("ClearPulse").renderer.enabled = false;
+		transform.FindChild("Outline").renderer.enabled = true;
+	}
+
+	public void ShowBeam(){
+		BaseBeam.renderer.enabled = true;
+		transform.FindChild("ClearPulse").renderer.enabled = true;
+		transform.FindChild("Outline").renderer.enabled = false;
+	}
+
+	public void GenerateLootAt(Vector3 location, int level) {
+		// auto corrects for position of objects on planet surface. choose loot based on level
+		Vector3 direction = (location - transform.position).normalized;
+		GameObject nextLoot;
+		if(Random.Range(0,5) < 1){
+			nextLoot = (GameObject)Instantiate(Loot_Health, transform.position + direction.normalized * orbitLength, Quaternion.identity);
+			nextLoot.GetComponent<Loot>().lootType = "Health";
+			nextLoot.GetComponent<Loot>().lootValue = 1;
+		} else{
+			nextLoot = (GameObject)Instantiate(Loot_Currency, transform.position + direction.normalized * orbitLength, Quaternion.identity);
+			nextLoot.GetComponent<Loot>().lootType = "Currency";
+			nextLoot.GetComponent<Loot>().lootValue = level * 10 + Random.Range(0,10);
+		}
+		nextLoot.transform.up = nextLoot.transform.position - transform.position;
 	}
 }

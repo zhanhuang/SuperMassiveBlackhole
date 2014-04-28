@@ -73,9 +73,13 @@ public class EnemyTurretAI : MonoBehaviour {
 	}
 	
 	public void Die(){
+<<<<<<< HEAD
 		if (turretDeadSound) {
 				AudioSource.PlayClipAtPoint (turretDeadSound, transform.position);
 				}
+=======
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
+>>>>>>> ee7fd688bb40cd090bf3b42c16674b85acacbc81
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
