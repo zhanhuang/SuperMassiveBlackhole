@@ -407,6 +407,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		case "Currency":
 			currency += lootValue;
 			currencyText.text = "CURRENCY: " + currency;
+			audio.PlayOneShot (healthSound);
 			break;
 		default:
 			break;
