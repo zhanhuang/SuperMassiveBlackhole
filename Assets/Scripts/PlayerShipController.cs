@@ -8,7 +8,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	// shop
 	public int darkMatterOrbs = 0;		// money
 	public int laserLevelStraight = 0;
-	public int laserLevelSpead = 0;
+	public int laserLevelSpread = 0;
 	public int bombLevel = 0;
 	public int mineLevel = 0;
 	public int mineCharges = 0;
@@ -50,6 +50,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
+	public AudioClip healthSound;
+	public AudioClip deadSound;
+	public AudioClip turretDeadSound;
+	int soundCount = 0;
 
 
 	// Use this for initialization
@@ -168,6 +172,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 					shieldText.color = Color.green;
 				}
 			}
+		}
+
+		//sound plays on initial player movement
+		if (soundCount == 0) {
+				if (Input.GetKeyDown (KeyCode.W)) {
+				audio.Play();
+				soundCount += 1;
+				}
 		}
 		
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
@@ -363,6 +375,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if (other.tag == "Health") {
 			health += 1;
 			healthText.text = "HEALTH: " + health;
+			audio.PlayOneShot (healthSound);
 			Destroy (other.gameObject);
 		}
 	}
