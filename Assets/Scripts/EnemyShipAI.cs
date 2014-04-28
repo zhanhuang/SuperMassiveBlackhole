@@ -10,7 +10,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	public int level = 0;
 
 	public AudioClip enemyGunSound;
-	public AudioClip deathSound;
 
 	float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
@@ -145,12 +144,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		if(Loot != null){
-			Instantiate (Loot, transform.position, transform.rotation);
-		}
-		if (deathSound) {
-			AudioSource.PlayClipAtPoint(deathSound, transform.position);
-		}
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);

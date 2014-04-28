@@ -6,9 +6,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public GalaxyPopulation Galaxy;
 
 	// shop
-	public int darkMatterOrbs = 0;		// money
-	public int laserLevelStraight = 0;
-	public int laserLevelSpread = 0;
+	public int currency = 30;
+	public int laserLevel = 0;
 	public int bombLevel = 0;
 	public int mineLevel = 0;
 	public int mineCharges = 0;
@@ -37,11 +36,13 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	GameObject Laser;
 	GameObject Bomb;
+	GameObject Mine;
 
 	bool flashing = false;
 
 	int health = 5;
 	GUIText healthText;
+	GUIText currencyText;
 	GUIText heatText;
 	GUIText shieldText;
 	GUIText weaponText;
@@ -50,8 +51,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
-	public AudioClip healthSound;
-	int soundCount = 0;
 
 
 	// Use this for initialization
@@ -65,6 +64,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// load prefab
 		Bomb = (GameObject)Resources.Load("Bomb");
 		Laser = (GameObject)Resources.Load("Laser_Blue");
+		Mine = (GameObject)Resources.Load("Mine_Yellow");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
 		// set camera
@@ -81,6 +81,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 		healthText.fontSize = 18;
 		healthText.color = Color.green;
 		healthText.text = "HEALTH: " + health;
+		
+		GameObject currencyTextObj = new GameObject("HUD_currencyCounter");
+		currencyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		currencyText = (GUIText)currencyTextObj.AddComponent(typeof(GUIText));
+		currencyText.pixelOffset = new Vector2(-Screen.width/2 + 40f, - Screen.height/2 + 30f);
+		currencyText.fontSize = 18;
+		currencyText.color = Color.yellow;
+		currencyText.text = "CURRENCY: " + currency;
 		
 		// overheat meter
 		// TODO: Have a bar for this
@@ -161,23 +169,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 			shieldTimeRemaining -= Time.deltaTime;
 			shieldText.text = "SHIELD ENGAGED. TIME LEFT: " + shieldTimeRemaining.ToString("F2");
 			if(shieldTimeRemaining <= 0f){
-				transform.FindChild("Shield").renderer.enabled = false;
-				transform.FindChild("Shield").collider.enabled = false;
-				shieldText.text = "SHIELD CHARGES: " + shieldCharges;
-				if(shieldCharges == 0){
-					shieldText.color = Color.red;
-				} else{
-					shieldText.color = Color.green;
-				}
+				DisableShield();
 			}
-		}
-
-		//sound plays on initial player movement
-		if (soundCount == 0) {
-				if (Input.GetKeyDown (KeyCode.W)) {
-				audio.Play();
-				soundCount += 1;
-				}
 		}
 		
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
@@ -215,6 +208,15 @@ public class PlayerShipController : ShipOrbitBehavior {
 					shieldCharges --;
 					ActivateShield(shieldLimit);
 				}
+			}
+
+			// setting mine
+			if (Input.GetKeyDown (KeyCode.I)) {
+//				if(mineCharges > 0){
+					mineCharges --;
+					GameObject nextmine = (GameObject)Instantiate(Mine, transform.position, transform.rotation);
+					nextmine.transform.GetComponent<MineMovement>().mineOrigin = "Player";
+//				}
 			}
 		} else{
 			//TODO: show overheat meter
@@ -369,12 +371,49 @@ public class PlayerShipController : ShipOrbitBehavior {
 		shieldTimeRemaining = shieldTime;
 	}
 
-	void OnTriggerEnter(Collider other){
-		if (other.tag == "Health") {
-			health += 1;
+	public void DisableShield(){
+		transform.FindChild("Shield").renderer.enabled = false;
+		transform.FindChild("Shield").collider.enabled = false;
+		shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+		if(shieldCharges == 0){
+			shieldText.color = Color.red;
+		} else{
+			shieldText.color = Color.green;
+		}
+	}
+
+	public void GetLoot(string lootType, int lootValue){
+		if(lootValue < 0){
+			return;
+		}
+
+		switch (lootType){
+		case "Health":
+			health += lootValue;
 			healthText.text = "HEALTH: " + health;
-			audio.PlayOneShot (healthSound);
-			Destroy (other.gameObject);
+			break;
+		case "Currency":
+			currency += lootValue;
+			currencyText.text = "CURRENCY: " + currency;
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void PurchaseItem(string item, int price){
+		currency -= price;
+		currencyText.text = "CURRENCY: " + currency;
+
+		switch(item){
+		case "Laser":
+			laserLevel ++;
+			break;
+		case "Bomb":
+			bombLevel++;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -390,11 +429,38 @@ public class PlayerShipController : ShipOrbitBehavior {
 	void FireLaser(){
 		audio.PlayOneShot (gunSound);
 
-		GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-		nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-		nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
-		nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-		nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
-		nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
+		switch(laserLevel){
+		case 0:
+			CreateLaser(0f, 0f);
+			break;
+		case 1:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0.6f, 0f);
+			break;
+		case 2:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0.6f, 0f);
+			CreateLaser(-1.5f, -30f);
+			CreateLaser(1.5f, 30f);
+			break;
+		default:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0f, 0f);
+			CreateLaser(0.6f, 0f);
+			CreateLaser(-1.5f, -30f);
+			CreateLaser(1.5f, 30f);
+			break;
+		}
+	}
+
+	void CreateLaser(float offsetRight, float rotateRight){
+		Vector3 location =  transform.position + transform.right.normalized * offsetRight;
+		GameObject nextLaser = (GameObject)Instantiate(Laser, location, transform.rotation);
+		nextLaser.transform.Rotate(new Vector3(90f, rotateRight,0f));
+		LaserBehavior laserScript = nextLaser.GetComponent<LaserBehavior>();
+		laserScript.laserPath = "orbit";
+		laserScript.gravityCenter = currentPlanet.transform.position;
+		laserScript.laserOrigin = "Player";
+		laserScript.laserSpeed = 60f;
 	}
 }
