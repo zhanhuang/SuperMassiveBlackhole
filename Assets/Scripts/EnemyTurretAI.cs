@@ -72,6 +72,7 @@ public class EnemyTurretAI : MonoBehaviour {
 	}
 	
 	public void Die(){
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
