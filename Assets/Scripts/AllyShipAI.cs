@@ -17,10 +17,6 @@ public class AllyShipAI : ShipOrbitBehavior {
 	GameObject Laser;
 	GameObject Explosion;
 	
-	// Loot
-	GameObject Loot;
-	
-	
 	// Use this for initialization
 	void Start () {
 		OrbitSetup();
@@ -30,17 +26,11 @@ public class AllyShipAI : ShipOrbitBehavior {
 		// load prefabs
 		Laser = (GameObject)Resources.Load("Laser_Green");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
-		
-		// set loot
-		if(Random.Range(0f,100f) < 20f){
-			Loot = (GameObject)Resources.Load("Health");
-		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
-
 
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
 		if(fireCoolDownRemaining < 0f && enemyCounter > 0){
@@ -85,9 +75,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 	}
 	
 	public void Die(){
-		if(Loot != null){
-			Instantiate (Loot, transform.position, transform.rotation);
-		}
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
