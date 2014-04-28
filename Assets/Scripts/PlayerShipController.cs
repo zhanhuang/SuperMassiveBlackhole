@@ -7,22 +7,23 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	// shop
 	public int currency = 30;
-	public int laserLevel = 0;
-	public int bombLevel = 0;
-	public int mineLevel = 0;
-	public int mineCharges = 0;
-	public int deathRayLevel = 0;
-	public int pulseWeaponLevel = 0;
-	public int flamethrowerLevel = 0;
+	int laserLevel = 0;
+	int bombLevel = 0;
+	int deathRayLevel = 0;
+	int pulseWeaponLevel = 0;
+	int flamethrowerLevel = 0;
 	
 	public float overHeatLimit = 5f;
 	float overHeatMeter = 0f;
 	float coolOffCounter = 0f;
 
-	public int shieldLevel = 0;
+	int shieldLevel = 0;
 	public int shieldCharges = 2;
 	float shieldLimit = 3f;
 	float shieldTimeRemaining = 0f;
+	
+	int mineLevel = 0;
+	int mineCharges = 1;
 
 	// ship stat variables
 	float acceleration = 50f;
@@ -45,12 +46,16 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GUIText currencyText;
 	GUIText heatText;
 	GUIText shieldText;
+	GUIText mineText;
 	GUIText weaponText;
 	GUIText enemyText;
 	GUIText allyText;
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
+	public AudioClip healthSound;
+
+	int soundCount = 0;
 
 
 	// Use this for initialization
@@ -101,9 +106,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		heatText.color = Color.white;
 		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
 		
-		// shield meter
-		// TODO: Have a bar for this
-		GameObject shieldTextObj = new GameObject("HUD_shieldMeter");
+		// shield counter
+		GameObject shieldTextObj = new GameObject("HUD_shieldCounter");
 		shieldTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		shieldText = (GUIText)shieldTextObj.AddComponent(typeof(GUIText));
 		shieldText.anchor = TextAnchor.UpperLeft;
@@ -114,6 +118,18 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(shieldCharges > 0){
 			shieldText.text = "SHIELD CHARGES: " + shieldCharges;
 		}
+		// mine counter
+		GameObject mineTextObj = new GameObject("HUD_mineCounter");
+		mineTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		mineText = (GUIText)mineTextObj.AddComponent(typeof(GUIText));
+		mineText.anchor = TextAnchor.UpperLeft;
+		mineText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 90f);
+		mineText.fontSize = 18;
+		mineText.color = Color.green;
+		mineText.text = "";
+		if(mineCharges > 0){
+			mineText.text = "MINE CHARGES: " + mineCharges;
+		}
 		
 		// weapon text
 		GameObject weaponTextObj = new GameObject("HUD_weaponText");
@@ -123,7 +139,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40f, -Screen.height/2 + 30f);
 		weaponText.fontSize = 18;
 		weaponText.color = Color.magenta;
-		weaponText.text = "[J]: Laser\n[K]: Bomb\n[L]: Shield";
+		weaponText.text = "[J]: Laser\n[K]: Bomb\n[L]: Shield\n[I]: Mine";
 		
 		// enemy counter for current planet
 		GameObject enemyTextObj = new GameObject("HUD_enemyCounter");
@@ -172,6 +188,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 				DisableShield();
 			}
 		}
+
+		//sound plays on initial player movement
+		if (soundCount == 0) {
+			if (Input.GetKeyDown (KeyCode.W)) {
+				audio.Play();
+				soundCount += 1;
+				}
+			}
 		
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
 
@@ -212,11 +236,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 			// setting mine
 			if (Input.GetKeyDown (KeyCode.I)) {
-//				if(mineCharges > 0){
+				if(mineCharges > 0){
 					mineCharges --;
+					mineText.text = "MINE CHARGES: " + mineCharges;
 					GameObject nextmine = (GameObject)Instantiate(Mine, transform.position, transform.rotation);
 					nextmine.transform.GetComponent<MineMovement>().mineOrigin = "Player";
-//				}
+				}
 			}
 		} else{
 			//TODO: show overheat meter
@@ -312,6 +337,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 			return;
 		}
 		health -= damage;
+		if(health < 0){
+			health = 0;
+		}
 		healthText.text = "HEALTH: " + health;
 
 		if(health <= 0){
@@ -391,26 +419,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 		case "Health":
 			health += lootValue;
 			healthText.text = "HEALTH: " + health;
+			audio.PlayOneShot (healthSound);
 			break;
 		case "Currency":
 			currency += lootValue;
 			currencyText.text = "CURRENCY: " + currency;
-			break;
-		default:
-			break;
-		}
-	}
-	
-	public void PurchaseItem(string item, int price){
-		currency -= price;
-		currencyText.text = "CURRENCY: " + currency;
-
-		switch(item){
-		case "Laser":
-			laserLevel ++;
-			break;
-		case "Bomb":
-			bombLevel++;
+			audio.PlayOneShot (healthSound);
 			break;
 		default:
 			break;
@@ -423,6 +437,38 @@ public class PlayerShipController : ShipOrbitBehavior {
 			Vector3 collisionDir = (collision.transform.position -  transform.position).normalized;
 			rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
 			TakeDamage(1);
+		}
+	}
+	
+	public void PurchaseItem(string item, int price){
+		currency -= price;
+		currencyText.text = "CURRENCY: " + currency;
+		
+		switch(item){
+		case "Laser":
+			laserLevel ++;
+			break;
+		case "Bomb":
+			bombLevel++;
+			break;
+		case "Shield":
+			shieldLevel++;
+			break;
+		case "ShieldCharge":
+			shieldCharges++;
+			shieldText.enabled = true;
+			shieldText.text = "SHIELD CHARGES: " + mineCharges;
+			break;
+		case "Mine":
+			mineLevel++;
+			break;
+		case "MineCharge":
+			mineCharges++;
+			mineText.enabled = true;
+			mineText.text = "MINE CHARGES: " + mineCharges;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -439,16 +485,24 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		case 2:
 			CreateLaser(-0.6f, 0f);
+			CreateLaser(0f, 0f);
 			CreateLaser(0.6f, 0f);
-			CreateLaser(-1.5f, -30f);
-			CreateLaser(1.5f, 30f);
+			break;
+		case 3:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0f, 0f);
+			CreateLaser(0.6f, 0f);
+			CreateLaser(-1.5f, -15f);
+			CreateLaser(1.5f, 15f);
 			break;
 		default:
 			CreateLaser(-0.6f, 0f);
 			CreateLaser(0f, 0f);
 			CreateLaser(0.6f, 0f);
-			CreateLaser(-1.5f, -30f);
-			CreateLaser(1.5f, 30f);
+			CreateLaser(-1.5f, -15f);
+			CreateLaser(1.5f, 15f);
+			CreateLaser(-2f, -30f);
+			CreateLaser(2f, 30f);
 			break;
 		}
 	}

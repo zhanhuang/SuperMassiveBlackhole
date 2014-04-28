@@ -17,6 +17,7 @@ public class EnemyTurretAI : MonoBehaviour {
 	Vector3 LaserStartPosition;
 
 	public AudioClip turretGunSound;
+	public AudioClip turretDeadSound;
 
 
 	// Use this for initialization
@@ -73,6 +74,9 @@ public class EnemyTurretAI : MonoBehaviour {
 	
 	public void Die(){
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
+		if (turretDeadSound) {
+						AudioSource.PlayClipAtPoint (turretDeadSound, transform.position);
+				}
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}

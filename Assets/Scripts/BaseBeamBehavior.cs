@@ -91,6 +91,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				player.rigidbody.velocity = Vector3.zero;
 				player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
 				playerScript.shipTransform.localRotation = Quaternion.identity;
+				player.audio.Stop ();
 				audio.Play ();
 				StartCoroutine(BeamMeUp());
 			} else if(Input.GetKeyDown(KeyCode.P)){
@@ -153,8 +154,10 @@ public class BaseBeamBehavior : MonoBehaviour {
 		
 		for(int i = 0; i < 6; i ++){
 			items[i] = "Laser";
-			prices[i] = 10;
+			prices[i] = 30;
 		}
+
+
 		// populate shop item text
 		for(int i = 0; i < 7; i ++){
 			GameObject itemTextObj = new GameObject("HUD_itemText");
