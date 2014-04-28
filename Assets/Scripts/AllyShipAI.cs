@@ -26,17 +26,11 @@ public class AllyShipAI : ShipOrbitBehavior {
 		// load prefabs
 		Laser = (GameObject)Resources.Load("Laser_Green");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
-		
-		// set loot
-		if(Random.Range(0f,100f) < 20f){
-			Loot = (GameObject)Resources.Load("Health");
-		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
-
 
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
 		if(fireCoolDownRemaining < 0f && enemyCounter > 0){

@@ -154,8 +154,10 @@ public class BaseBeamBehavior : MonoBehaviour {
 		
 		for(int i = 0; i < 6; i ++){
 			items[i] = "Laser";
-			prices[i] = 10;
+			prices[i] = 30;
 		}
+
+
 		// populate shop item text
 		for(int i = 0; i < 7; i ++){
 			GameObject itemTextObj = new GameObject("HUD_itemText");
