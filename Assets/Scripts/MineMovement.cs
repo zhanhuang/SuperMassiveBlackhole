@@ -22,6 +22,10 @@ public class MineMovement : MonoBehaviour {
 		} else if(other.tag != mineOrigin && (other.tag == "Player" || other.tag == "Ally" || other.tag == "Enemy")){
 			Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 			Destroy(gameObject);
+		} else if(other.transform.GetComponent<LaserBehavior>() != null && other.transform.GetComponent<LaserBehavior>().laserOrigin == "Player" && mineOrigin == "Enemy"){
+			// player can shoot down enemy mines
+			Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
+			Destroy(gameObject);
 		}
 	}
 }

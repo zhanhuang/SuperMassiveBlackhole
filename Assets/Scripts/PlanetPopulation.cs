@@ -24,6 +24,7 @@ public class PlanetPopulation : MonoBehaviour {
 	// Prefabs
 	GameObject AllyShip;
 	GameObject EnemyShip;
+	GameObject EnemyShip2;
 	GameObject EnemyTurret;
 	GameObject BasePrefab;
 	GameObject Crater;
@@ -81,9 +82,17 @@ public class PlanetPopulation : MonoBehaviour {
 		
 		// generate enemy ships. Max 20 or will lag
 		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
+		EnemyShip2 = (GameObject)Resources.Load("Enemy_Ship_2");
 		for(int i = 0; i < planetRow * 2 + Random.Range(-1,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
-			GameObject nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
+			GameObject nextEnemyShip;
+			if(Random.Range(0,2) == 0){
+				nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
+				nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = false;
+			} else{
+				nextEnemyShip = (GameObject)Instantiate(EnemyShip2, transform.position + startDir * orbitLength, transform.rotation);
+				nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = true;
+			}
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
 			nextShipScript.level = planetRow;

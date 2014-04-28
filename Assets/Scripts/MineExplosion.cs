@@ -15,7 +15,7 @@ public class MineExplosion : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Enemy" || other.tag == "Ally" || other.tag == "Player"){
-			other.gameObject.SendMessage("TakeDamage", 1);
+			other.gameObject.SendMessage("TakeDamage", 2);
 		} else if(other.tag == "Destructible"){
 			Debug.Log("destruction!");
 			Destroy(other.gameObject);

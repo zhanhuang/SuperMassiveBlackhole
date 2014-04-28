@@ -13,15 +13,19 @@ public class EnemyShipAI : ShipOrbitBehavior {
 
 	float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
+	float mineCoolDown = 15f;
+	float mineCoolDownRemaining = 0f;
 	
 	bool flashing = false;
 
 	GameObject player;
 	GameObject Laser;
+	GameObject Mine;
 	GameObject Explosion;
 
 	// AI types
 	public string enemyType;	// random, chase
+	public bool mineEnabled = false;
 	bool chasing = false;
 	float chaseTimeLimit = 8f;
 	float chaseCountDown = 0f;
@@ -34,6 +38,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		
 		// load prefabs
 		Laser = (GameObject)Resources.Load("Laser_Red");
+		Mine = (GameObject)Resources.Load("Mine_Red");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
 		// set player
@@ -43,6 +48,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	// Update is called once per frame
 	void Update () {
 		fireCoolDownRemaining -= Time.deltaTime;
+		mineCoolDownRemaining -= Time.deltaTime;
 
 		if(enemyType == "random"){
 			if(fireCoolDownRemaining < 0f){
@@ -77,6 +83,11 @@ public class EnemyShipAI : ShipOrbitBehavior {
 			}
 		}
 
+		if(mineEnabled && mineCoolDownRemaining < 0f){
+			mineCoolDownRemaining = mineCoolDown;
+			GameObject nextmine = (GameObject)Instantiate(Mine, transform.position, transform.rotation);
+			nextmine.transform.GetComponent<MineMovement>().mineOrigin = "Enemy";
+		}
 	}
 
 	void FixedUpdate () {
