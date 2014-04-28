@@ -37,81 +37,79 @@ public class BaseBeamBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-<<<<<<< HEAD
-		if (!liftOff && Input.GetKeyDown(KeyCode.Space) && beamText.enabled){
-			liftOff = true;
-			beamText.enabled = false;
-			Destroy(player.GetComponent<ConfigurableJoint>());
-			playerScript.enabled = false;
-			player.rigidbody.velocity = Vector3.zero;
-			player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
-			playerScript.shipTransform.localRotation = Quaternion.identity;
-			player.audio.Stop ();
-			audio.Play ();
-			StartCoroutine(BeamMeUp());
-=======
-		if (shopping){
-			if(Input.GetKeyDown(KeyCode.P)){
-				shopping = false;
-				CloseDownShop();
-			} else if(Input.GetKeyDown(KeyCode.W)){
-				itemTexts[selectedIndex].fontSize = 24;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.black;
-				}
+		if (!liftOff && Input.GetKeyDown (KeyCode.Space) && beamText.enabled) {
+						liftOff = true;
+						beamText.enabled = false;
+						Destroy (player.GetComponent<ConfigurableJoint> ());
+						playerScript.enabled = false;
+						player.rigidbody.velocity = Vector3.zero;
+						player.position = new Vector3 (transform.position.x, player.transform.position.y, transform.position.z);
+						playerScript.shipTransform.localRotation = Quaternion.identity;
+						player.audio.Stop ();
+						audio.Play ();
+						StartCoroutine (BeamMeUp ());
+						if (shopping) {
+								if (Input.GetKeyDown (KeyCode.P)) {
+										shopping = false;
+										CloseDownShop ();
+								} else if (Input.GetKeyDown (KeyCode.W)) {
+										itemTexts [selectedIndex].fontSize = 24;
+										if (itemTexts [selectedIndex].text != "sold out") {
+												itemTexts [selectedIndex].color = Color.black;
+										}
 
-				selectedIndex --;
-				if(selectedIndex < 0){
-					selectedIndex = 5;
-				}
+										selectedIndex --;
+										if (selectedIndex < 0) {
+												selectedIndex = 5;
+										}
 
-				itemTexts[selectedIndex].fontSize = 28;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.green;
-				}
-			} else if(Input.GetKeyDown(KeyCode.S)){
-				itemTexts[selectedIndex].fontSize = 24;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.black;
-				}
+										itemTexts [selectedIndex].fontSize = 28;
+										if (itemTexts [selectedIndex].text != "sold out") {
+												itemTexts [selectedIndex].color = Color.green;
+										}
+								} else if (Input.GetKeyDown (KeyCode.S)) {
+										itemTexts [selectedIndex].fontSize = 24;
+										if (itemTexts [selectedIndex].text != "sold out") {
+												itemTexts [selectedIndex].color = Color.black;
+										}
 
-				selectedIndex ++;
-				if(selectedIndex > 5){
-					selectedIndex = 0;
-				}
+										selectedIndex ++;
+										if (selectedIndex > 5) {
+												selectedIndex = 0;
+										}
 
-				itemTexts[selectedIndex].fontSize = 28;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.green;
-				}
-			} else if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
-				if(playerScript.currency >= prices[selectedIndex] && itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].text = "sold out";
-					itemTexts[selectedIndex].color = Color.red;
-					playerScript.PurchaseItem(items[selectedIndex], prices[selectedIndex]);
-				}
-			}
-			return;
-		}
+										itemTexts [selectedIndex].fontSize = 28;
+										if (itemTexts [selectedIndex].text != "sold out") {
+												itemTexts [selectedIndex].color = Color.green;
+										}
+								} else if (Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.Return)) {
+										if (playerScript.currency >= prices [selectedIndex] && itemTexts [selectedIndex].text != "sold out") {
+												itemTexts [selectedIndex].text = "sold out";
+												itemTexts [selectedIndex].color = Color.red;
+												playerScript.PurchaseItem (items [selectedIndex], prices [selectedIndex]);
+										}
+								}
+								return;
+						}
 
-		if (!liftOff && beamText.enabled){
-			if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
-				liftOff = true;
-				beamText.enabled = false;
-				Destroy(player.GetComponent<ConfigurableJoint>());
-				playerScript.DisableShield();
-				playerScript.enabled = false;
-				player.rigidbody.velocity = Vector3.zero;
-				player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
-				playerScript.shipTransform.localRotation = Quaternion.identity;
-				audio.Play ();
-				StartCoroutine(BeamMeUp());
-			} else if(Input.GetKeyDown(KeyCode.P)){
-				shopping = true;
-				OpenUpShop();
-			}
->>>>>>> ee7fd688bb40cd090bf3b42c16674b85acacbc81
-		}
+						if (!liftOff && beamText.enabled) {
+								if (Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.Return)) {
+										liftOff = true;
+										beamText.enabled = false;
+										Destroy (player.GetComponent<ConfigurableJoint> ());
+										playerScript.DisableShield ();
+										playerScript.enabled = false;
+										player.rigidbody.velocity = Vector3.zero;
+										player.position = new Vector3 (transform.position.x, player.transform.position.y, transform.position.z);
+										playerScript.shipTransform.localRotation = Quaternion.identity;
+										audio.Play ();
+										StartCoroutine (BeamMeUp ());
+								} else if (Input.GetKeyDown (KeyCode.P)) {
+										shopping = true;
+										OpenUpShop ();
+								}
+						}
+				}
 
 		if (inSpace){
 			// adjust rotation so camera faces target planet
