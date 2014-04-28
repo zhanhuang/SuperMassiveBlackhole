@@ -15,8 +15,11 @@ public class BaseBeamBehavior : MonoBehaviour {
 	GameObject[] surroundingPlanets;
 	int lookingPlanet = 0;
 	
-	// TODO: available weapons in shop
-	public GUIText[] itemTexts;
+	// shop
+	string[] items = new string[6];
+	int[] prices = new int[6];
+	public GUIText[] itemTexts = new GUIText[7];
+	int selectedIndex = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -35,12 +38,51 @@ public class BaseBeamBehavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (shopping){
+			if(Input.GetKeyDown(KeyCode.P)){
+				shopping = false;
+				CloseDownShop();
+			} else if(Input.GetKeyDown(KeyCode.W)){
+				itemTexts[selectedIndex].fontSize = 24;
+				if(itemTexts[selectedIndex].text != "sold out"){
+					itemTexts[selectedIndex].color = Color.black;
+				}
 
+				selectedIndex --;
+				if(selectedIndex < 0){
+					selectedIndex = 5;
+				}
+
+				itemTexts[selectedIndex].fontSize = 28;
+				if(itemTexts[selectedIndex].text != "sold out"){
+					itemTexts[selectedIndex].color = Color.green;
+				}
+			} else if(Input.GetKeyDown(KeyCode.S)){
+				itemTexts[selectedIndex].fontSize = 24;
+				if(itemTexts[selectedIndex].text != "sold out"){
+					itemTexts[selectedIndex].color = Color.black;
+				}
+
+				selectedIndex ++;
+				if(selectedIndex > 5){
+					selectedIndex = 0;
+				}
+
+				itemTexts[selectedIndex].fontSize = 28;
+				if(itemTexts[selectedIndex].text != "sold out"){
+					itemTexts[selectedIndex].color = Color.green;
+				}
+			} else if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
+				if(playerScript.currency >= prices[selectedIndex] && itemTexts[selectedIndex].text != "sold out"){
+					itemTexts[selectedIndex].text = "sold out";
+					itemTexts[selectedIndex].color = Color.red;
+					playerScript.PurchaseItem(items[selectedIndex], prices[selectedIndex]);
+				}
+			}
 			return;
 		}
 
 		if (!liftOff && beamText.enabled){
-			if(Input.GetKeyDown(KeyCode.Space)){
+			if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
 				liftOff = true;
 				beamText.enabled = false;
 				Destroy(player.GetComponent<ConfigurableJoint>());
@@ -53,8 +95,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				StartCoroutine(BeamMeUp());
 			} else if(Input.GetKeyDown(KeyCode.P)){
 				shopping = true;
-
-
+				OpenUpShop();
 			}
 		}
 
@@ -79,7 +120,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				} else{
 					lookingPlanet ++;
 				}
-			} else if (Input.GetKeyDown(KeyCode.Space)){
+			} else if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
 				player.position = surroundingPlanets[lookingPlanet].transform.position + new Vector3(0f,200f,0f);
 				playerScript.enabled = true;
 				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().HideBeam();
@@ -109,27 +150,57 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	public void EnableShop(){
 		shopEnabled = true;
-		itemTexts = new GUIText[6];
-		// populate shop item text
+		
 		for(int i = 0; i < 6; i ++){
+			items[i] = "Laser";
+			prices[i] = 10;
+		}
+		// populate shop item text
+		for(int i = 0; i < 7; i ++){
 			GameObject itemTextObj = new GameObject("HUD_itemText");
 			itemTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 			GUIText nextItemText = (GUIText)itemTextObj.AddComponent(typeof(GUIText));
-			nextItemText.anchor = TextAnchor.UpperLeft;
-			nextItemText.pixelOffset = new Vector2(0f, Screen.height/2 + 30f - (i * 10f));
-			nextItemText.fontSize = 18;
-			nextItemText.color = Color.white;
-			nextItemText.text = "";
+			nextItemText.anchor = TextAnchor.MiddleCenter;
+			nextItemText.fontSize = 24;
+			nextItemText.color = Color.black;
+			if(i < 6){
+				nextItemText.pixelOffset = new Vector2(0f, 90f - (i * 30f));
+				nextItemText.text = items[i].PadRight(10) + prices[i].ToString().PadRight(4);
+			} else{
+				nextItemText.pixelOffset = new Vector2(0f, - Screen.height/2 + 30f);
+				nextItemText.text = "Press [P] To Close Shop";
+			}
 			nextItemText.enabled = false;
 			itemTexts[i] = nextItemText;
 		}
+
+		
+		itemTexts[0].fontSize = 28;
+		itemTexts[0].color = Color.green;
+	}
+
+	void OpenUpShop(){
+		playerScript.enabled = false;
+		player.rigidbody.velocity = Vector3.zero;
+		player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
+		beamText.enabled = false;
+		foreach(GUIText text in itemTexts){
+			text.enabled = true;
+		}
+	}
+
+	void CloseDownShop(){
+		playerScript.enabled = true;
+		foreach(GUIText text in itemTexts){
+			text.enabled = false;
+		}
+		beamText.enabled = true;
 	}
 
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Player"){
 			if(shopEnabled){
 				beamText.text = "Press [Space] To Engage Planar Drive\nPress [P] To Open Shop";
-//				beamText.text = "Press [Space] To Engage Planar Drive\n(Shop Temporarily Closed)";
 			}
 			beamText.enabled = true;
 			player = other.transform;

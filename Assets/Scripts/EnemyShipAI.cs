@@ -55,7 +55,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 				AutoFire();
 				fireCoolDownRemaining = fireCoolDown;
 			}
-			return;
 		}else if(enemyType == "chase"){
 			// chasing fire pattern
 			RaycastHit hit = new RaycastHit();

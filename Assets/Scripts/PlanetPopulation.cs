@@ -173,7 +173,7 @@ public class PlanetPopulation : MonoBehaviour {
 				// boss planet
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
 				BaseBeam.collider.enabled = false;
-			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
+			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0) || planetType == -1){
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);

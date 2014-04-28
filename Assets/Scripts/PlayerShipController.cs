@@ -6,9 +6,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public GalaxyPopulation Galaxy;
 
 	// shop
-	public int currency = 0;
-	public int laserLevelStraight = 0;
-	public int laserLevelSpead = 0;
+	public int currency = 30;
+	public int laserLevel = 0;
 	public int bombLevel = 0;
 	public int mineLevel = 0;
 	public int mineCharges = 0;
@@ -401,6 +400,22 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		}
 	}
+	
+	public void PurchaseItem(string item, int price){
+		currency -= price;
+		currencyText.text = "CURRENCY: " + currency;
+
+		switch(item){
+		case "Laser":
+			laserLevel ++;
+			break;
+		case "Bomb":
+			bombLevel++;
+			break;
+		default:
+			break;
+		}
+	}
 
 	void OnCollisionEnter(Collision collision){
 		// take damage upon hitting a ship
@@ -414,11 +429,38 @@ public class PlayerShipController : ShipOrbitBehavior {
 	void FireLaser(){
 		audio.PlayOneShot (gunSound);
 
-		GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-		nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-		nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
-		nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-		nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Player";
-		nextLaser.GetComponent<LaserBehavior>().laserSpeed = 60f;
+		switch(laserLevel){
+		case 0:
+			CreateLaser(0f, 0f);
+			break;
+		case 1:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0.6f, 0f);
+			break;
+		case 2:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0.6f, 0f);
+			CreateLaser(-1.5f, -30f);
+			CreateLaser(1.5f, 30f);
+			break;
+		default:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0f, 0f);
+			CreateLaser(0.6f, 0f);
+			CreateLaser(-1.5f, -30f);
+			CreateLaser(1.5f, 30f);
+			break;
+		}
+	}
+
+	void CreateLaser(float offsetRight, float rotateRight){
+		Vector3 location =  transform.position + transform.right.normalized * offsetRight;
+		GameObject nextLaser = (GameObject)Instantiate(Laser, location, transform.rotation);
+		nextLaser.transform.Rotate(new Vector3(90f, rotateRight,0f));
+		LaserBehavior laserScript = nextLaser.GetComponent<LaserBehavior>();
+		laserScript.laserPath = "orbit";
+		laserScript.gravityCenter = currentPlanet.transform.position;
+		laserScript.laserOrigin = "Player";
+		laserScript.laserSpeed = 60f;
 	}
 }
