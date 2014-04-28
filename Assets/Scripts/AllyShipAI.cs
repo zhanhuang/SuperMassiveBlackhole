@@ -17,10 +17,6 @@ public class AllyShipAI : ShipOrbitBehavior {
 	GameObject Laser;
 	GameObject Explosion;
 	
-	// Loot
-	GameObject Loot;
-	
-	
 	// Use this for initialization
 	void Start () {
 		OrbitSetup();
@@ -85,9 +81,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 	}
 	
 	public void Die(){
-		if(Loot != null){
-			Instantiate (Loot, transform.position, transform.rotation);
-		}
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}

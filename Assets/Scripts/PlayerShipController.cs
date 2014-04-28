@@ -323,6 +323,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 			return;
 		}
 		health -= damage;
+		if(health < 0){
+			health = 0;
+		}
 		healthText.text = "HEALTH: " + health;
 
 		if(health <= 0){
@@ -452,16 +455,24 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		case 2:
 			CreateLaser(-0.6f, 0f);
+			CreateLaser(0f, 0f);
 			CreateLaser(0.6f, 0f);
-			CreateLaser(-1.5f, -30f);
-			CreateLaser(1.5f, 30f);
+			break;
+		case 3:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0f, 0f);
+			CreateLaser(0.6f, 0f);
+			CreateLaser(-1.5f, -15f);
+			CreateLaser(1.5f, 15f);
 			break;
 		default:
 			CreateLaser(-0.6f, 0f);
 			CreateLaser(0f, 0f);
 			CreateLaser(0.6f, 0f);
-			CreateLaser(-1.5f, -30f);
-			CreateLaser(1.5f, 30f);
+			CreateLaser(-1.5f, -15f);
+			CreateLaser(1.5f, 15f);
+			CreateLaser(-2f, -30f);
+			CreateLaser(2f, 30f);
 			break;
 		}
 	}
