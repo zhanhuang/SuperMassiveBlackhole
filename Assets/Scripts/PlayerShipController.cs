@@ -51,6 +51,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
+	public AudioClip healthSound;
+
+	int soundCount = 0;
 
 
 	// Use this for initialization
@@ -172,6 +175,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 				DisableShield();
 			}
 		}
+
+		//sound plays on initial player movement
+		if (soundCount == 0) {
+			if (Input.GetKeyDown (KeyCode.W)) {
+				audio.Play();
+				soundCount += 1;
+				}
+			}
 		
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
 
@@ -391,6 +402,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		case "Health":
 			health += lootValue;
 			healthText.text = "HEALTH: " + health;
+			audio.PlayOneShot (healthSound);
 			break;
 		case "Currency":
 			currency += lootValue;
