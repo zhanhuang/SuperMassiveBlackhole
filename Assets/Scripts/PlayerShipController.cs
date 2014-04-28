@@ -350,6 +350,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	public void Die(){
+		currentPlanet.GetComponent<PlanetPopulation> ().audio.Stop ();
 		Destroy(transform.Find("Ship").gameObject);
 		transform.collider.enabled = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
