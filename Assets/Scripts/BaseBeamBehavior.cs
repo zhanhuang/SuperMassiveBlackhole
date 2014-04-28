@@ -10,12 +10,12 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	bool liftOff = false;
 	bool inSpace = false;
+	bool shopping = false;
 
 	GameObject[] surroundingPlanets;
 	int lookingPlanet = 0;
 	
 	// TODO: available weapons in shop
-	
 	public GUIText[] itemTexts;
 
 	// Use this for initialization
@@ -34,16 +34,28 @@ public class BaseBeamBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!liftOff && Input.GetKeyDown(KeyCode.Space) && beamText.enabled){
-			liftOff = true;
-			beamText.enabled = false;
-			Destroy(player.GetComponent<ConfigurableJoint>());
-			playerScript.enabled = false;
-			player.rigidbody.velocity = Vector3.zero;
-			player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
-			playerScript.shipTransform.localRotation = Quaternion.identity;
-			audio.Play ();
-			StartCoroutine(BeamMeUp());
+		if (shopping){
+
+			return;
+		}
+
+		if (!liftOff && beamText.enabled){
+			if(Input.GetKeyDown(KeyCode.Space)){
+				liftOff = true;
+				beamText.enabled = false;
+				Destroy(player.GetComponent<ConfigurableJoint>());
+				playerScript.DisableShield();
+				playerScript.enabled = false;
+				player.rigidbody.velocity = Vector3.zero;
+				player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
+				playerScript.shipTransform.localRotation = Quaternion.identity;
+				audio.Play ();
+				StartCoroutine(BeamMeUp());
+			} else if(Input.GetKeyDown(KeyCode.P)){
+				shopping = true;
+
+
+			}
 		}
 
 		if (inSpace){
@@ -70,6 +82,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			} else if (Input.GetKeyDown(KeyCode.Space)){
 				player.position = surroundingPlanets[lookingPlanet].transform.position + new Vector3(0f,200f,0f);
 				playerScript.enabled = true;
+				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().HideBeam();
 				playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
 				playerScript.OrbitSetup();
 				playerScript.ActivateShield(2f);
@@ -96,6 +109,20 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	public void EnableShop(){
 		shopEnabled = true;
+		itemTexts = new GUIText[6];
+		// populate shop item text
+		for(int i = 0; i < 6; i ++){
+			GameObject itemTextObj = new GameObject("HUD_itemText");
+			itemTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+			GUIText nextItemText = (GUIText)itemTextObj.AddComponent(typeof(GUIText));
+			nextItemText.anchor = TextAnchor.UpperLeft;
+			nextItemText.pixelOffset = new Vector2(0f, Screen.height/2 + 30f - (i * 10f));
+			nextItemText.fontSize = 18;
+			nextItemText.color = Color.white;
+			nextItemText.text = "";
+			nextItemText.enabled = false;
+			itemTexts[i] = nextItemText;
+		}
 	}
 
 	void OnTriggerEnter(Collider other){

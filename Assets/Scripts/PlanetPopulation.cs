@@ -51,10 +51,20 @@ public class PlanetPopulation : MonoBehaviour {
 
 	// Called From GalaxyPopulation
 	public void PopulatePlanet(){
-		if(beamActivated && planetType != -2){
+		if(planetType == -2){
+			HideBeam();
+		} else{
+			// turn off outline upon entering planet
+			transform.FindChild("Outline").renderer.enabled = false;
+		}
+
+		if(beamActivated){
 			// planet cleared
+			ShowBeam();
 			return;
 		}
+
+
 		
 		
 		// generate destructable structures
@@ -63,7 +73,7 @@ public class PlanetPopulation : MonoBehaviour {
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextCrater = (GameObject)Instantiate(Crater, transform.position + startDir * surfaceLength, transform.rotation);
 			nextCrater.transform.up = nextCrater.transform.position - transform.position;
-			generateLoot(startDir,planetRow + 1);
+			GenerateLoot(startDir,planetRow + 1);
 		}
 		
 		// generate enemy ships. Max 20 or will lag
@@ -108,7 +118,7 @@ public class PlanetPopulation : MonoBehaviour {
 				AllyShipAI nextShipScript = nextAllyShip.transform.GetComponent<AllyShipAI>();
 				nextShipScript.currentPlanet = gameObject;
 				nextShipScript.level = planetRow;
-				nextShipScript.health = 5;
+				nextShipScript.health = 3;
 				AllyCounter++;
 			}
 		}
@@ -123,6 +133,9 @@ public class PlanetPopulation : MonoBehaviour {
 		if(EnemyCounter <= 0){
 			if(planetType == -2){
 				// WIN
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
+				ShowBeam();
 				GameObject winTextObj = new GameObject("HUD_winText");
 				winTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 				GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
@@ -138,7 +151,6 @@ public class PlanetPopulation : MonoBehaviour {
 	}
 
 	public void ActivateBeam(){
-
 		if(!beamActivated){
 			// run activation animation only once
 			beamActivated = true;
@@ -152,8 +164,10 @@ public class PlanetPopulation : MonoBehaviour {
 			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
+				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
 			} else{
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 
 			StartCoroutine(ExpandBeam());
@@ -162,13 +176,13 @@ public class PlanetPopulation : MonoBehaviour {
 	
 	IEnumerator ExpandBeam() {
 		// animate the activation of the beam
+		if(planetType != -2){
+			transform.FindChild("ClearPulse").renderer.enabled = true;
+		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
 			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 150f, BaseBeam.localPosition.z);
 			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x, BaseBeam.localScale.y + Time.deltaTime * 300f, BaseBeam.localScale.z);
 			yield return null;
-		}
-		if(planetType != -2){
-			transform.FindChild("ClearPulse").renderer.enabled = true;
 		}
 		transform.GetComponentInChildren<Animation>().Play();
 		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
@@ -176,8 +190,20 @@ public class PlanetPopulation : MonoBehaviour {
 			yield return null;
 		}
 	}
+	
+	public void HideBeam(){
+		BaseBeam.renderer.enabled = false;
+		transform.FindChild("ClearPulse").renderer.enabled = false;
+		transform.FindChild("Outline").renderer.enabled = true;
+	}
 
-	public void generateLoot(Vector3 direction, int level) {
+	public void ShowBeam(){
+		BaseBeam.renderer.enabled = true;
+		transform.FindChild("ClearPulse").renderer.enabled = true;
+		transform.FindChild("Outline").renderer.enabled = false;
+	}
+
+	public void GenerateLoot(Vector3 direction, int level) {
 
 	}
 }

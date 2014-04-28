@@ -159,14 +159,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			shieldTimeRemaining -= Time.deltaTime;
 			shieldText.text = "SHIELD ENGAGED. TIME LEFT: " + shieldTimeRemaining.ToString("F2");
 			if(shieldTimeRemaining <= 0f){
-				transform.FindChild("Shield").renderer.enabled = false;
-				transform.FindChild("Shield").collider.enabled = false;
-				shieldText.text = "SHIELD CHARGES: " + shieldCharges;
-				if(shieldCharges == 0){
-					shieldText.color = Color.red;
-				} else{
-					shieldText.color = Color.green;
-				}
+				DisableShield();
 			}
 		}
 		
@@ -359,6 +352,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 		shieldTimeRemaining = shieldTime;
 	}
 
+	public void DisableShield(){
+		transform.FindChild("Shield").renderer.enabled = false;
+		transform.FindChild("Shield").collider.enabled = false;
+		shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+		if(shieldCharges == 0){
+			shieldText.color = Color.red;
+		} else{
+			shieldText.color = Color.green;
+		}
+	}
+	
 	void OnTriggerEnter(Collider other){
 		if (other.tag == "Health") {
 			health += 1;

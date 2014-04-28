@@ -43,7 +43,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 
 
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
-		if(fireCoolDownRemaining < 0f && enemyCounter < 0){
+		if(fireCoolDownRemaining < 0f && enemyCounter > 0){
 			AutoFire();
 			fireCoolDownRemaining = fireCoolDown;
 		}
