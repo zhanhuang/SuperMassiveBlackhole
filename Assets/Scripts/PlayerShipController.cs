@@ -6,7 +6,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public GalaxyPopulation Galaxy;
 
 	// shop
-	public int darkMatterOrbs = 0;		// money
+	public int currency = 0;
 	public int laserLevelStraight = 0;
 	public int laserLevelSpead = 0;
 	public int bombLevel = 0;
@@ -43,6 +43,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	int health = 5;
 	GUIText healthText;
+	GUIText currencyText;
 	GUIText heatText;
 	GUIText shieldText;
 	GUIText weaponText;
@@ -81,6 +82,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 		healthText.fontSize = 18;
 		healthText.color = Color.green;
 		healthText.text = "HEALTH: " + health;
+		
+		GameObject currencyTextObj = new GameObject("HUD_currencyCounter");
+		currencyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		currencyText = (GUIText)currencyTextObj.AddComponent(typeof(GUIText));
+		currencyText.pixelOffset = new Vector2(-Screen.width/2 + 40f, - Screen.height/2 + 30f);
+		currencyText.fontSize = 18;
+		currencyText.color = Color.yellow;
+		currencyText.text = "CURRENCY: " + currency;
 		
 		// overheat meter
 		// TODO: Have a bar for this
@@ -373,12 +382,23 @@ public class PlayerShipController : ShipOrbitBehavior {
 			shieldText.color = Color.green;
 		}
 	}
-	
-	void OnTriggerEnter(Collider other){
-		if (other.tag == "Health") {
-			health += 1;
+
+	public void GetLoot(string lootType, int lootValue){
+		if(lootValue < 0){
+			return;
+		}
+
+		switch (lootType){
+		case "Health":
+			health += lootValue;
 			healthText.text = "HEALTH: " + health;
-			Destroy (other.gameObject);
+			break;
+		case "Currency":
+			currency += lootValue;
+			currencyText.text = "CURRENCY: " + currency;
+			break;
+		default:
+			break;
 		}
 	}
 

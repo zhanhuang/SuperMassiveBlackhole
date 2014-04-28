@@ -26,10 +26,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	float chaseTimeLimit = 8f;
 	float chaseCountDown = 0f;
 
-	// Loot
-	GameObject Loot;
-
-
 	// Use this for initialization
 	void Start () {
 		OrbitSetup();
@@ -42,11 +38,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 
 		// set player
 		player = GameObject.FindGameObjectWithTag("Player");
-
-		// set loot
-		if(Random.Range(0f,100f) < 20f){
-			Loot = (GameObject)Resources.Load("Health");
-		}
 	}
 	
 	// Update is called once per frame
@@ -143,9 +134,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		if(Loot != null){
-			Instantiate (Loot, transform.position, transform.rotation);
-		}
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
