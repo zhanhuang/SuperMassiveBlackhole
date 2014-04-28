@@ -1,25 +1,34 @@
 fileFormatVersion: 2
-guid: 2b7a4e364fafe5643b6645dc3244e22b
+guid: 7fb364e9300504dd6916c868d3aeea60
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: Mine
-    100004: Mine1
-    400000: //RootNode
-    400002: Mine
-    400004: Mine1
-    2300000: //RootNode
-    2300002: Mine
-    2300004: Mine1
-    3300000: //RootNode
-    3300002: Mine
-    3300004: Mine1
-    4300000: Mine
-    4300002: Mine1
+    100000: ConstructGroup
+    100002: pCylinder1
+    100004: Spike
+    100006: SpikeGroup
+    100008: SpikeOutline
+    100010: //RootNode
+    400000: ConstructGroup
+    400002: pCylinder1
+    400004: Spike
+    400006: SpikeGroup
+    400008: SpikeOutline
+    400010: //RootNode
+    2300000: ConstructGroup
+    2300002: pCylinder1
+    2300004: Spike
+    2300006: SpikeOutline
+    3300000: ConstructGroup
+    3300002: pCylinder1
+    3300004: Spike
+    3300006: SpikeOutline
+    4300000: pCylinder1
+    4300002: ConstructGroup
+    4300004: Spike
+    4300006: SpikeOutline
     7400000: Take 001
     9500000: //RootNode
-    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -34,39 +43,7 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: Take 001
-      takeName: Take 001
-      firstFrame: 1
-      lastFrame: 72
-      wrapMode: 2
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: Mine
-        weight: 1
-      - path: Mine1
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
+    clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -102,6 +79,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 1
+  animationType: 2
   additionalBone: 0
   userData: 

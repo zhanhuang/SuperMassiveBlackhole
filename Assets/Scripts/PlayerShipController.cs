@@ -37,6 +37,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	GameObject Laser;
 	GameObject Bomb;
+	GameObject Mine;
 
 	bool flashing = false;
 
@@ -63,6 +64,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// load prefab
 		Bomb = (GameObject)Resources.Load("Bomb");
 		Laser = (GameObject)Resources.Load("Laser_Blue");
+		Mine = (GameObject)Resources.Load("Mine_Yellow");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
 		// set camera
@@ -198,6 +200,15 @@ public class PlayerShipController : ShipOrbitBehavior {
 					shieldCharges --;
 					ActivateShield(shieldLimit);
 				}
+			}
+
+			// setting mine
+			if (Input.GetKeyDown (KeyCode.I)) {
+//				if(mineCharges > 0){
+					mineCharges --;
+					GameObject nextmine = (GameObject)Instantiate(Mine, transform.position, transform.rotation);
+					nextmine.transform.GetComponent<MineMovement>().mineOrigin = "Player";
+//				}
 			}
 		} else{
 			//TODO: show overheat meter
