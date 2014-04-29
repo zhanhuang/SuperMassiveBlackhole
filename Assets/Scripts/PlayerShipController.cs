@@ -88,7 +88,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		GameObject currencyTextObj = new GameObject("HUD_currencyCounter");
 		currencyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		currencyText = (GUIText)currencyTextObj.AddComponent(typeof(GUIText));
-		currencyText.pixelOffset = new Vector2(-Screen.width/2 + 40f, - Screen.height/2 + 30f);
+		currencyText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 60f);
 		currencyText.fontSize = 18;
 		currencyText.color = Color.yellow;
 		currencyText.text = "CURRENCY: " + currency;
@@ -108,10 +108,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		GameObject shieldTextObj = new GameObject("HUD_shieldCounter");
 		shieldTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		shieldText = (GUIText)shieldTextObj.AddComponent(typeof(GUIText));
-		shieldText.anchor = TextAnchor.UpperLeft;
-		shieldText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 60f);
+		shieldText.anchor = TextAnchor.UpperRight;
+		shieldText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 60f);
 		shieldText.fontSize = 18;
-		shieldText.color = Color.green;
+		shieldText.color = Color.magenta;
 		shieldText.text = "";
 		if(shieldCharges > 0){
 			shieldText.text = "SHIELD CHARGES: " + shieldCharges;
@@ -120,10 +120,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		GameObject mineTextObj = new GameObject("HUD_mineCounter");
 		mineTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		mineText = (GUIText)mineTextObj.AddComponent(typeof(GUIText));
-		mineText.anchor = TextAnchor.UpperLeft;
-		mineText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 90f);
+		mineText.anchor = TextAnchor.UpperRight;
+		mineText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 90f);
 		mineText.fontSize = 18;
-		mineText.color = Color.green;
+		mineText.color = Color.magenta;
 		mineText.text = "";
 		if(mineCharges > 0){
 			mineText.text = "MINE CHARGES: " + mineCharges;

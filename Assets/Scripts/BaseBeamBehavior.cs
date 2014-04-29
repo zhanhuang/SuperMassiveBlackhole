@@ -39,10 +39,10 @@ public class BaseBeamBehavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (shopping){
-			if(Input.GetKeyDown(KeyCode.P)){
+			if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){
 				shopping = false;
 				CloseDownShop();
-			} else if(Input.GetKeyDown(KeyCode.W)){
+			} else if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)){
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex --;
@@ -51,7 +51,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				}
 
 				HighLight(selectedIndex);
-			} else if(Input.GetKeyDown(KeyCode.S)){
+			} else if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)){
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex ++;
@@ -170,6 +170,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				nextItemText.pixelOffset = new Vector2(-160f, 90f - (i * 30f));
 				nextItemText.text = items[i];
 			} else{
+				nextItemText.anchor = TextAnchor.MiddleCenter;
 				nextItemText.pixelOffset = new Vector2(0f, - Screen.height/2 + 30f);
 				nextItemText.text = "Press [P] To Close Shop";
 			}
