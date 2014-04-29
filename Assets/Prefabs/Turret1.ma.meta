@@ -131,8 +131,9 @@ ModelImporter:
     4300030: polySurface26
     4300032: polySurface27
     4300034: polySurface28
-    7400000: Take 001
+    7400000: Turret Rotate
     9500000: //RootNode
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -149,10 +150,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: Turret Rotate
       takeName: Take 001
       firstFrame: 1
-      lastFrame: 96
+      lastFrame: 100
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -217,6 +218,6 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 1
   additionalBone: 0
   userData: 
