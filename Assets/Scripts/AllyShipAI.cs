@@ -48,10 +48,11 @@ public class AllyShipAI : ShipOrbitBehavior {
 	IEnumerator AvoidObstacle(){
 		while(true){
 			RaycastHit hit = new RaycastHit();
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 10f)){
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 40f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Enemy"){
-					rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * speed * 10f, ForceMode.VelocityChange);
+					rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * speed * 50f, ForceMode.VelocityChange);
+					rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * 20f, ForceMode.Force);
 				}
 			}
 			yield return new WaitForSeconds(1f);

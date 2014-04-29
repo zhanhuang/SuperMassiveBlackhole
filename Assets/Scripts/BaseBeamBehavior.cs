@@ -93,7 +93,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			// adjust rotation so camera faces target planet
 			Vector3 lookDirection = surroundingPlanets[lookingPlanet].transform.position - player.position;
 			Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
-			targetRotation *= Quaternion.Inverse(player.GetChild(0).localRotation);
+			targetRotation *= Quaternion.Inverse(player.FindChild("Camera").localRotation);
 			player.rotation = Quaternion.Lerp(player.rotation, targetRotation, Time.deltaTime * 6f);
 			if (Input.GetKeyDown(KeyCode.A)){
 				if(lookingPlanet == 0){

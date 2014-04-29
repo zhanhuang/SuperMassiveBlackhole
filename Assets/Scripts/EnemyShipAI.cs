@@ -92,9 +92,12 @@ public class EnemyShipAI : ShipOrbitBehavior {
 
 	void FixedUpdate () {
 		if(!chasing || (player.transform.position - transform.position).magnitude > 15f){
+			// random walk if chasing or not in range
 			if(rigidbody.velocity.z < 10f){
 				rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
 			}
+		} else if (chasing){
+			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * 4f, ForceMode.Force);
 		}
 		if(chasing){
 			// chase player
@@ -118,10 +121,11 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	IEnumerator AvoidObstacle(){
 		while(true){
 			RaycastHit hit = new RaycastHit();
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 15f)){
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 40f)){
 				// check if the player is in front
-				if (hit.transform.tag != "Player"){
-					rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * speed * 10f, ForceMode.VelocityChange);
+				if (hit.transform.tag != "Player" && hit.transform.tag != "Ally"){
+					rigidbody.AddForce(-transform.forward.normalized * speed * 50f, ForceMode.VelocityChange);
+					rigidbody.AddTorque(transform.up.normalized * turnSpeed * 50f, ForceMode.VelocityChange);
 				}
 			}
 			yield return new WaitForSeconds(1f);

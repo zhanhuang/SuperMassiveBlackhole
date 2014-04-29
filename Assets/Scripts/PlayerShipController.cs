@@ -5,23 +5,29 @@ using System.Collections;
 public class PlayerShipController : ShipOrbitBehavior {
 	public GalaxyPopulation Galaxy;
 
-	// shop
+	// shop and weapons
 	public int currency = 30;
+
 	int laserLevel = 1;
+
 	int bombLevel = 1;
-	int deathRayLevel = 0;
-	int pulseWeaponLevel = 0;
-	int flamethrowerLevel = 0;
-	
-	public float overHeatLimit = 5f;
-	float overHeatMeter = 0f;
-	float coolOffCounter = 0f;
 
 	int shieldCharges = 2;
 	float shieldLimit = 3f;
 	float shieldTimeRemaining = 0f;
+	
+	int deathRayLevel = 0;
 
 	int mineCharges = 2;
+
+	int EMPLevel = 1;
+	bool EMPActivated = false;
+	
+
+	// overheat
+	public float overHeatLimit = 5f;
+	float overHeatMeter = 0f;
+	float coolOffCounter = 0f;
 
 	// ship stat variables
 	float acceleration = 50f;
@@ -72,7 +78,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		// set camera
 		shipTransform = transform.FindChild("Ship");
-		playerCamera = transform.GetChild(0).gameObject;
+		playerCamera = transform.FindChild("Camera").gameObject;
 		cameraStartingLocalPosition = playerCamera.transform.localPosition;
 		
 		// health counter 
@@ -228,6 +234,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 					ActivateShield(shieldLimit);
 				}
 			}
+			
+			// death ray
+			if (Input.GetKeyDown (KeyCode.U)) {
+
+			}
 
 			// setting mine
 			if (Input.GetKeyDown (KeyCode.I)) {
@@ -239,6 +250,15 @@ public class PlayerShipController : ShipOrbitBehavior {
 					mineText.text = "MINE CHARGES: " + mineCharges;
 					GameObject nextmine = (GameObject)Instantiate(Mine, transform.position, transform.rotation);
 					nextmine.transform.GetComponent<MineMovement>().mineOrigin = "Player";
+				}
+			}
+
+			// EMP
+			if (Input.GetKeyDown (KeyCode.O)) {
+				if(shieldCharges > 0 && EMPLevel > 0 && !EMPActivated){
+					shieldCharges --;
+					shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+					StartCoroutine(ActivateEMP());
 				}
 			}
 		} else{
@@ -257,7 +277,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 //		// zoom camera according to speed. TODO: decide if we want this in or not
 //		Vector3 adjustedCameraRotation = new Vector3(cameraStartingLocalPosition.x, cameraStartingLocalPosition.y - forwardVelocity, cameraStartingLocalPosition.z + forwardVelocity);
-//		transform.GetChild(0).transform.localPosition = adjustedCameraRotation;
+//		transform.FindChild("Camera").transform.localPosition = adjustedCameraRotation;
 
 		// update heat text
 		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
@@ -391,45 +411,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		restartText.fontSize = 14;
 		restartText.enabled = true;
 	}
-	
-	public void ActivateShield(float shieldTime){
-		shieldText.color = Color.cyan;
-		transform.FindChild("Shield").renderer.enabled = true;
-		transform.FindChild("Shield").collider.enabled = true;
-		shieldTimeRemaining = shieldTime;
-	}
-
-	public void DisableShield(){
-		transform.FindChild("Shield").renderer.enabled = false;
-		transform.FindChild("Shield").collider.enabled = false;
-		shieldText.text = "SHIELD CHARGES: " + shieldCharges;
-		if(shieldCharges == 0){
-			shieldText.color = Color.red;
-		} else{
-			shieldText.color = Color.green;
-		}
-	}
-
-	public void GetLoot(string lootType, int lootValue){
-		if(lootValue < 0){
-			return;
-		}
-
-		switch (lootType){
-		case "Health":
-			health += lootValue;
-			healthText.text = "HEALTH: " + health;
-			audio.PlayOneShot (healthSound);
-			break;
-		case "Currency":
-			currency += lootValue;
-			currencyText.text = "CURRENCY: " + currency;
-			audio.PlayOneShot (healthSound);
-			break;
-		default:
-			break;
-		}
-	}
 
 	void OnCollisionEnter(Collision collision){
 		// take damage upon hitting a ship
@@ -438,77 +419,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 			rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
 			TakeDamage(1);
 		}
-	}
-	
-	public void PurchaseItem(string item, int price){
-		currency -= price;
-		currencyText.text = "CURRENCY: " + currency;
-		
-		switch(item){
-		case "Laser":
-			laserLevel ++;
-			break;
-		case "Bomb":
-			bombLevel++;
-			break;
-		case "Shield":
-			shieldCharges++;
-			shieldText.enabled = true;
-			shieldText.text = "SHIELD CHARGES: " + mineCharges;
-			break;
-		case "Mine":
-			mineCharges++;
-			mineText.enabled = true;
-			mineText.text = "MINE CHARGES: " + mineCharges;
-			break;
-		default:
-			break;
-		}
-	}
-
-	public bool ItemMaxed(string item){
-		switch(item){
-		case "Laser":
-			if(laserLevel >= 5){
-				return true;
-			}
-			break;
-		case "Bomb":
-			if(bombLevel >= 3){
-				return true;
-			}
-			break;
-		case "Shield":
-			if(shieldCharges >= 5){
-				return true;
-			}
-			break;
-		case "Mine":
-			if(mineCharges >= 10){
-				return true;
-			}
-			break;
-		default:
-			break;
-		}
-		
-		return false;
-	}
-
-	public int GetItemLevel(string item){
-		switch(item){
-		case "Laser":
-			return laserLevel;
-		case "Bomb":
-			return bombLevel;
-		case "Shield":
-			return shieldCharges;
-		case "Mine":
-			return mineCharges;
-		default:
-			break;
-		}
-		return 0;
 	}
 
 	void FireLaser(){
@@ -585,5 +495,140 @@ public class PlayerShipController : ShipOrbitBehavior {
 		nextbomb.transform.Rotate (new Vector3(180f, 0f, 0f));
 		nextbomb.GetComponent<BombMovement>().gravityCenter = currentPlanet.transform.position;
 		nextbomb.GetComponent<BombMovement>().bombForwardSpeed += forwardVelocity;
+	}
+	
+	public void ActivateShield(float shieldTime){
+		shieldText.color = Color.cyan;
+		transform.FindChild("Shield").renderer.enabled = true;
+		transform.FindChild("Shield").collider.enabled = true;
+		shieldTimeRemaining = shieldTime;
+	}
+	
+	public void DisableShield(){
+		transform.FindChild("Shield").renderer.enabled = false;
+		transform.FindChild("Shield").collider.enabled = false;
+		shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+		if(shieldCharges == 0){
+			shieldText.color = Color.red;
+		} else{
+			shieldText.color = Color.magenta;
+		}
+	}
+	
+	IEnumerator ActivateEMP(){
+		EMPActivated = true;
+		shieldText.color = Color.cyan;
+		shieldText.text = "EMP ACTIVATED";
+		Transform EMPTransform = transform.FindChild("EMP");
+		EMPTransform.renderer.enabled = true;
+		EMPTransform.collider.enabled = true;
+		Vector3 startingScale = EMPTransform.localScale;
+		for(float t = 0f; t < 0.5f; t += Time.deltaTime){
+			EMPTransform.localScale = startingScale * (1f + t * 5f);
+			yield return null;
+		}
+		yield return new WaitForSeconds(0.3f);
+		for(float t = 0f; t < 0.4f; t += Time.deltaTime){
+			EMPTransform.localScale = startingScale * (3.5f + t * 200f * EMPLevel);
+			yield return null;
+		}
+		EMPTransform.renderer.enabled = false;
+		EMPTransform.collider.enabled = false;
+		EMPTransform.localScale = startingScale;
+		shieldText.color = Color.magenta;
+		shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+		EMPActivated = false;
+	}
+	
+	public void GetLoot(string lootType, int lootValue){
+		if(lootValue < 0){
+			return;
+		}
+		
+		switch (lootType){
+		case "Health":
+			health += lootValue;
+			healthText.text = "HEALTH: " + health;
+			audio.PlayOneShot (healthSound);
+			break;
+		case "Currency":
+			currency += lootValue;
+			currencyText.text = "CURRENCY: " + currency;
+			audio.PlayOneShot (healthSound);
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void PurchaseItem(string item, int price){
+		currency -= price;
+		currencyText.text = "CURRENCY: " + currency;
+		
+		switch(item){
+		case "Laser":
+			laserLevel ++;
+			break;
+		case "Bomb":
+			bombLevel++;
+			break;
+		case "Shield":
+			shieldCharges++;
+			shieldText.enabled = true;
+			shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+			break;
+		case "Mine":
+			mineCharges++;
+			mineText.enabled = true;
+			mineText.text = "MINE CHARGES: " + mineCharges;
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public bool ItemMaxed(string item){
+		switch(item){
+		case "Laser":
+			if(laserLevel >= 5){
+				return true;
+			}
+			break;
+		case "Bomb":
+			if(bombLevel >= 3){
+				return true;
+			}
+			break;
+		case "Shield":
+			if(shieldCharges >= 5){
+				return true;
+			}
+			break;
+		case "Mine":
+			if(mineCharges >= 10){
+				return true;
+			}
+			break;
+		default:
+			break;
+		}
+		
+		return false;
+	}
+	
+	public int GetItemLevel(string item){
+		switch(item){
+		case "Laser":
+			return laserLevel;
+		case "Bomb":
+			return bombLevel;
+		case "Shield":
+			return shieldCharges;
+		case "Mine":
+			return mineCharges;
+		default:
+			break;
+		}
+		return 0;
 	}
 }
