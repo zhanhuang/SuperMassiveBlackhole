@@ -121,15 +121,21 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	IEnumerator AvoidObstacle(){
 		while(true){
 			RaycastHit hit = new RaycastHit();
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 40f)){
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 30f)){
 				// check if the player is in front
-				if (hit.transform.tag != "Player" && hit.transform.tag != "Ally"){
-					rigidbody.AddForce(-transform.forward.normalized * speed * 50f, ForceMode.VelocityChange);
-					rigidbody.AddTorque(transform.up.normalized * turnSpeed * 50f, ForceMode.VelocityChange);
+				if (hit.transform.tag != "Player" && hit.transform.tag != "Shield" && hit.transform.tag != "Ally"){
+					rigidbody.AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
+					rigidbody.AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
 				}
 			}
 			yield return new WaitForSeconds(1f);
 		}
+	}
+	
+	void OnCollisionEnter(Collision collision){
+		Vector3 collisionDir = (collision.transform.position -  transform.position).normalized;
+		rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
+		rigidbody.AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
 	}
 	
 	public void TakeDamage(int damage){

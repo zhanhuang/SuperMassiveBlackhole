@@ -61,6 +61,7 @@ public class GalaxyPopulation : MonoBehaviour {
 					// starting planet, earth texture
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[0];
 					startingPlanet = nextPlanet;
+//					nextPlanetScript.avoidTest();
 					nextPlanetScript.ActivateBeam();
 					nextPlanetScript.ShowBeam();
 					break;

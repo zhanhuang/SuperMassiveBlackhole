@@ -20,7 +20,9 @@ public class MineExplosion : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other){
-		if(other.tag == "Enemy" || other.tag == "Ally" || other.tag == "Player"){
+		if(other.tag == "Player" && other.GetComponent<PlayerShipController>().shieldTimeRemaining <= 0f){
+			other.gameObject.SendMessage("TakeDamage", 2);
+		} else if(other.tag == "Enemy" || other.tag == "Ally"){
 			other.gameObject.SendMessage("TakeDamage", 2);
 		} else if(other.tag == "Destructible"){
 			Debug.Log("destruction!");

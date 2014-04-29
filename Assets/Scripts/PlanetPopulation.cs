@@ -44,8 +44,6 @@ public class PlanetPopulation : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		Loot_Currency = (GameObject)Resources.Load("Currency");
-		Loot_Health = (GameObject)Resources.Load("Health");
 	}
 
 	// Update is called once per frame
@@ -58,6 +56,32 @@ public class PlanetPopulation : MonoBehaviour {
 		GameObject Base = (GameObject)Instantiate(BasePrefab, transform.position + new Vector3(0f,1f,0f) * surfaceLength, transform.rotation);
 		BaseBeam = Base.transform.FindChild("BaseBeam");
 	}
+
+//	// test for enemy ship avoiding objects
+//	public void avoidTest(){
+//		Crater = (GameObject)Resources.Load("Crater");
+//		Vector3 startDir = new Vector3(0f,1f,0f);
+//		GameObject nextCrater = (GameObject)Instantiate(Crater, transform.position + startDir * surfaceLength, transform.rotation);
+//		nextCrater.transform.up = nextCrater.transform.position - transform.position;
+//		GenerateLootAt(nextCrater.transform.position,planetRow + 1);
+//		
+//		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
+//		EnemyShip2 = (GameObject)Resources.Load("Enemy_Ship_2");
+//		GameObject nextEnemyShip;
+//		if(Random.Range(0,2) == 0){
+//			nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
+//			nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = false;
+//		} else{
+//			nextEnemyShip = (GameObject)Instantiate(EnemyShip2, transform.position + startDir * orbitLength, transform.rotation);
+//			nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = true;
+//		}
+//		EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
+//		nextShipScript.currentPlanet = gameObject;
+//		nextShipScript.level = planetRow;
+//		nextShipScript.health = (planetRow + 1)/2;
+//		nextShipScript.enemyType = "chase";
+//		EnemyCounter++;
+//	}
 
 	// Called From GalaxyPopulation
 	public void PopulatePlanet(){
@@ -110,7 +134,7 @@ public class PlanetPopulation : MonoBehaviour {
 		// generate enemy turrets.
 		// TODO: make sure turrets don't overlap
 		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
-		for(int i = 0; i < planetRow * 2 + Random.Range(-2,3); i++){
+		for(int i = 0; i < planetRow + Random.Range(-2,2); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
 			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
@@ -224,6 +248,12 @@ public class PlanetPopulation : MonoBehaviour {
 	}
 
 	public void GenerateLootAt(Vector3 location, int level) {
+		if(Loot_Currency == null){
+			Loot_Currency = (GameObject)Resources.Load("Currency");
+		} else if(Loot_Health == null){
+			Loot_Health = (GameObject)Resources.Load("Health");
+		}
+
 		// auto corrects for position of objects on planet surface. choose loot based on level
 		Vector3 direction = (location - transform.position).normalized;
 		float rnd = Random.Range(0f,100f);

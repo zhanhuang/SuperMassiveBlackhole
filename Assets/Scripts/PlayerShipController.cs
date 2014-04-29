@@ -14,13 +14,13 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	int shieldCharges = 2;
 	float shieldLimit = 3f;
-	float shieldTimeRemaining = 0f;
+	public float shieldTimeRemaining = 0f;
 	
 	int deathRayLevel = 0;
 
 	int mineCharges = 2;
 
-	int EMPLevel = 1;
+	int EMPLevel = 0;
 	bool EMPActivated = false;
 	
 
@@ -117,11 +117,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		shieldText.anchor = TextAnchor.UpperRight;
 		shieldText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 60f);
 		shieldText.fontSize = 18;
-		shieldText.color = Color.magenta;
 		shieldText.text = "";
-		if(shieldCharges > 0){
-			shieldText.text = "SHIELD CHARGES: " + shieldCharges;
-		}
+
 		// mine counter
 		GameObject mineTextObj = new GameObject("HUD_mineCounter");
 		mineTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
@@ -129,11 +126,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		mineText.anchor = TextAnchor.UpperRight;
 		mineText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 90f);
 		mineText.fontSize = 18;
-		mineText.color = Color.magenta;
 		mineText.text = "";
-		if(mineCharges > 0){
-			mineText.text = "MINE CHARGES: " + mineCharges;
-		}
 		
 		// weapon text
 		GameObject weaponTextObj = new GameObject("HUD_weaponText");
@@ -143,7 +136,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40f, -Screen.height/2 + 30f);
 		weaponText.fontSize = 18;
 		weaponText.color = Color.magenta;
-		weaponText.text = "[J]: Laser\n[K]: Bomb\n[L]: Shield\n[I]: Mine";
 		
 		// enemy counter for current planet
 		GameObject enemyTextObj = new GameObject("HUD_enemyCounter");
@@ -164,6 +156,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 		allyText.fontSize = 18;
 		allyText.color = Color.green;
 		allyText.enabled = false;
+
+		
+		UpdateWeaponText();
 	}
 	
 	// Update is called once per frame
@@ -229,7 +224,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			
 			// shielding
 			if (Input.GetKeyDown (KeyCode.L)) {
-				if(shieldCharges > 0 && shieldTimeRemaining <= 0f){
+				if(shieldCharges > 0 && shieldTimeRemaining <= 0f && !EMPActivated){
 					shieldCharges --;
 					ActivateShield(shieldLimit);
 				}
@@ -244,10 +239,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			if (Input.GetKeyDown (KeyCode.I)) {
 				if(mineCharges > 0){
 					mineCharges --;
-					if(mineCharges <= 0){
-						mineText.color = Color.red;
-					}
-					mineText.text = "MINE CHARGES: " + mineCharges;
+					UpdateWeaponText();
 					GameObject nextmine = (GameObject)Instantiate(Mine, transform.position, transform.rotation);
 					nextmine.transform.GetComponent<MineMovement>().mineOrigin = "Player";
 				}
@@ -255,9 +247,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 			// EMP
 			if (Input.GetKeyDown (KeyCode.O)) {
-				if(shieldCharges > 0 && EMPLevel > 0 && !EMPActivated){
+				if(shieldCharges > 0 && EMPLevel > 0 && !EMPActivated && shieldTimeRemaining <= 0f){
+					EMPActivated = true;
 					shieldCharges --;
-					shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+					UpdateWeaponText();
 					StartCoroutine(ActivateEMP());
 				}
 			}
@@ -507,18 +500,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public void DisableShield(){
 		transform.FindChild("Shield").renderer.enabled = false;
 		transform.FindChild("Shield").collider.enabled = false;
-		shieldText.text = "SHIELD CHARGES: " + shieldCharges;
-		if(shieldCharges == 0){
-			shieldText.color = Color.red;
-		} else{
-			shieldText.color = Color.magenta;
-		}
+		UpdateWeaponText();
 	}
 	
 	IEnumerator ActivateEMP(){
-		EMPActivated = true;
-		shieldText.color = Color.cyan;
-		shieldText.text = "EMP ACTIVATED";
 		Transform EMPTransform = transform.FindChild("EMP");
 		EMPTransform.renderer.enabled = true;
 		EMPTransform.collider.enabled = true;
@@ -535,9 +520,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		EMPTransform.renderer.enabled = false;
 		EMPTransform.collider.enabled = false;
 		EMPTransform.localScale = startingScale;
-		shieldText.color = Color.magenta;
-		shieldText.text = "SHIELD CHARGES: " + shieldCharges;
 		EMPActivated = false;
+		UpdateWeaponText();
 	}
 	
 	public void GetLoot(string lootType, int lootValue){
@@ -574,16 +558,55 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		case "Shield":
 			shieldCharges++;
-			shieldText.enabled = true;
-			shieldText.text = "SHIELD CHARGES: " + shieldCharges;
+			break;
+		case "Death Ray":
+			deathRayLevel++;
 			break;
 		case "Mine":
 			mineCharges++;
-			mineText.enabled = true;
-			mineText.text = "MINE CHARGES: " + mineCharges;
+			break;
+		case "EMP":
+			EMPLevel++;
 			break;
 		default:
 			break;
+		}
+		UpdateWeaponText();
+	}
+
+	void UpdateWeaponText(){
+		string text = "[J]: Laser\n[K]: Bomb";
+		if(shieldCharges > 0){
+			text += "\n[L]: Shield";
+		}
+		if(deathRayLevel > 0){
+			text += "\n[U]: Death Ray";
+		}
+		if(mineCharges > 0){
+			text += "\n[I]: Mine";
+		}
+		if(shieldCharges > 0 && EMPLevel > 0){
+			text += "\n[O]: EMP";
+		}
+		weaponText.text = text;
+		
+		if(mineCharges <= 0){
+			mineText.color = Color.red;
+		} else{
+			mineText.color = Color.magenta;
+		}
+		mineText.text = "MINE CHARGES: " + mineCharges;
+
+		if(EMPActivated){
+			shieldText.color = Color.cyan;
+			shieldText.text = "EMP ACTIVATED";
+		} else if(shieldTimeRemaining <= 0f){
+			if(shieldCharges <= 0){
+				shieldText.color = Color.red;
+			} else{
+				shieldText.color = Color.magenta;
+			}
+			shieldText.text = "SHIELD CHARGES: " + shieldCharges;
 		}
 	}
 	
@@ -604,8 +627,18 @@ public class PlayerShipController : ShipOrbitBehavior {
 				return true;
 			}
 			break;
+		case "Death Ray":
+			if(deathRayLevel >= 3){
+				return true;
+			}
+			break;
 		case "Mine":
 			if(mineCharges >= 10){
+				return true;
+			}
+			break;
+		case "EMP":
+			if(EMPLevel >= 3){
 				return true;
 			}
 			break;
@@ -624,8 +657,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 			return bombLevel;
 		case "Shield":
 			return shieldCharges;
+		case "Death Ray":
+			return deathRayLevel;
 		case "Mine":
 			return mineCharges;
+		case "EMP":
+			return EMPLevel;
 		default:
 			break;
 		}
