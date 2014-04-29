@@ -114,7 +114,7 @@ public class PlanetPopulation : MonoBehaviour {
 			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
 			nextTurretScript.currentPlanet = gameObject;
 			nextTurretScript.level = planetRow;
-			nextTurretScript.health = (planetRow + 1)/2;
+			nextTurretScript.health = 1;
 			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
 			EnemyCounter++;
 		}
@@ -218,16 +218,17 @@ public class PlanetPopulation : MonoBehaviour {
 	public void GenerateLootAt(Vector3 location, int level) {
 		// auto corrects for position of objects on planet surface. choose loot based on level
 		Vector3 direction = (location - transform.position).normalized;
-		GameObject nextLoot;
-		if(Random.Range(0,5) < 1){
-			nextLoot = (GameObject)Instantiate(Loot_Health, transform.position + direction.normalized * orbitLength, Quaternion.identity);
+		float rnd = Random.Range(0f,100f);
+		if(rnd < 10f){
+			GameObject nextLoot = (GameObject)Instantiate(Loot_Health, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Health";
 			nextLoot.GetComponent<Loot>().lootValue = 1;
-		} else{
-			nextLoot = (GameObject)Instantiate(Loot_Currency, transform.position + direction.normalized * orbitLength, Quaternion.identity);
+			nextLoot.transform.up = nextLoot.transform.position - transform.position;
+		} else if(rnd < 40f){
+			GameObject nextLoot = (GameObject)Instantiate(Loot_Currency, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Currency";
-			nextLoot.GetComponent<Loot>().lootValue = level * 10 + Random.Range(0,10);
+			nextLoot.GetComponent<Loot>().lootValue = level * 5 + Random.Range(5,15);
+			nextLoot.transform.up = nextLoot.transform.position - transform.position;
 		}
-		nextLoot.transform.up = nextLoot.transform.position - transform.position;
 	}
 }

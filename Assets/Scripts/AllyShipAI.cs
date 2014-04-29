@@ -50,8 +50,8 @@ public class AllyShipAI : ShipOrbitBehavior {
 			RaycastHit hit = new RaycastHit();
 			if(Physics.Raycast(transform.position, transform.forward, out hit, 10f)){
 				// check if the player is in front
-				if (hit.transform.tag != "Ally"){
-					rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * 100f, ForceMode.VelocityChange);
+				if (hit.transform.tag != "Enemy"){
+					rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * speed * 10f, ForceMode.VelocityChange);
 				}
 			}
 			yield return new WaitForSeconds(1f);

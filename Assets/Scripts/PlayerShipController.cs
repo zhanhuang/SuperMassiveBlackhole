@@ -7,8 +7,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	// shop
 	public int currency = 30;
-	int laserLevel = 0;
-	int bombLevel = 0;
+	int laserLevel = 1;
+	int bombLevel = 1;
 	int deathRayLevel = 0;
 	int pulseWeaponLevel = 0;
 	int flamethrowerLevel = 0;
@@ -17,13 +17,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float overHeatMeter = 0f;
 	float coolOffCounter = 0f;
 
-	int shieldLevel = 0;
-	public int shieldCharges = 2;
+	int shieldCharges = 2;
 	float shieldLimit = 3f;
 	float shieldTimeRemaining = 0f;
-	
-	int mineLevel = 0;
-	int mineCharges = 1;
+
+	int mineCharges = 2;
 
 	// ship stat variables
 	float acceleration = 50f;
@@ -196,8 +194,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 				soundCount += 1;
 				}
 			}
-		
-		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z; // shared between bomb and camera zoom
+
 
 		if(overHeatMeter < overHeatLimit){
 			// color to cyan when cooldown is high to signify faster heat reduction
@@ -206,6 +203,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			} else{
 				heatText.color = Color.white;
 			}
+
 			// shooting
 			if (Input.GetKeyDown(KeyCode.J)){
 				FireLaser();
@@ -216,11 +214,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 			
 			// bombing
 			if (Input.GetKeyDown (KeyCode.K)) {
-				GameObject nextbomb = (GameObject)Instantiate (Bomb, transform.position, transform.rotation);
-				audio.PlayOneShot (bombSound);
-				nextbomb.transform.Rotate (new Vector3(180f, 0f, 0f));
-				nextbomb.GetComponent<BombMovement>().gravityCenter = currentPlanet.transform.position;
-				nextbomb.GetComponent<BombMovement>().bombForwardSpeed += forwardVelocity;
+
+				DropBomb();
 
 				overHeatMeter += 1f;
 				coolOffCounter = 0f;
@@ -238,6 +233,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 			if (Input.GetKeyDown (KeyCode.I)) {
 				if(mineCharges > 0){
 					mineCharges --;
+					if(mineCharges <= 0){
+						mineText.color = Color.red;
+					}
 					mineText.text = "MINE CHARGES: " + mineCharges;
 					GameObject nextmine = (GameObject)Instantiate(Mine, transform.position, transform.rotation);
 					nextmine.transform.GetComponent<MineMovement>().mineOrigin = "Player";
@@ -249,6 +247,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		}
 		
 		// tail particle effect
+		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z;
 		if(forwardVelocity > 0f){
 			shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
 			shipTransform.FindChild("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
@@ -256,7 +255,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		
 
 
-//		// zoom camera according to speed. TODO: decide if we want this in or not	
+//		// zoom camera according to speed. TODO: decide if we want this in or not
 //		Vector3 adjustedCameraRotation = new Vector3(cameraStartingLocalPosition.x, cameraStartingLocalPosition.y - forwardVelocity, cameraStartingLocalPosition.z + forwardVelocity);
 //		transform.GetChild(0).transform.localPosition = adjustedCameraRotation;
 
@@ -452,17 +451,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 			bombLevel++;
 			break;
 		case "Shield":
-			shieldLevel++;
-			break;
-		case "ShieldCharge":
 			shieldCharges++;
 			shieldText.enabled = true;
 			shieldText.text = "SHIELD CHARGES: " + mineCharges;
 			break;
 		case "Mine":
-			mineLevel++;
-			break;
-		case "MineCharge":
 			mineCharges++;
 			mineText.enabled = true;
 			mineText.text = "MINE CHARGES: " + mineCharges;
@@ -472,23 +465,68 @@ public class PlayerShipController : ShipOrbitBehavior {
 		}
 	}
 
+	public bool ItemMaxed(string item){
+		switch(item){
+		case "Laser":
+			if(laserLevel >= 5){
+				return true;
+			}
+			break;
+		case "Bomb":
+			if(bombLevel >= 3){
+				return true;
+			}
+			break;
+		case "Shield":
+			if(shieldCharges >= 5){
+				return true;
+			}
+			break;
+		case "Mine":
+			if(mineCharges >= 10){
+				return true;
+			}
+			break;
+		default:
+			break;
+		}
+		
+		return false;
+	}
+
+	public int GetItemLevel(string item){
+		switch(item){
+		case "Laser":
+			return laserLevel;
+		case "Bomb":
+			return bombLevel;
+		case "Shield":
+			return shieldCharges;
+		case "Mine":
+			return mineCharges;
+		default:
+			break;
+		}
+		return 0;
+	}
+
 	void FireLaser(){
 		audio.PlayOneShot (gunSound);
 
 		switch(laserLevel){
-		case 0:
-			CreateLaser(0f, 0f);
-			break;
 		case 1:
-			CreateLaser(-0.6f, 0f);
-			CreateLaser(0.6f, 0f);
+			CreateLaser(0f, 0f);
 			break;
 		case 2:
 			CreateLaser(-0.6f, 0f);
-			CreateLaser(0f, 0f);
 			CreateLaser(0.6f, 0f);
 			break;
 		case 3:
+			CreateLaser(-0.6f, 0f);
+			CreateLaser(0f, 0f);
+			CreateLaser(0.6f, 0f);
+			break;
+		case 4:
 			CreateLaser(-0.6f, 0f);
 			CreateLaser(0f, 0f);
 			CreateLaser(0.6f, 0f);
@@ -496,6 +534,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			CreateLaser(1.5f, 15f);
 			break;
 		default:
+			// level = 5
 			CreateLaser(-0.6f, 0f);
 			CreateLaser(0f, 0f);
 			CreateLaser(0.6f, 0f);
@@ -516,5 +555,34 @@ public class PlayerShipController : ShipOrbitBehavior {
 		laserScript.gravityCenter = currentPlanet.transform.position;
 		laserScript.laserOrigin = "Player";
 		laserScript.laserSpeed = 60f;
+	}
+
+	void DropBomb(){
+		audio.PlayOneShot (bombSound);
+
+		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z;
+		switch(bombLevel){
+		case 1:
+			CreateBomb(0f, 0f, forwardVelocity);
+			break;
+		case 2:
+			CreateBomb(0f, 2f, forwardVelocity);
+			CreateBomb(0f, -1f, forwardVelocity);
+			break;
+		default:
+			CreateBomb(0f, 3f, forwardVelocity);
+			CreateBomb(0f, 0f, forwardVelocity);
+			CreateBomb(1f, -2f, forwardVelocity);
+			CreateBomb(-1f, -2f, forwardVelocity);
+			break;
+		}
+	}
+
+	void CreateBomb(float offsetRight, float offsetForward, float forwardVelocity){
+		Vector3 location =  transform.position + transform.right.normalized * offsetRight + transform.forward.normalized * offsetForward;
+		GameObject nextbomb = (GameObject)Instantiate (Bomb, location, transform.rotation);
+		nextbomb.transform.Rotate (new Vector3(180f, 0f, 0f));
+		nextbomb.GetComponent<BombMovement>().gravityCenter = currentPlanet.transform.position;
+		nextbomb.GetComponent<BombMovement>().bombForwardSpeed += forwardVelocity;
 	}
 }

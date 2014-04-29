@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class MineExplosion : MonoBehaviour {
+	float countDown = 0.8f;
 
 	// Use this for initialization
 	void Start () {
@@ -10,7 +11,12 @@ public class MineExplosion : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if(countDown > 0f){
+			countDown -= Time.deltaTime;
+			if(countDown <= 0f){
+				transform.collider.enabled = false;
+			}
+		}
 	}
 
 	void OnTriggerEnter(Collider other){

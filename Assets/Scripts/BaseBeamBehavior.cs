@@ -18,7 +18,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 	// shop
 	string[] items = new string[6];
 	int[] prices = new int[6];
-	public GUIText[] itemTexts = new GUIText[7];
+	GUIText[] itemTexts = new GUIText[7];
+	GUIText[] priceTexts = new GUIText[6];
 	int selectedIndex = 0;
 
 	// Use this for initialization
@@ -42,47 +43,35 @@ public class BaseBeamBehavior : MonoBehaviour {
 				shopping = false;
 				CloseDownShop();
 			} else if(Input.GetKeyDown(KeyCode.W)){
-				itemTexts[selectedIndex].fontSize = 24;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.black;
-				}
+				RemoveHighLight(selectedIndex);
 
 				selectedIndex --;
 				if(selectedIndex < 0){
 					selectedIndex = 5;
 				}
 
-				itemTexts[selectedIndex].fontSize = 28;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.green;
-				}
+				HighLight(selectedIndex);
 			} else if(Input.GetKeyDown(KeyCode.S)){
-				itemTexts[selectedIndex].fontSize = 24;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.black;
-				}
+				RemoveHighLight(selectedIndex);
 
 				selectedIndex ++;
 				if(selectedIndex > 5){
 					selectedIndex = 0;
 				}
-
-				itemTexts[selectedIndex].fontSize = 28;
-				if(itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].color = Color.green;
-				}
-			} else if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
-				if(playerScript.currency >= prices[selectedIndex] && itemTexts[selectedIndex].text != "sold out"){
-					itemTexts[selectedIndex].text = "sold out";
-					itemTexts[selectedIndex].color = Color.red;
+				
+				HighLight(selectedIndex);
+			} else if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.J)){
+				// purchased an item
+				if(playerScript.currency >= prices[selectedIndex] && itemTexts[selectedIndex].text != "Sold Out"){
 					playerScript.PurchaseItem(items[selectedIndex], prices[selectedIndex]);
+					UpdateItem(selectedIndex);
 				}
 			}
 			return;
 		}
 
 		if (!liftOff && beamText.enabled){
-			if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
+			if(Input.GetKeyDown(KeyCode.Space)){
 				liftOff = true;
 				beamText.enabled = false;
 				Destroy(player.GetComponent<ConfigurableJoint>());
@@ -121,7 +110,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				} else{
 					lookingPlanet ++;
 				}
-			} else if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)){
+			} else if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.J)){
 				player.position = surroundingPlanets[lookingPlanet].transform.position + new Vector3(0f,200f,0f);
 				playerScript.enabled = true;
 				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().HideBeam();
@@ -151,24 +140,35 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	public void EnableShop(){
 		shopEnabled = true;
-		
-		for(int i = 0; i < 6; i ++){
-			items[i] = "Laser";
-			prices[i] = 30;
-		}
 
+		/* TODO: upgrades for the following
+		 * Health
+		 * Heat
+		 * 
+		 */
+
+		items[0] = "Laser";
+		items[1] = "Bomb";
+		items[2] = "Shield";
+		items[3] = "Death Ray";
+		items[4] = "Mine";
+		items[5] = "EMP";
+
+		for(int i = 0; i < 6; i ++){
+			prices[i] = 20;
+		}
 
 		// populate shop item text
 		for(int i = 0; i < 7; i ++){
 			GameObject itemTextObj = new GameObject("HUD_itemText");
 			itemTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 			GUIText nextItemText = (GUIText)itemTextObj.AddComponent(typeof(GUIText));
-			nextItemText.anchor = TextAnchor.MiddleCenter;
+			nextItemText.anchor = TextAnchor.MiddleLeft;
 			nextItemText.fontSize = 24;
 			nextItemText.color = Color.black;
 			if(i < 6){
-				nextItemText.pixelOffset = new Vector2(0f, 90f - (i * 30f));
-				nextItemText.text = items[i].PadRight(10) + prices[i].ToString().PadRight(4);
+				nextItemText.pixelOffset = new Vector2(-160f, 90f - (i * 30f));
+				nextItemText.text = items[i];
 			} else{
 				nextItemText.pixelOffset = new Vector2(0f, - Screen.height/2 + 30f);
 				nextItemText.text = "Press [P] To Close Shop";
@@ -177,9 +177,20 @@ public class BaseBeamBehavior : MonoBehaviour {
 			itemTexts[i] = nextItemText;
 		}
 
-		
-		itemTexts[0].fontSize = 28;
-		itemTexts[0].color = Color.green;
+		for(int i = 0; i < 6; i ++){
+			GameObject priceTextObj = new GameObject("HUD_priceText");
+			priceTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+			GUIText nextPriceText = (GUIText)priceTextObj.AddComponent(typeof(GUIText));
+			nextPriceText.anchor = TextAnchor.MiddleRight;
+			nextPriceText.fontSize = 24;
+			nextPriceText.color = Color.black;
+			nextPriceText.pixelOffset = new Vector2(160f, 90f - (i * 30f));
+			nextPriceText.text = "20";
+			nextPriceText.enabled = false;
+			priceTexts[i] = nextPriceText;
+		}
+
+		HighLight(0);
 	}
 
 	void OpenUpShop(){
@@ -187,17 +198,66 @@ public class BaseBeamBehavior : MonoBehaviour {
 		player.rigidbody.velocity = Vector3.zero;
 		player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
 		beamText.enabled = false;
+
+		// update items
+		for(int i = 0; i < 6; i ++){
+			UpdateItem(i);
+		}
+		
 		foreach(GUIText text in itemTexts){
 			text.enabled = true;
 		}
+		foreach(GUIText text in priceTexts){
+			text.enabled = true;
+		}
 	}
-
+	
 	void CloseDownShop(){
 		playerScript.enabled = true;
 		foreach(GUIText text in itemTexts){
 			text.enabled = false;
 		}
+		foreach(GUIText text in priceTexts){
+			text.enabled = false;
+		}
 		beamText.enabled = true;
+
+		selectedIndex = 0;
+	}
+	
+	void UpdateItem(int index){
+		int level = playerScript.GetItemLevel(items[index]);
+		prices[index] = level * level * 10 + 20;
+		if(index == 2 || index == 4){
+			itemTexts[index].text = items[index];
+		} else{
+			itemTexts[index].text = items[index] + "(lv" + (playerScript.GetItemLevel(items[index]) + 1) + ")";
+		}
+		priceTexts[index].text = prices[index].ToString();
+		if(playerScript.ItemMaxed(items[index])){
+			// returning true means the item is maxed out
+			itemTexts[index].text = "Sold Out";
+			itemTexts[index].color = Color.red;
+			priceTexts[index].text = "";
+		}
+	}
+
+	void HighLight(int index){
+		itemTexts[index].fontSize = 28;
+		priceTexts[index].fontSize = 28;
+		if(itemTexts[selectedIndex].text != "Sold Out"){
+			itemTexts[index].color = Color.green;
+			priceTexts[index].color = Color.green;
+		}
+	}
+
+	void RemoveHighLight(int index){
+		itemTexts[index].fontSize = 24;
+		priceTexts[index].fontSize = 24;
+		if(itemTexts[selectedIndex].text != "Sold Out"){
+			itemTexts[index].color = Color.black;
+			priceTexts[index].color = Color.black;
+		}
 	}
 
 	void OnTriggerEnter(Collider other){
@@ -212,6 +272,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 	}
 	
 	void OnTriggerExit(Collider other){
-		beamText.enabled = false;
+		if(other.tag == "Player"){
+			beamText.enabled = false;
+		}
 	}
 }

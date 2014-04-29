@@ -121,7 +121,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 			if(Physics.Raycast(transform.position, transform.forward, out hit, 15f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Player"){
-					rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * speed * -10f, ForceMode.VelocityChange);
+					rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * speed * 10f, ForceMode.VelocityChange);
 				}
 			}
 			yield return new WaitForSeconds(1f);
