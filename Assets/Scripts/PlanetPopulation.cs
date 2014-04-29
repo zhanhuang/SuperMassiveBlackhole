@@ -32,6 +32,8 @@ public class PlanetPopulation : MonoBehaviour {
 	GameObject Loot_Currency;
 	GameObject Loot_Health;
 
+	public AudioClip victorySound;
+
 	
 	void Awake (){
 		float scale = Random.Range(80f,120f);
@@ -134,6 +136,10 @@ public class PlanetPopulation : MonoBehaviour {
 				AllyCounter++;
 			}
 		}
+
+		if (planetType == 1 || planetType == 3) {
+						audio.Play ();
+				}
 	}
 
 	public void AllyDied(){
@@ -158,6 +164,8 @@ public class PlanetPopulation : MonoBehaviour {
 				winText.fontSize = 48;
 				winText.enabled = true;
 			}
+			audio.Stop ();
+			audio.PlayOneShot (victorySound);
 			ActivateBeam();
 		}
 	}
