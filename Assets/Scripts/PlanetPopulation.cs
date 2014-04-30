@@ -23,9 +23,10 @@ public class PlanetPopulation : MonoBehaviour {
 
 	// Prefabs
 	GameObject AllyShip;
-	GameObject EnemyShip;
-	GameObject EnemyShip2;
+	GameObject EnemyShipA;
+	GameObject EnemyShipB;
 	GameObject EnemyTurret;
+	GameObject EnemyTank;
 	GameObject BasePrefab;
 	GameObject Crater;
 	// Loot Prefabs
@@ -110,23 +111,19 @@ public class PlanetPopulation : MonoBehaviour {
 		}
 		
 		// generate enemy ships. Max 20 or will lag
-		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
-		EnemyShip2 = (GameObject)Resources.Load("Enemy_Ship_2");
+		EnemyShipA = (GameObject)Resources.Load("Enemy_Ship_A");
+		EnemyShipB = (GameObject)Resources.Load("Enemy_Ship_B");
 		for(int i = 0; i < planetRow * 2 + Random.Range(-1,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip;
-			int shipType = Random.Range(0,2);
-			if(shipType == 0){
-				nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
-				nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = false;
+			int shipType = Random.Range(0,6) + planetRow;
+			if(shipType < 6){
+				nextEnemyShip = (GameObject)Instantiate(EnemyShipA, transform.position + startDir * orbitLength, transform.rotation);
 			} else{
-				nextEnemyShip = (GameObject)Instantiate(EnemyShip2, transform.position + startDir * orbitLength, transform.rotation);
-				nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = true;
+				nextEnemyShip = (GameObject)Instantiate(EnemyShipB, transform.position + startDir * orbitLength, transform.rotation);
 			}
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
-			nextShipScript.level = planetRow;
-			nextShipScript.health = 2; //(planetRow + 1)/2;
 			if(planetType == 3){
 				nextShipScript.enemyType = "random";
 			} else{
@@ -136,15 +133,19 @@ public class PlanetPopulation : MonoBehaviour {
 		}
 		
 		// generate enemy turrets.
-		// TODO: make sure turrets don't overlap
 		EnemyTurret = (GameObject)Resources.Load("Enemy_Turret");
-		for(int i = 0; i < planetRow + Random.Range(-2,2); i++){
+		EnemyTank = (GameObject)Resources.Load("Enemy_Tank");
+		for(int i = 0; i < planetRow + Random.Range(-1,2); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
-			GameObject nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
+			GameObject nextEnemyTurret;
+			int turretType = Random.Range(0,4) + planetRow;
+			if(turretType < 4){
+				nextEnemyTurret = (GameObject)Instantiate(EnemyTurret, transform.position + startDir * surfaceLength, transform.rotation);
+			} else{
+				nextEnemyTurret = (GameObject)Instantiate(EnemyTank, transform.position + startDir * surfaceLength, transform.rotation);
+			}
 			EnemyTurretAI nextTurretScript = nextEnemyTurret.transform.GetComponent<EnemyTurretAI>();
 			nextTurretScript.currentPlanet = gameObject;
-			nextTurretScript.level = planetRow;
-			nextTurretScript.health = 1;
 			nextEnemyTurret.transform.up = nextEnemyTurret.transform.position - transform.position;
 			EnemyCounter++;
 		}

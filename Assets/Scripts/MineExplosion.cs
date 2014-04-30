@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class MineExplosion : MonoBehaviour {
-	float countDown = 0.8f;
+	float countDown = 0.5f;
 
 	// Use this for initialization
 	void Start () {

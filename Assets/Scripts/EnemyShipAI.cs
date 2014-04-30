@@ -177,7 +177,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	void AutoFire(){
-		if(level < 4){
+		if(level < 2){
 			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
 			audio.PlayOneShot(enemyGunSound);
 			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
