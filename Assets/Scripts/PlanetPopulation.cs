@@ -125,7 +125,7 @@ public class PlanetPopulation : MonoBehaviour {
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
 			nextShipScript.level = planetRow;
-			nextShipScript.health = 5; //(planetRow + 1)/2;
+			nextShipScript.health = 2; //(planetRow + 1)/2;
 			if(planetType == 1){
 				nextShipScript.enemyType = "chase";
 			} else{
