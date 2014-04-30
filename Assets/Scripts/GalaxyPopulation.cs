@@ -7,7 +7,7 @@ public class GalaxyPopulation : MonoBehaviour {
 	
 	GameObject startingPlanet;
 
-
+	public int specificType;
 	int[,] planetTypeArray = new int[5,5];
 	public GameObject[,] planetGrid = new GameObject[5,5];
 
@@ -163,7 +163,7 @@ public class GalaxyPopulation : MonoBehaviour {
 		return planets;
 	}
 
-	void MarkPlanetTypes (){
+	public void MarkPlanetTypes (){
 		/* PLANET TYPES:
 		 * -2: Boss Planet
 		 * -1: Starting Planet
@@ -249,7 +249,7 @@ public class GalaxyPopulation : MonoBehaviour {
 		for(int r = 1; r < 5; r++){
 			for(int c = 0; c < 5; c++){
 				if(planetTypeArray[r, c] == 1){
-					int specificType = Random.Range(-1,4);
+					specificType = Random.Range(-1,4);
 					if(specificType < 1){
 						if(friendlyCount == 0 && totalCount >= 6){
 							// too few friendlies

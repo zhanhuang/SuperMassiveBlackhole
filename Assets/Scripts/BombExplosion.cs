@@ -15,13 +15,13 @@ public class BombExplosion : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Enemy"){
-			Debug.Log("enemy hit");
+//			Debug.Log("enemy hit");
 			other.gameObject.SendMessage("TakeDamage", 1);
 		} else if(other.tag == "Ally"){
-			Debug.Log("ally hit");
+//			Debug.Log("ally hit");
 			other.gameObject.SendMessage("TakeDamage", 1);
 		} else if(other.tag == "Destructible"){
-			Debug.Log("destruction!");
+//			Debug.Log("destruction!");
 			Destroy(other.gameObject);
 			// TODO: dust puff
 		} 
