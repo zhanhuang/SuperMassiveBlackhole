@@ -115,7 +115,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
 				audio.Play ();
 				StartCoroutine(BeamMeUp());
-			} else if(Input.GetKeyDown(KeyCode.P)){
+			} else if(Input.GetKeyDown(KeyCode.P) && shopEnabled == true){
 				player.audio.Stop ();
 				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
 				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
