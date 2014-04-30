@@ -166,12 +166,26 @@ public class BaseBeamBehavior : MonoBehaviour {
 			player.position += new Vector3(0f, 1f, 0f) * Time.deltaTime * 50f;
 			yield return null;
 		}
-		GalaxyPopulation galaxy = playerScript.Galaxy;
-		PlanetPopulation currentPlanet = playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>();
-		surroundingPlanets = galaxy.GetSurroundingPlanets(currentPlanet);
-		lookingPlanet = 0;
-		inSpace = true;
-
+		
+		if(isFinalBeam){
+			// freeze planet
+			GameObject finalPlanet = GameObject.Find("FinalPlanet");
+			player.position = finalPlanet.transform.position + new Vector3(0f,finalPlanet.GetComponent<FinalStageScript>().orbitLength,0.9f);
+			playerScript.enabled = true;
+			playerScript.currentPlanet = finalPlanet;
+			playerScript.OrbitSetup();
+			player.rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+			finalPlanet.GetComponent<FinalStageScript>().StageStart();
+			liftOff = false;
+			inSpace = false;
+			audio.Stop();
+		} else{
+			GalaxyPopulation galaxy = playerScript.Galaxy;
+			PlanetPopulation currentPlanet = playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>();
+			surroundingPlanets = galaxy.GetSurroundingPlanets(currentPlanet);
+			lookingPlanet = 0;
+			inSpace = true;
+		}
 	}
 
 	public void EnableShop(){

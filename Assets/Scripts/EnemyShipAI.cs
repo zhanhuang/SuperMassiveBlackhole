@@ -157,7 +157,9 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
+		if(currentPlanet.GetComponent<FinalStageScript>() == null){
+			currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
+		}
 		Destroy(Instantiate (deathAudioSource, transform.position, transform.rotation), deathSound.length);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);

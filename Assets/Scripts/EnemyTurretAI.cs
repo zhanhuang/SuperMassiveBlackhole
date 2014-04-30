@@ -156,7 +156,9 @@ public class EnemyTurretAI : MonoBehaviour {
 	}
 	
 	public void Die(){
-		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
+		if(currentPlanet.GetComponent<FinalStageScript>() == null){
+			currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
+		}
 		Destroy(Instantiate (turretDeathAudioSource, transform.position, transform.rotation), turretDeadSound.length);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);

@@ -64,4 +64,17 @@ public class PortalScript : MonoBehaviour {
 			Destroy(gameObject);
 		}
 	}
+
+	void FacePortal(){
+		Vector3 playerDir = transform.position - enemy.transform.position;
+		Vector2 forwardDirection = new Vector3(enemy.transform.forward.x,enemy.transform.forward.z);
+		float angle = 30f;
+		Vector3 cross = Vector3.Cross(playerDir,transform.forward);
+		if(Vector3.Dot(cross, enemy.transform.up) > 0f){
+			angle = -angle;
+		} else if(Vector3.Dot(cross, enemy.transform.up) == 0f){
+			angle = 0f;
+		}
+		rigidbody.AddTorque(enemy.transform.up.normalized * angle, ForceMode.Force);
+	}
 }

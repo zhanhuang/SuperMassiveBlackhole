@@ -226,8 +226,9 @@ public class PlanetPopulation : MonoBehaviour {
 			if(planetType == -2){
 				// boss planet
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
-				BaseBeam.collider.enabled = false;
-			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0) || planetType == -1){
+				BaseBeam.collider.enabled = true;
+				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
@@ -235,7 +236,12 @@ public class PlanetPopulation : MonoBehaviour {
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
-
+			
+			// TODO: test code. comment out in production
+			if(planetType == -1){
+				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+			}
+				
 			StartCoroutine(ExpandBeam());
 		}
 	}
@@ -260,12 +266,14 @@ public class PlanetPopulation : MonoBehaviour {
 	
 	public void HideBeam(){
 		BaseBeam.renderer.enabled = false;
+		BaseBeam.collider.enabled = false;
 		transform.FindChild("ClearPulse").renderer.enabled = false;
 		transform.FindChild("Outline").renderer.enabled = true;
 	}
 
 	public void ShowBeam(){
 		BaseBeam.renderer.enabled = true;
+		BaseBeam.collider.enabled = true;
 		transform.FindChild("ClearPulse").renderer.enabled = true;
 		transform.FindChild("Outline").renderer.enabled = false;
 	}

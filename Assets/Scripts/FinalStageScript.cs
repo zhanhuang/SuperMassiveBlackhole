@@ -13,7 +13,7 @@ public class FinalStageScript : PlanetPopulation {
 
 	void Awake (){
 		// override parent script so we don't resize planet
-		orbitLength = transform.localScale.x / 2 + 15f;
+		orbitLength = transform.localScale.x / 2 + 8f;
 		surfaceLength = transform.localScale.x / 2;
 
 		for(int i = 0; i < 8; i++){
@@ -92,5 +92,10 @@ public class FinalStageScript : PlanetPopulation {
 		EnemyCounter++;
 
 		return nextEnemy;
+	}
+
+	public void GenerateLootAt(Vector3 location, int level) {
+		//don't generate loot
+		return;
 	}
 }
