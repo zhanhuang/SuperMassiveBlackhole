@@ -32,7 +32,11 @@ public class PlanetPopulation : MonoBehaviour {
 	GameObject Loot_Currency;
 	GameObject Loot_Health;
 
+	public AudioSource audio2;
+	public AudioSource audio3;
 	public AudioClip victorySound;
+	public AudioClip beamAwake;
+	public AudioClip winSound;
 
 	
 	void Awake (){
@@ -43,10 +47,12 @@ public class PlanetPopulation : MonoBehaviour {
 
 		Loot_Currency = (GameObject)Resources.Load("Currency");
 		Loot_Health = (GameObject)Resources.Load("Health");
+
 	}
 	
 	// Use this for initialization
 	void Start () {
+
 	}
 
 	// Update is called once per frame
@@ -165,7 +171,14 @@ public class PlanetPopulation : MonoBehaviour {
 
 		if (planetType == 1 || planetType == 3) {
 						audio.Play ();
+				} 
+		else if (planetType == 2) {
+						audio2.Play ();
+				} 
+		else if (planetType == -2) {
+						audio3.Play ();
 				}
+
 	}
 
 	public void AllyDied(){
@@ -177,6 +190,8 @@ public class PlanetPopulation : MonoBehaviour {
 		if(EnemyCounter <= 0){
 			if(planetType == -2){
 				// WIN
+				audio3.Stop ();
+				audio.PlayOneShot (winSound);
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 				ShowBeam();
@@ -190,8 +205,9 @@ public class PlanetPopulation : MonoBehaviour {
 				winText.fontSize = 48;
 				winText.enabled = true;
 			}
-			audio.Stop ();
 			audio.PlayOneShot (victorySound);
+			audio2.PlayDelayed (5f);
+			audio.Stop ();
 			ActivateBeam();
 		}
 	}
@@ -200,7 +216,7 @@ public class PlanetPopulation : MonoBehaviour {
 		if(!beamActivated){
 			// run activation animation only once
 			beamActivated = true;
-
+			BaseBeam.audio.PlayOneShot (beamAwake);
 			
 			// decide whether there is a shop
 			if(planetType == -2){
@@ -224,6 +240,7 @@ public class PlanetPopulation : MonoBehaviour {
 		// animate the activation of the beam
 		if(planetType != -2){
 			transform.FindChild("ClearPulse").renderer.enabled = true;
+			transform.FindChild ("ClearPulse").audio.Play ();
 		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
 			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 150f, BaseBeam.localPosition.z);
