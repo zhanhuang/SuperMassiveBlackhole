@@ -170,17 +170,14 @@ public class PlanetPopulation : MonoBehaviour {
 		}
 
 		if (planetType == 1 || planetType == 3) {
-						audio.Play ();
-				} 
-		else if (planetType == 2) {
-						audio2.Play ();
-				} 
+			audio.Play ();
+		} 
 		else if (planetType == -2) {
-						audio3.Play ();
-				}
-
+			audio3.Play ();
+		}
+		
 	}
-
+	
 	public void AllyDied(){
 		AllyCounter--;
 	}
@@ -191,6 +188,7 @@ public class PlanetPopulation : MonoBehaviour {
 			if(planetType == -2){
 				// WIN
 				audio3.Stop ();
+				audio.Stop ();
 				audio.PlayOneShot (winSound);
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
@@ -205,9 +203,9 @@ public class PlanetPopulation : MonoBehaviour {
 				winText.fontSize = 48;
 				winText.enabled = true;
 			}
+			audio.Stop ();
 			audio.PlayOneShot (victorySound);
 			audio2.PlayDelayed (5f);
-			audio.Stop ();
 			ActivateBeam();
 		}
 	}
@@ -257,15 +255,17 @@ public class PlanetPopulation : MonoBehaviour {
 	public void HideBeam(){
 		BaseBeam.renderer.enabled = false;
 		transform.FindChild("ClearPulse").renderer.enabled = false;
-		transform.FindChild("Outline").renderer.enabled = true;
+		transform.FindChild ("Outline").renderer.enabled = true;
 	}
 
 	public void ShowBeam(){
 		BaseBeam.renderer.enabled = true;
 		transform.FindChild("ClearPulse").renderer.enabled = true;
 		transform.FindChild("Outline").renderer.enabled = false;
-	}
 
+
+		}
+	
 	public void GenerateLootAt(Vector3 location, int level) {
 		// auto corrects for position of objects on planet surface. choose loot based on level
 		Vector3 direction = (location - transform.position).normalized;
