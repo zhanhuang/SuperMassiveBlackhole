@@ -35,18 +35,20 @@ public class PortalScript : MonoBehaviour {
 
 	IEnumerator EnemyEmergence(){
 		enemy.transform.position = startingPosition;
-		enemy.transform.up = enemy.transform.position - currentPlanet.transform.position;
 		if(enemy.GetComponent<EnemyTurretAI>() != null){
 			// start tanks on the ground
 			PlanetPopulation planet = currentPlanet.GetComponent<PlanetPopulation>();
 			enemy.transform.position = enemy.transform.position - enemy.transform.up.normalized * (planet.orbitLength - planet.surfaceLength);
+			enemy.transform.rotation = Quaternion.LookRotation(transform.position + transform.up.normalized * 1f - enemy.transform.position);
+		} else if(enemy.GetComponent<EnemyShipAI>() != null){
+			enemy.GetComponent<EnemyShipAI>().OrbitSetup();
+			enemy.transform.rotation = Quaternion.LookRotation(transform.position + transform.up.normalized * 10f - enemy.transform.position);
 		}
 		for(float t = 0f; t < 1.8f; t += Time.deltaTime){
-			enemy.transform.RotateAround(currentPlanet.transform.position, enemy.transform.right, 1f);
+			enemy.transform.RotateAround(currentPlanet.transform.position, enemy.transform.right, 0.5f);
 			yield return null;
 		}
 		if(enemy.GetComponent<EnemyShipAI>() != null){
-			enemy.GetComponent<EnemyShipAI>().OrbitSetup();
 			enemy.GetComponent<EnemyShipAI>().enabled = true;
 		} else if(enemy.GetComponent<EnemyTurretAI>() != null){
 			enemy.GetComponent<EnemyTurretAI>().enabled = true;

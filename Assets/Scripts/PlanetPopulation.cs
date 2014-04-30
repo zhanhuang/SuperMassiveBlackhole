@@ -237,11 +237,17 @@ public class PlanetPopulation : MonoBehaviour {
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 			
+//			// TODO: test code. comment out in production
+//			if(planetType == -1){
+//				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+//			}
 			// TODO: test code. comment out in production
 			if(planetType == -1){
-				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
+				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
 			}
-				
+			
 			StartCoroutine(ExpandBeam());
 		}
 	}
