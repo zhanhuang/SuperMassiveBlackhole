@@ -1,6 +1,6 @@
 //Maya ASCII 2013 scene
 //Name: Heat Bar.ma
-//Last modified: Wed, Apr 30, 2014 05:27:16 PM
+//Last modified: Wed, Apr 30, 2014 05:55:14 PM
 //Codeset: 1252
 requires maya "2013";
 requires "stereoCamera" "10.0";
@@ -4669,7 +4669,7 @@ createNode script -n "sceneConfigurationScriptNode";
 	setAttr ".b" -type "string" "playbackOptions -min 1 -max 24 -ast 1 -aet 48 ";
 	setAttr ".st" 6;
 createNode lambert -n "Mat_HeatBarYellow";
-	setAttr ".c" -type "float3" 1 0.30000001 0 ;
+	setAttr ".c" -type "float3" 1 0.264 0 ;
 createNode shadingEngine -n "lambert4SG";
 	setAttr ".ihi" 0;
 	setAttr ".ro" yes;
