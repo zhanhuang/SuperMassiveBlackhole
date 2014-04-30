@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class EnemyTurretAI : MonoBehaviour {
-	public int health = 1;
 	public int level = 0;
+	public int health = 1;
 
 	public GameObject currentPlanet;
 	float fireCoolDown = 0.5f;
@@ -82,22 +82,20 @@ public class EnemyTurretAI : MonoBehaviour {
 	}
 	
 	IEnumerator DamageFlash(){
-		Material targetMat1 = transform.FindChild("TurretBase").renderer.material;
-		Material targetMat2 = transform.FindChild("TurretHead").renderer.material;
-
-		Color origColor1 = targetMat1.color;
-		Color origColor2 = targetMat2.color;
-		targetMat1.color = Color.white;
-		targetMat2.color = Color.white;
+		Material targetMat = null;
+		if(level == 0){
+			targetMat = transform.FindChild("TurretTop").FindChild("polySurface14").renderer.material;
+		} else if(level == 1){
+			targetMat = transform.FindChild("Tank_Body").renderer.material;
+		}
+		Color origColor = targetMat.color;
+		targetMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
-		targetMat1.color = origColor1;
-		targetMat2.color = origColor2;
+		targetMat.color = origColor;
 		yield return new WaitForSeconds(0.05f);
-		targetMat1.color = Color.white;
-		targetMat2.color = Color.white;
+		targetMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
-		targetMat1.color = origColor1;
-		targetMat2.color = origColor2;
+		targetMat.color = origColor;
 		flashing = false;
 	}
 

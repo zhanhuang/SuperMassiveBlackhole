@@ -12,7 +12,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	public AudioClip enemyGunSound;
 	public AudioClip deathSound;
 
-	float fireCoolDown = 1f;
+	public float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
 	float mineCoolDown = 15f;
 	float mineCoolDownRemaining = 0f;

@@ -183,7 +183,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			} else{
 				nextItemText.anchor = TextAnchor.MiddleCenter;
 				nextItemText.pixelOffset = new Vector2(0f, - Screen.height/2 + 30f);
-				nextItemText.text = "Press [P] To Close Shop";
+				nextItemText.text = "[J]: Purchase \n[P]: Close Shop";
 			}
 			nextItemText.enabled = false;
 			itemTexts[i] = nextItemText;
@@ -235,15 +235,20 @@ public class BaseBeamBehavior : MonoBehaviour {
 		}
 		beamText.enabled = true;
 
+		RemoveHighLight(selectedIndex);
 		selectedIndex = 0;
+		HighLight(selectedIndex);
 	}
 	
 	void UpdateItem(int index){
-		int level = playerScript.GetItemLevel(items[index]);
-		prices[index] = level * level * 10 + 20;
 		if(index == 2 || index == 4){
+			// shield and mine charges don't ramp up in price
+			prices[index] = 20;
 			itemTexts[index].text = items[index];
 		} else{
+			// weapons ramp up according to current level
+			int level = playerScript.GetItemLevel(items[index]);
+			prices[index] = level * level * 10 + 20;
 			itemTexts[index].text = items[index] + "(lv" + (playerScript.GetItemLevel(items[index]) + 1) + ")";
 		}
 		priceTexts[index].text = prices[index].ToString();
@@ -276,7 +281,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Player"){
 			if(shopEnabled){
-				beamText.text = "Press [Space] To Engage Planar Drive\nPress [P] To Open Shop";
+				beamText.text = "[Space]: Engage Planar Drive\n    [P]     : Open Shop";
 			}
 			beamText.enabled = true;
 			player = other.transform;

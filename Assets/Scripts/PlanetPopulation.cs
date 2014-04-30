@@ -115,7 +115,8 @@ public class PlanetPopulation : MonoBehaviour {
 		for(int i = 0; i < planetRow * 2 + Random.Range(-1,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip;
-			if(Random.Range(0,2) == 0){
+			int shipType = Random.Range(0,2);
+			if(shipType == 0){
 				nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
 				nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = false;
 			} else{
@@ -126,10 +127,10 @@ public class PlanetPopulation : MonoBehaviour {
 			nextShipScript.currentPlanet = gameObject;
 			nextShipScript.level = planetRow;
 			nextShipScript.health = 2; //(planetRow + 1)/2;
-			if(planetType == 1){
-				nextShipScript.enemyType = "chase";
-			} else{
+			if(planetType == 3){
 				nextShipScript.enemyType = "random";
+			} else{
+				nextShipScript.enemyType = "chase";
 			}
 			EnemyCounter++;
 		}
@@ -158,8 +159,6 @@ public class PlanetPopulation : MonoBehaviour {
 				GameObject nextAllyShip = (GameObject)Instantiate(AllyShip, transform.position + startDir * orbitLength, transform.rotation);
 				AllyShipAI nextShipScript = nextAllyShip.transform.GetComponent<AllyShipAI>();
 				nextShipScript.currentPlanet = gameObject;
-				nextShipScript.level = planetRow;
-				nextShipScript.health = 3;
 				AllyCounter++;
 			}
 		}
@@ -262,7 +261,7 @@ public class PlanetPopulation : MonoBehaviour {
 		} else if(rnd < 40f){
 			GameObject nextLoot = (GameObject)Instantiate(Loot_Currency, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Currency";
-			nextLoot.GetComponent<Loot>().lootValue = level * 5 + Random.Range(5,15);
+			nextLoot.GetComponent<Loot>().lootValue = level * 5 + planetRow * 3 + Random.Range(5,15);
 			nextLoot.transform.up = nextLoot.transform.position - transform.position;
 		}
 	}
