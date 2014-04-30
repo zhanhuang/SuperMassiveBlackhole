@@ -55,7 +55,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GameObject MoveJoint;
 	GameObject BaseJoint;
 
-	bool flashing = false;
+	bool dmgFlashing = false;
+	bool heatFlashing = false;
 
 	GUIText healthText;
 	GUIText currencyText;
@@ -321,12 +322,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 				}
 			}
 			if (overHeatMeter > overHeatLimit){
-				overHeatMeter = 12;
+				overHeatMeter = overHeatLimit + 2;
 				coolOffCounter = -.5f;
-				if(!flashing){
-					flashing = true;
-					StartCoroutine(OverheatFlash());
-				}
+				StopCoroutine("OverheatFlash");
+				StartCoroutine(OverheatFlash());
 			}
 		} 
 		else{
@@ -444,15 +443,15 @@ public class PlayerShipController : ShipOrbitBehavior {
 			if(health <= 2){
 				healthText.color = new Color(1f, 0.5f, 0f);
 			}
-			if(!flashing){
-				flashing = true;
+			if(!dmgFlashing){
+				dmgFlashing = true;
 				StartCoroutine(DamageFlash());
 			}
 		}
 	}
 
 	IEnumerator OverheatFlash(){
-		Color origColor = heatWordMat.color;
+		Color origColor = new Color(1f, 0.25f, 0f);
 		heatWordMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
 		heatWordMat.color = origColor;
@@ -487,7 +486,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		yield return new WaitForSeconds(0.05f);
 		heatWordMat.color = origColor;
 
-		flashing = false;
 	}
 
 	IEnumerator DamageFlash(){
@@ -500,7 +498,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		targetMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
 		targetMat.color = origColor;
-		flashing = false;
+		dmgFlashing = false;
 	}
 
 	public void Die(){
