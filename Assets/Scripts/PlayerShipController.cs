@@ -32,9 +32,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 	
 
 	// overheat
-	public float overHeatLimit = 5f;
+	public float overHeatLimit = 10f;
 	float overHeatMeter = 0f;
 	float coolOffCounter = 0f;
+	Material heatMat;
+	Material heatWordMat;
 
 	// ship stat variables
 	float acceleration = 50f;
@@ -49,6 +51,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GameObject Laser;
 	GameObject Bomb;
 	GameObject Mine;
+
+	GameObject MoveJoint;
+	GameObject BaseJoint;
 
 	bool flashing = false;
 
@@ -77,6 +82,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 	void Start () {
 //		currentPlanet = GameObject.Find("Planet");
 		OrbitSetup();
+
+		// setup joint for heat bar
+		MoveJoint = transform.FindChild("Heat Bar").FindChild("BaseJoint").FindChild("MoveJoint").gameObject;
 
 		// set camera culling to spherical
 		transform.GetComponentInChildren<Camera>().layerCullSpherical = true;
@@ -121,16 +129,19 @@ public class PlayerShipController : ShipOrbitBehavior {
 		
 		// overheat meter
 		// TODO: Have a bar for this
-		GameObject heatTextObj = new GameObject("HUD_heatMeter");
-		heatTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		heatText = (GUIText)heatTextObj.AddComponent(typeof(GUIText));
-		heatText.anchor = TextAnchor.UpperRight;
-		heatText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 30f);
-		heatText.fontSize = 18;
-		heatText.font = GUIFont;
-		heatText.color = Color.white;
-		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
-		
+//		GameObject heatTextObj = new GameObject("HUD_heatMeter");
+//		heatTextObj.transform.position = new Vector3(0.5f, 0.5f, 0f);
+//		heatText = (GUIText)heatTextObj.AddComponent(typeof(GUIText));
+//		heatText.anchor = TextAnchor.MiddleRight;
+//		heatText.pixelOffset = new Vector2(Screen.width/2 - 125f, Screen.height/2 - 34f);
+//		heatText.fontSize = 18;
+//		heatText.font = GUIFont;
+//		heatText.color = Color.white;
+//		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
+		heatMat = transform.FindChild("Heat Bar").FindChild("Bar").renderer.material;
+		heatWordMat = transform.FindChild("Heat Bar").FindChild("HeatText").renderer.materials[1];
+		heatWordMat.color = new Color(1f, 0.25f, 0f);
+
 		// shield counter
 		GameObject shieldTextObj = new GameObject("HUD_shieldCounter");
 		shieldTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
@@ -202,8 +213,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		coolOffCounter += Time.deltaTime;
 		if(overHeatMeter > 0){
-			overHeatMeter -= Time.deltaTime * Mathf.Clamp(coolOffCounter, 1f, Mathf.Infinity);
+			if (coolOffCounter > 2f){
+				overHeatMeter -= Time.deltaTime * 7;
+			}
+			else{
+				overHeatMeter -= Time.deltaTime* 1.5f;
+			}
 			overHeatMeter = Mathf.Clamp(overHeatMeter, 0f, overHeatLimit*2);
+			
 		}
 
 		if(shieldTimeRemaining > 0f){
@@ -228,16 +245,18 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(overHeatMeter < overHeatLimit){
 			// color to cyan when cooldown is high to signify faster heat reduction
 			if(coolOffCounter > 2f && overHeatMeter > 0f){
-				heatText.color = Color.cyan;
+//				heatText.color = Color.cyan;
+				heatMat.color = Color.cyan;
 			} else{
-				heatText.color = Color.white;
+//				heatText.color = Color.white;
+				// Yellow Color
+				heatMat.color = new Color(.75f, .75f, 0f);
 			}
 
 			// shooting
 			if (Input.GetKeyDown(KeyCode.J)){
 				FireLaser();
-
-				overHeatMeter += 1f;
+				overHeatMeter += .4f * laserLevel;
 				coolOffCounter = 0f;
 			}
 			
@@ -246,7 +265,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 				DropBomb();
 
-				overHeatMeter += 1f;
+				overHeatMeter += 2f * bombLevel;
 				coolOffCounter = 0f;
 			}
 			
@@ -289,11 +308,21 @@ public class PlayerShipController : ShipOrbitBehavior {
 					StartCoroutine(ActivateEMP());
 				}
 			}
-		} else{
+			if (overHeatMeter > overHeatLimit){
+				overHeatMeter = 12;
+				coolOffCounter = -.5f;
+				if(!flashing){
+					flashing = true;
+					StartCoroutine(OverheatFlash());
+				}
+			}
+		} 
+		else{
 			//TODO: show overheat meter
-			heatText.color = Color.red;
+//			heatText.color = Color.red;
+			heatMat.color = new Color(1f, .118f, .118f);
 		}
-		
+			
 		// tail particle effect
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z;
 		if(forwardVelocity > 0f){
@@ -308,7 +337,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 //		transform.FindChild("Camera").transform.localPosition = adjustedCameraRotation;
 
 		// update heat text
-		heatText.text = "WEAPON HEAT: " + overHeatMeter.ToString("F1") + "/" + overHeatLimit.ToString("F1");
+//		heatText.text = "HEAT";
+		// update heat bar
+		if (overHeatMeter > 10){
+			MoveJoint.transform.localPosition = new Vector3(-10, MoveJoint.transform.localPosition.y, MoveJoint.transform.localPosition.z);
+		}
+		else{
+			MoveJoint.transform.localPosition = new Vector3(-overHeatMeter, MoveJoint.transform.localPosition.y, MoveJoint.transform.localPosition.z);
+		}
 
 		// enemy and ally counters
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
@@ -401,6 +437,45 @@ public class PlayerShipController : ShipOrbitBehavior {
 				StartCoroutine(DamageFlash());
 			}
 		}
+	}
+
+	IEnumerator OverheatFlash(){
+		Color origColor = heatWordMat.color;
+		heatWordMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = Color.white;
+		yield return new WaitForSeconds(0.1f);
+		heatWordMat.color = origColor;
+		yield return new WaitForSeconds(0.05f);
+		heatWordMat.color = origColor;
+
+		flashing = false;
 	}
 
 	IEnumerator DamageFlash(){
