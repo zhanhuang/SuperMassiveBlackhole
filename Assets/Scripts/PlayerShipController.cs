@@ -8,20 +8,26 @@ public class PlayerShipController : ShipOrbitBehavior {
 	// shop and weapons
 	public int currency = 30;
 
+
+	// WEAPONS
+	// laser
 	int laserLevel = 1;
-
+	// bomb
 	int bombLevel = 1;
-
+	// shield
 	int shieldCharges = 2;
 	float shieldLimit = 3f;
 	public float shieldTimeRemaining = 0f;
-	
+	// death ray
 	int deathRayLevel = 0;
-
+	bool deathRayActivated = false;
+	// mine
 	int mineCharges = 2;
-
+	// EMP
 	int EMPLevel = 0;
 	bool EMPActivated = false;
+	Transform EMPTransform;
+	Vector3 EMPStartingScale;
 	
 
 	// overheat
@@ -76,10 +82,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 		Mine = (GameObject)Resources.Load("Mine_Yellow");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
+		// load font
+		Font GUIFont = (Font)Resources.Load("AirStrike");
+
 		// set camera
 		shipTransform = transform.FindChild("Ship");
 		playerCamera = transform.FindChild("Camera").gameObject;
 		cameraStartingLocalPosition = playerCamera.transform.localPosition;
+
+		// set emp
+		EMPTransform = transform.FindChild("EMP");
+		EMPStartingScale = EMPTransform.localScale;
 		
 		// health counter 
 		// TODO: Have a bar for this
@@ -88,6 +101,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		healthText = (GUIText)healthTextObj.AddComponent(typeof(GUIText));
 		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 30f);
 		healthText.fontSize = 18;
+		healthText.font = GUIFont;
 		healthText.color = Color.green;
 		healthText.text = "HEALTH: " + health;
 		
@@ -96,6 +110,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		currencyText = (GUIText)currencyTextObj.AddComponent(typeof(GUIText));
 		currencyText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 60f);
 		currencyText.fontSize = 18;
+		currencyText.font = GUIFont;
 		currencyText.color = Color.yellow;
 		currencyText.text = "CURRENCY: " + currency;
 		
@@ -107,6 +122,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		heatText.anchor = TextAnchor.UpperRight;
 		heatText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 30f);
 		heatText.fontSize = 18;
+		heatText.font = GUIFont;
 		heatText.color = Color.white;
 		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
 		
@@ -117,6 +133,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		shieldText.anchor = TextAnchor.UpperRight;
 		shieldText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 60f);
 		shieldText.fontSize = 18;
+		shieldText.font = GUIFont;
 		shieldText.text = "";
 
 		// mine counter
@@ -126,6 +143,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		mineText.anchor = TextAnchor.UpperRight;
 		mineText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 90f);
 		mineText.fontSize = 18;
+		mineText.font = GUIFont;
 		mineText.text = "";
 		
 		// weapon text
@@ -135,6 +153,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.anchor = TextAnchor.LowerRight;
 		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40f, -Screen.height/2 + 30f);
 		weaponText.fontSize = 18;
+		weaponText.font = GUIFont;
 		weaponText.color = Color.magenta;
 		
 		// enemy counter for current planet
@@ -144,6 +163,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		enemyText.anchor = TextAnchor.MiddleCenter;
 		enemyText.pixelOffset = new Vector2(0f, Screen.height/2 - 30f);
 		enemyText.fontSize = 18;
+		enemyText.font = GUIFont;
 		enemyText.color = Color.red;
 		enemyText.text = "Enemies Left: 0";
 		
@@ -154,6 +174,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		allyText.anchor = TextAnchor.MiddleCenter;
 		allyText.pixelOffset = new Vector2(0f, Screen.height/2 - 50f);
 		allyText.fontSize = 18;
+		allyText.font = GUIFont;
 		allyText.color = Color.green;
 		allyText.enabled = false;
 
@@ -232,7 +253,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 			
 			// death ray
 			if (Input.GetKeyDown (KeyCode.U)) {
-
+				if(deathRayLevel > 0 && !deathRayActivated){
+					deathRayActivated = true;
+					StartCoroutine(ActivateDeathRay());
+					overHeatMeter += 8f;
+					coolOffCounter = 0f;
+				}
 			}
 
 			// setting mine
@@ -497,14 +523,53 @@ public class PlayerShipController : ShipOrbitBehavior {
 		shieldTimeRemaining = shieldTime;
 	}
 	
-	public void DisableShield(){
+	void DisableShield(){
 		transform.FindChild("Shield").renderer.enabled = false;
 		transform.FindChild("Shield").collider.enabled = false;
 		UpdateWeaponText();
 	}
+
+	IEnumerator ActivateDeathRay(){
+		LineRenderer line = transform.GetComponent<LineRenderer>();
+		line.enabled = true;
+		line.SetWidth(0.2f,0.2f);
+
+		Transform lastTarget = transform;
+		float countDown = 0f;
+
+		float deathRayDuration = 2f;
+		for(float t = 0f; t < (deathRayDuration + 1f); t += Time.deltaTime){
+			line.SetPosition(0, (transform.position - transform.up.normalized * 0.5f));
+			Vector3 rayDirection = Quaternion.AngleAxis(-45f * Mathf.Clamp01(1f - t/deathRayDuration), -transform.right) * transform.forward;
+			RaycastHit hit = new RaycastHit();
+			if(Physics.Raycast((transform.position - transform.up.normalized * 0.5f), rayDirection, out hit, 40f)){
+				if (hit.transform.tag == "Enemy" || hit.transform.tag == "Ally"){
+					if(lastTarget == hit.transform && countDown > 0f){
+						countDown -= Time.deltaTime;
+					} else{
+						hit.transform.SendMessage("TakeDamage", 1);
+						lastTarget = hit.transform;
+						countDown = 1f/deathRayLevel;
+					}
+				}
+				line.SetPosition(1, hit.point);
+			} else{
+				line.SetPosition(1, transform.position + rayDirection * 100f);
+			}
+			yield return null;
+		}
+		
+		line.enabled = false;
+		deathRayActivated = false;
+	}
+
+	void DeactivateDeathRay(){
+		StopCoroutine("ActivateDeathRay");
+		transform.GetComponent<LineRenderer>().enabled = false;
+		deathRayActivated = false;
+	}
 	
 	IEnumerator ActivateEMP(){
-		Transform EMPTransform = transform.FindChild("EMP");
 		EMPTransform.renderer.enabled = true;
 		EMPTransform.collider.enabled = true;
 		Vector3 startingScale = EMPTransform.localScale;
@@ -517,11 +582,22 @@ public class PlayerShipController : ShipOrbitBehavior {
 			EMPTransform.localScale = startingScale * (3.5f + t * 200f * EMPLevel);
 			yield return null;
 		}
+		DeactivateEMP();
+	}
+
+	void DeactivateEMP(){
+		StopCoroutine("ActivateEMP");
 		EMPTransform.renderer.enabled = false;
 		EMPTransform.collider.enabled = false;
-		EMPTransform.localScale = startingScale;
+		EMPTransform.localScale = EMPStartingScale;
 		EMPActivated = false;
 		UpdateWeaponText();
+	}
+	
+	public void DeactivateAllWeapons(){
+		DisableShield();
+		DeactivateDeathRay();
+		DeactivateEMP();
 	}
 	
 	public void GetLoot(string lootType, int lootValue){

@@ -40,6 +40,9 @@ public class PlanetPopulation : MonoBehaviour {
 		transform.localScale = new Vector3(scale, scale, scale);
 		orbitLength = transform.localScale.x / 2 + 6f;
 		surfaceLength = transform.localScale.x / 2 - 0.02f;
+
+		Loot_Currency = (GameObject)Resources.Load("Currency");
+		Loot_Health = (GameObject)Resources.Load("Health");
 	}
 	
 	// Use this for initialization
@@ -122,7 +125,7 @@ public class PlanetPopulation : MonoBehaviour {
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
 			nextShipScript.level = planetRow;
-			nextShipScript.health = (planetRow + 1)/2;
+			nextShipScript.health = 5; //(planetRow + 1)/2;
 			if(planetType == 1){
 				nextShipScript.enemyType = "chase";
 			} else{
@@ -248,12 +251,6 @@ public class PlanetPopulation : MonoBehaviour {
 	}
 
 	public void GenerateLootAt(Vector3 location, int level) {
-		if(Loot_Currency == null){
-			Loot_Currency = (GameObject)Resources.Load("Currency");
-		} else if(Loot_Health == null){
-			Loot_Health = (GameObject)Resources.Load("Health");
-		}
-
 		// auto corrects for position of objects on planet surface. choose loot based on level
 		Vector3 direction = (location - transform.position).normalized;
 		float rnd = Random.Range(0f,100f);
