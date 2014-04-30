@@ -22,12 +22,19 @@ public class BaseBeamBehavior : MonoBehaviour {
 	GUIText[] priceTexts = new GUIText[6];
 	int selectedIndex = 0;
 
+	Font GUIFont;
+
 	// Use this for initialization
 	void Start () {
+		
+		// load font
+		GUIFont = (Font)Resources.Load("AirStrike");
+
 		GameObject beamTextObj = new GameObject("HUD_beamText");
 		beamTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		beamText = (GUIText)beamTextObj.AddComponent(typeof(GUIText));
 		beamText.fontSize = 24;
+		beamText.font = GUIFont;
 		beamText.anchor = TextAnchor.MiddleCenter;
 		beamText.color = Color.black;
 		beamText.text = "Press [Space] To Engage Planar Drive";
@@ -75,7 +82,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				liftOff = true;
 				beamText.enabled = false;
 				Destroy(player.GetComponent<ConfigurableJoint>());
-				playerScript.DisableShield();
+				playerScript.DeactivateAllWeapons();
 				playerScript.enabled = false;
 				player.rigidbody.velocity = Vector3.zero;
 				player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
@@ -139,6 +146,9 @@ public class BaseBeamBehavior : MonoBehaviour {
 	}
 
 	public void EnableShop(){
+		// load font
+		GUIFont = (Font)Resources.Load("AirStrike");
+
 		shopEnabled = true;
 
 		/* TODO: upgrades for the following
@@ -165,6 +175,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			GUIText nextItemText = (GUIText)itemTextObj.AddComponent(typeof(GUIText));
 			nextItemText.anchor = TextAnchor.MiddleLeft;
 			nextItemText.fontSize = 24;
+			nextItemText.font = GUIFont;
 			nextItemText.color = Color.black;
 			if(i < 6){
 				nextItemText.pixelOffset = new Vector2(-160f, 90f - (i * 30f));
@@ -184,6 +195,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			GUIText nextPriceText = (GUIText)priceTextObj.AddComponent(typeof(GUIText));
 			nextPriceText.anchor = TextAnchor.MiddleRight;
 			nextPriceText.fontSize = 24;
+			nextPriceText.font = GUIFont;
 			nextPriceText.color = Color.black;
 			nextPriceText.pixelOffset = new Vector2(160f, 90f - (i * 30f));
 			nextPriceText.text = "20";
