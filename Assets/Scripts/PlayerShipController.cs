@@ -57,6 +57,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GUIText heatText;
 	GUIText shieldText;
 	GUIText mineText;
+	GUIText movementText;
 	GUIText weaponText;
 	GUIText enemyText;
 	GUIText allyText;
@@ -150,6 +151,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 		mineText.fontSize = 18;
 		mineText.font = GUIFont;
 		mineText.text = "";
+		
+		// movement text
+		GameObject moveTextObj = new GameObject("HUD_moveText");
+		moveTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		movementText = (GUIText)moveTextObj.AddComponent(typeof(GUIText));
+		movementText.anchor = TextAnchor.LowerLeft;
+		movementText.pixelOffset = new Vector2(-Screen.width/2 + 40f, -Screen.height/2 + 30f);
+		movementText.fontSize = 18;
+		movementText.font = GUIFont;
+		movementText.color = Color.grey;
+		movementText.text = "Move: \n[Q][W][E]\n[A][S][D]";
 		
 		// weapon text
 		GameObject weaponTextObj = new GameObject("HUD_weaponText");
