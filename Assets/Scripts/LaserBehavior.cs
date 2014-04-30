@@ -7,6 +7,8 @@ public class LaserBehavior : MonoBehaviour {
 	public float laserSpeed;
 	public Vector3 gravityCenter;
 	GameObject Explosion;
+
+	public AudioClip playerHitSound;
 	// Use this for initialization
 	void Start () {
 		Explosion = (GameObject)Resources.Load ("Explosion_Laser");
@@ -34,6 +36,7 @@ public class LaserBehavior : MonoBehaviour {
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				if(other.transform.GetComponent<PlayerShipController>() != null){
 					other.gameObject.SendMessage("TakeDamage", 1);
+					other.audio.PlayOneShot (playerHitSound);
 				}
 			}
 		} else if(other.tag == "Ally"){

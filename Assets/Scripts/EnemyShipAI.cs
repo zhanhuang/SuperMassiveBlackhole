@@ -23,6 +23,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	GameObject Laser;
 	GameObject Mine;
 	GameObject Explosion;
+	GameObject deathAudioSource;
 
 	// AI types
 	public string enemyType;	// random, chase
@@ -41,6 +42,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		Laser = (GameObject)Resources.Load("Laser_Red");
 		Mine = (GameObject)Resources.Load("Mine_Red");
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
+		deathAudioSource = (GameObject)Resources.Load ("enemydeathprefab");
 
 		// set player
 		player = GameObject.FindGameObjectWithTag("Player");
@@ -156,9 +158,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 
 	public void Die(){
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
-		if (deathSound) {
-			AudioSource.PlayClipAtPoint (deathSound, transform.position);
-		}
+		Destroy(Instantiate (deathAudioSource, transform.position, transform.rotation), deathSound.length);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}

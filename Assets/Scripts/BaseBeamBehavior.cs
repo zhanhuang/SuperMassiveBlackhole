@@ -27,6 +27,12 @@ public class BaseBeamBehavior : MonoBehaviour {
 	// final stage
 	public bool isFinalBeam = false;
 
+	public AudioSource audio2;
+
+	public AudioClip storeScroll;
+	public AudioClip storeBuy;
+	public AudioClip storeCantBuy;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -44,15 +50,24 @@ public class BaseBeamBehavior : MonoBehaviour {
 		beamText.enabled = false;
 
 		surroundingPlanets = new GameObject[8];
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (shopping){
 			if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){
+				audio2.Stop ();
+				if(playerScript.currentPlanet.GetComponent<PlanetPopulation>().planetType == -1){
+					player.audio.Play ();
+					playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Play ();}
+				else{
+					playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Play ();
+					playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Play ();}
 				shopping = false;
 				CloseDownShop();
 			} else if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)){
+				audio.PlayOneShot (storeScroll);
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex --;
@@ -62,6 +77,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 				HighLight(selectedIndex);
 			} else if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)){
+				audio.PlayOneShot (storeScroll);
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex ++;
@@ -73,8 +89,12 @@ public class BaseBeamBehavior : MonoBehaviour {
 			} else if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.J)){
 				// purchased an item
 				if(playerScript.currency >= prices[selectedIndex] && itemTexts[selectedIndex].text != "Sold Out"){
+					audio.PlayOneShot (storeBuy);
 					playerScript.PurchaseItem(items[selectedIndex], prices[selectedIndex]);
 					UpdateItem(selectedIndex);
+				}
+				else{
+					audio.PlayOneShot (storeCantBuy);
 				}
 			}
 			return;
@@ -91,9 +111,15 @@ public class BaseBeamBehavior : MonoBehaviour {
 				player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
 				playerScript.shipTransform.localRotation = Quaternion.identity;
 				player.audio.Stop ();
+				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
+				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
 				audio.Play ();
 				StartCoroutine(BeamMeUp());
 			} else if(Input.GetKeyDown(KeyCode.P)){
+				player.audio.Stop ();
+				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
+				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
+				audio2.Play ();
 				shopping = true;
 				OpenUpShop();
 			}

@@ -65,6 +65,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public AudioClip gunSound;
 	public AudioClip bombSound;
 	public AudioClip healthSound;
+	public AudioClip gameOverSound;
+	public AudioClip deathRaySound;
+	public AudioClip empSound;
+
+	public AudioSource audio2;
 
 	int soundCount = 0;
 
@@ -268,6 +273,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			// death ray
 			if (Input.GetKeyDown (KeyCode.U)) {
 				if(deathRayLevel > 0 && !deathRayActivated){
+					audio.PlayOneShot (deathRaySound);
 					deathRayActivated = true;
 					StartCoroutine(ActivateDeathRay());
 					overHeatMeter += 8f;
@@ -288,6 +294,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			// EMP
 			if (Input.GetKeyDown (KeyCode.O)) {
 				if(shieldCharges > 0 && EMPLevel > 0 && !EMPActivated && shieldTimeRemaining <= 0f){
+					audio.PlayOneShot (empSound);
 					EMPActivated = true;
 					shieldCharges --;
 					UpdateWeaponText();
@@ -423,6 +430,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	public void Die(){
 		currentPlanet.GetComponent<PlanetPopulation> ().audio.Stop ();
+		audio.PlayOneShot (gameOverSound);
 		Destroy(transform.Find("Ship").gameObject);
 		transform.collider.enabled = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
@@ -536,6 +544,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 	
 	public void ActivateShield(float shieldTime){
+		audio2.Play ();
 		shieldText.color = Color.cyan;
 		transform.FindChild("Shield").renderer.enabled = true;
 		transform.FindChild("Shield").collider.enabled = true;
@@ -543,6 +552,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 	
 	void DisableShield(){
+		audio2.Stop ();
 		transform.FindChild("Shield").renderer.enabled = false;
 		transform.FindChild("Shield").collider.enabled = false;
 		UpdateWeaponText();
