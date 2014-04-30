@@ -169,8 +169,8 @@ public class PlanetPopulation : MonoBehaviour {
 		}
 
 		if (planetType == 1 || planetType == 3) {
-						audio.Play ();
-				}
+			audio.Play ();
+		}
 	}
 
 	public void AllyDied(){

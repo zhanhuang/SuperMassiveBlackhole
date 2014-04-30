@@ -15,7 +15,7 @@ public class EMPBehavior : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Enemy" || other.tag == "Ally"){
-			Debug.Log("enemy hit");
+//			Debug.Log("enemy hit");
 			other.gameObject.SendMessage("TakeDamage", 1);
 		} else if(other.GetComponent<LaserBehavior>() != null && other.GetComponent<LaserBehavior>().laserOrigin != "Player"){
 			Destroy(other.gameObject);

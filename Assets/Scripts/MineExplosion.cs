@@ -25,7 +25,7 @@ public class MineExplosion : MonoBehaviour {
 		} else if(other.tag == "Enemy" || other.tag == "Ally"){
 			other.gameObject.SendMessage("TakeDamage", 2);
 		} else if(other.tag == "Destructible"){
-			Debug.Log("destruction!");
+//			Debug.Log("destruction!");
 			Destroy(other.gameObject);
 			// TODO: dust puff
 		} 

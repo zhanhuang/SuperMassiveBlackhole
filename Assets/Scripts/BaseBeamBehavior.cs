@@ -24,6 +24,9 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	Font GUIFont;
 
+	// final stage
+	public bool isFinalBeam = false;
+
 	// Use this for initialization
 	void Start () {
 		
