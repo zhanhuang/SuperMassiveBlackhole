@@ -15,6 +15,10 @@ public class FinalStageScript : PlanetPopulation {
 		// override parent script so we don't resize planet
 		orbitLength = transform.localScale.x / 2 + 15f;
 		surfaceLength = transform.localScale.x / 2;
+
+		for(int i = 0; i < 8; i++){
+			portals[i].GetComponent<PortalScript>().currentPlanet = gameObject;
+		}
 	}
 
 	// Use this for initialization
