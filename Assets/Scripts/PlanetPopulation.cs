@@ -23,6 +23,7 @@ public class PlanetPopulation : MonoBehaviour {
 
 	// Prefabs
 	GameObject AllyShip;
+	GameObject EnemyDrone;
 	GameObject EnemyShipA;
 	GameObject EnemyShipB;
 	GameObject EnemyTurret;
@@ -111,13 +112,16 @@ public class PlanetPopulation : MonoBehaviour {
 		}
 		
 		// generate enemy ships. Max 20 or will lag
+		EnemyDrone = (GameObject)Resources.Load("Enemy_Drone");
 		EnemyShipA = (GameObject)Resources.Load("Enemy_Ship_A");
 		EnemyShipB = (GameObject)Resources.Load("Enemy_Ship_B");
 		for(int i = 0; i < planetRow * 2 + Random.Range(-1,3); i++){
 			Vector3 startDir = Random.insideUnitSphere.normalized;
 			GameObject nextEnemyShip;
 			int shipType = Random.Range(0,6) + planetRow;
-			if(shipType < 6){
+			if(shipType < 4){
+				nextEnemyShip = (GameObject)Instantiate(EnemyDrone, transform.position + startDir * orbitLength, transform.rotation);
+			} else if(shipType < 6){
 				nextEnemyShip = (GameObject)Instantiate(EnemyShipA, transform.position + startDir * orbitLength, transform.rotation);
 			} else{
 				nextEnemyShip = (GameObject)Instantiate(EnemyShipB, transform.position + startDir * orbitLength, transform.rotation);

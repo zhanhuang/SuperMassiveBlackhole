@@ -121,7 +121,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	IEnumerator AvoidObstacle(){
 		while(true){
 			RaycastHit hit = new RaycastHit();
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 30f)){
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 15f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Player" && hit.transform.tag != "Shield" && hit.transform.tag != "Ally"){
 					rigidbody.AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
@@ -190,7 +190,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 			for(int i = -1; i < 2; i++){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
 				audio.PlayOneShot(enemyGunSound);
-				nextLaser.transform.Rotate(new Vector3(90f,45f * i,0f));
+				nextLaser.transform.Rotate(new Vector3(90f,30f * i,0f));
 				nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
 				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";

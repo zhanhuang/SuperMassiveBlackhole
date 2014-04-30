@@ -52,7 +52,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 	IEnumerator AvoidObstacle(){
 		while(true){
 			RaycastHit hit = new RaycastHit();
-			if(Physics.Raycast(transform.position, transform.forward, out hit, 30f)){
+			if(Physics.Raycast(transform.position, transform.forward, out hit, 15f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Enemy"){
 					rigidbody.AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
