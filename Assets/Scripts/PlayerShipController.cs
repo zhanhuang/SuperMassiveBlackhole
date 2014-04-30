@@ -4,7 +4,8 @@ using System.Collections;
 // Inherits from ShipOrbitBehavior
 public class PlayerShipController : ShipOrbitBehavior {
 	public GalaxyPopulation Galaxy;
-
+	
+	int health = 5;
 	// shop and weapons
 	public int currency = 30;
 
@@ -51,7 +52,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	bool flashing = false;
 
-	int health = 5;
 	GUIText healthText;
 	GUIText currencyText;
 	GUIText heatText;
@@ -202,8 +202,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		}
 
 		if(shieldTimeRemaining > 0f){
+			shieldText.anchor = TextAnchor.UpperLeft;
+			shieldText.pixelOffset = new Vector2(Screen.width/2 - 320f, Screen.height/2 - 60f);
 			shieldTimeRemaining -= Time.deltaTime;
-			shieldText.text = "SHIELD ENGAGED. TIME LEFT: " + shieldTimeRemaining.ToString("F2");
+			shieldText.text = "SHIELD ENGAGED. TIME LEFT: " + shieldTimeRemaining.ToString("F1");
 			if(shieldTimeRemaining <= 0f){
 				DisableShield();
 			}
@@ -384,6 +386,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 			healthText.color = Color.red;
 			Die();
 		} else{
+			if(health <= 2){
+				healthText.color = new Color(1f, 0.5f, 0f);
+			}
 			if(!flashing){
 				flashing = true;
 				StartCoroutine(DamageFlash());
@@ -436,7 +441,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Ally"){
 			Vector3 collisionDir = (collision.transform.position -  transform.position).normalized;
 			rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
-			TakeDamage(1);
+			if(shieldTimeRemaining <= 0f){
+				TakeDamage(1);
+			}
 		}
 	}
 
@@ -606,15 +613,38 @@ public class PlayerShipController : ShipOrbitBehavior {
 		}
 		
 		switch (lootType){
+		case "HeatLimitBreaker":
+			break;
+		case "InstantShield":
+			break;
+		default:
+			StartCoroutine(LootDisplay(lootType, lootValue));
+			break;
+		}
+	}
+
+	public IEnumerator LootDisplay(string lootType, int lootValue){
+		switch (lootType){
 		case "Health":
 			health += lootValue;
-			healthText.text = "HEALTH: " + health;
 			audio.PlayOneShot (healthSound);
+			for(float t = 0f; t < 1f; t += Time.deltaTime){
+				healthText.text = "HEALTH: " + (health - lootValue).ToString() + "  + " + lootValue;
+				yield return null;
+			}
+			healthText.text = "HEALTH: " + health;
+			if(health > 2){
+				healthText.color = Color.green;
+			}
 			break;
 		case "Currency":
 			currency += lootValue;
-			currencyText.text = "CURRENCY: " + currency;
 			audio.PlayOneShot (healthSound);
+			for(float t = 0f; t < 1f; t += Time.deltaTime){
+				currencyText.text = "CURRENCY: " + (currency - lootValue).ToString() + "  + " + lootValue;
+				yield return null;
+			}
+			currencyText.text = "CURRENCY: " + currency;
 			break;
 		default:
 			break;
@@ -674,9 +704,13 @@ public class PlayerShipController : ShipOrbitBehavior {
 		mineText.text = "MINE CHARGES: " + mineCharges;
 
 		if(EMPActivated){
+			shieldText.anchor = TextAnchor.UpperRight;
+			shieldText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 60f);
 			shieldText.color = Color.cyan;
 			shieldText.text = "EMP ACTIVATED";
 		} else if(shieldTimeRemaining <= 0f){
+			shieldText.anchor = TextAnchor.UpperRight;
+			shieldText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 60f);
 			if(shieldCharges <= 0){
 				shieldText.color = Color.red;
 			} else{

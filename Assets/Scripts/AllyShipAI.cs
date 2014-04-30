@@ -6,8 +6,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 	public float speed = 10f;
 	public float turnSpeed = 10f;
 	
-	public int health = 5;
-	public int level = 0;
+	int health = 2;
 	
 	float fireCoolDown = 1f;
 	float fireCoolDownRemaining = 0f;
@@ -36,6 +35,11 @@ public class AllyShipAI : ShipOrbitBehavior {
 		if(fireCoolDownRemaining < 0f && enemyCounter > 0){
 			AutoFire();
 			fireCoolDownRemaining = fireCoolDown;
+		}
+
+		if(enemyCounter <= 0){
+			// after you clear the planet, no more shooting allies for loot
+			transform.collider.enabled = false;
 		}
 	}
 	
@@ -82,7 +86,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 	}
 	
 	public void Die(){
-		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, 0);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 	}
@@ -101,22 +105,11 @@ public class AllyShipAI : ShipOrbitBehavior {
 	}
 	
 	void AutoFire(){
-		if(level < 4){
-			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
-			nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
-			nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-			nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Ally";
-			nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
-		} else{
-			for(int i = -1; i < 2; i++){
-				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-				nextLaser.transform.Rotate(new Vector3(90f,45f * i,0f));
-				nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
-				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
-				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Ally";
-				nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
-			}
-		}
+		GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
+		nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
+		nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
+		nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
+		nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Ally";
+		nextLaser.GetComponent<LaserBehavior>().laserSpeed = 45f;
 	}
 }
