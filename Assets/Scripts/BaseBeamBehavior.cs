@@ -47,7 +47,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 		beamText.font = GUIFont;
 		beamText.anchor = TextAnchor.MiddleCenter;
 		beamText.color = Color.black;
-		beamText.text = "Press [Space] To Engage Planar Drive";
+		beamText.text = "[Space]: Engage Planar Drive";
 		beamText.enabled = false;
 
 		surroundingPlanets = new GameObject[8];

@@ -155,7 +155,6 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		}
 		health -= damage;
 		if(health <= 0){
-			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 			Die();
 		} else{
 			if(!flashing){
@@ -166,6 +165,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	public void Die(){
+		currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 		deathAudioSource = (GameObject)Resources.Load ("enemydeathprefab");
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);

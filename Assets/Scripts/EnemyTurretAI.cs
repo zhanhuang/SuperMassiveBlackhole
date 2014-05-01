@@ -143,7 +143,6 @@ public class EnemyTurretAI : MonoBehaviour {
 		}
 		health -= damage;
 		if(health <= 0){
-			currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 			Die();
 		} else{
 			if(!flashing){
@@ -154,6 +153,7 @@ public class EnemyTurretAI : MonoBehaviour {
 	}
 	
 	public void Die(){
+		currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 		turretDeathAudioSource = (GameObject)Resources.Load ("turretdeathprefab");
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
