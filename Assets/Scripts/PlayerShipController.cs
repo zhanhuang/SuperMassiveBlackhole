@@ -503,6 +503,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	public void Die(){
 		currentPlanet.GetComponent<PlanetPopulation>().audio.Stop ();
+		if (currentPlanet.GetComponent<PlanetPopulation> ().planetType == -2) {
+			currentPlanet.GetComponent<PlanetPopulation> ().audio3.Stop ();
+		}
 		audio.PlayOneShot (gameOverSound);
 		DeactivateAllWeapons();
 		Destroy(transform.Find("Ship").gameObject);
