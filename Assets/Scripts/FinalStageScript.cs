@@ -41,18 +41,35 @@ public class FinalStageScript : PlanetPopulation {
 	}
 
 	IEnumerator EnemyWaveStart(){
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 5; i++){
 			int portalIndex = Random.Range(0,8);
 			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(CreateEnemy(0,1))){
 				portalIndex = Random.Range(0,8);
 				yield return null;
 			}
-			yield return new WaitForSeconds(2f);
+			yield return new WaitForSeconds(10f);
 		}
-		yield return new WaitForSeconds(5f);
+		yield return new WaitForSeconds(10f);
+		for(int i = 0; i < 8; i++){
+			int portalIndex = Random.Range(0,8);
+			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(CreateEnemy(0,2))){
+				portalIndex = Random.Range(0,8);
+				yield return null;
+			}
+			yield return new WaitForSeconds(8f);
+		}
+		yield return new WaitForSeconds(10f);
+		for(int i = 0; i < 10; i++){
+			int portalIndex = Random.Range(0,8);
+			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(CreateEnemy(1,3))){
+				portalIndex = Random.Range(0,8);
+				yield return null;
+			}
+			yield return new WaitForSeconds(6f);
+		}
 	}
 
-	public void EnemyDied(){
+	public override void EnemyDied(){
 		EnemyCounter--;
 	}
 
@@ -94,7 +111,7 @@ public class FinalStageScript : PlanetPopulation {
 		return nextEnemy;
 	}
 
-	public void GenerateLootAt(Vector3 location, int level) {
+	public override void GenerateLootAt(Vector3 location, int level) {
 		//don't generate loot
 		return;
 	}
