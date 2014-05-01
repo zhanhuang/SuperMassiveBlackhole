@@ -229,7 +229,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	void Update () {
 		
 		// reset
-		if (health == 0 && Input.GetKey(KeyCode.R)){
+		if ((health == 0 && Input.GetKey(KeyCode.R)) || (Input.GetKey(KeyCode.R) && Input.GetKey(KeyCode.T))){
 			Application.LoadLevel(0);
 		}
 
