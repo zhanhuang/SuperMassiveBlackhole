@@ -4,8 +4,8 @@ using System.Collections;
 public class GalaxyPopulation : MonoBehaviour {
 	GameObject player;
 	GameObject planet;
-	
-	GameObject startingPlanet;
+
+	public GameObject startingPlanet;
 
 	public int specificType;
 	int[,] planetTypeArray = new int[5,5];

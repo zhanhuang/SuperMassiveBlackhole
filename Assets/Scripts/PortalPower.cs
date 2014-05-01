@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PortalPower : MonoBehaviour {
 	bool flashing;
-	int health = 1;
+	int health = 10;
 
 	public PortalScript portal1;
 	public PortalScript portal2;
@@ -34,7 +34,7 @@ public class PortalPower : MonoBehaviour {
 		} else{
 			if(!flashing){
 				flashing = true;
-				StartCoroutine(DamageFlash());
+				StartCoroutine("DamageFlash");
 			}
 		}
 	}

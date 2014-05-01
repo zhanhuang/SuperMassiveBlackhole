@@ -148,7 +148,7 @@ public class EnemyTurretAI : MonoBehaviour {
 		} else{
 			if(!flashing){
 				flashing = true;
-				StartCoroutine(DamageFlash());
+				StartCoroutine("DamageFlash");
 			}
 		}
 	}
