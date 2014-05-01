@@ -282,7 +282,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			yield return null;
 		}
 		playerScript.EngineOff();
-		playerScript.DisplayText("THANK YOU FOR PLAYING!!!", 5f);
+		playerScript.DisplayText("THANK YOU FOR PLAYING!!!", 500f);
 	}
 
 	public void EnableShop(){
