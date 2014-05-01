@@ -24,8 +24,9 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	Font GUIFont;
 
-	// final stage
+	// last two planets
 	public bool isFinalBeam = false;
+	public bool isEndBeam = false;
 
 	public AudioSource audio2;
 
@@ -55,6 +56,13 @@ public class BaseBeamBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (isEndBeam && beamText.enabled){
+			if(Input.GetKeyDown(KeyCode.Space)){
+				StartCoroutine(BeamMeUp());
+			}
+			return;
+		}
+
 		if (shopping){
 			if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){
 				audio2.Stop ();
@@ -103,19 +111,9 @@ public class BaseBeamBehavior : MonoBehaviour {
 		if (!liftOff && beamText.enabled){
 			if(Input.GetKeyDown(KeyCode.Space)){
 				liftOff = true;
-				beamText.enabled = false;
-				Destroy(player.GetComponent<ConfigurableJoint>());
-				playerScript.DeactivateAllWeapons();
-				playerScript.enabled = false;
-				player.rigidbody.velocity = Vector3.zero;
-				player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
-				playerScript.shipTransform.localRotation = Quaternion.identity;
-				player.audio.Stop ();
-				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
-				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
-				audio.Play ();
 				StartCoroutine(BeamMeUp());
 			} else if(Input.GetKeyDown(KeyCode.P) && shopEnabled == true){
+				playerScript.DeactivateAllWeapons();
 				player.audio.Stop ();
 				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
 				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
@@ -162,12 +160,32 @@ public class BaseBeamBehavior : MonoBehaviour {
 	}
 
 	IEnumerator BeamMeUp(){
+		beamText.enabled = false;
+		Destroy(player.GetComponent<ConfigurableJoint>());
+		playerScript.DeactivateAllWeapons();
+		playerScript.enabled = false;
+		player.rigidbody.velocity = Vector3.zero;
+		player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
+		playerScript.shipTransform.localRotation = Quaternion.identity;
+		player.audio.Stop ();
+		playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
+		playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
+		audio.Play ();
+
+		if(isFinalBeam){
+			gameObject.renderer.material.SetColor("_TintColor", Color.red);
+		}
+
+		// beaming
 		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
 			player.position += new Vector3(0f, 1f, 0f) * Time.deltaTime * 50f;
 			yield return null;
 		}
-		
-		if(isFinalBeam){
+
+		if(isEndBeam){
+			// TODO: ending sequence --- fly back to earth
+			Debug.Log("Win");
+		} else if(isFinalBeam){
 			// freeze planet
 			GameObject finalPlanet = GameObject.Find("FinalPlanet");
 			player.position = finalPlanet.transform.position + new Vector3(0f,finalPlanet.GetComponent<FinalStageScript>().orbitLength,0.9f);

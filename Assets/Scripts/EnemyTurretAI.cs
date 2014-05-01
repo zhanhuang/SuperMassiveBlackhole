@@ -30,18 +30,15 @@ public class EnemyTurretAI : MonoBehaviour {
 	GameObject turretDeathAudioSource;
 	
 	void Awake (){
-		// load prefabs
-		Laser = (GameObject)Resources.Load("Laser_Red");
-		Explosion = (GameObject)Resources.Load("Explosion_Player");
-		turretDeathAudioSource = (GameObject)Resources.Load ("turretdeathprefab");
-		
-		// set player
-		player = GameObject.Find("Player(Clone)");
 	}
 
 	// Use this for initialization
 	void Start () {
+		// load prefabs
+		Laser = (GameObject)Resources.Load("Laser_Red");
 
+		// set player
+		player = GameObject.FindGameObjectWithTag("Player");
 	}
 	
 	// Update is called once per frame
@@ -157,6 +154,8 @@ public class EnemyTurretAI : MonoBehaviour {
 	}
 	
 	public void Die(){
+		Explosion = (GameObject)Resources.Load("Explosion_Player");
+		turretDeathAudioSource = (GameObject)Resources.Load ("turretdeathprefab");
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(Instantiate (turretDeathAudioSource, transform.position, transform.rotation), turretDeadSound.length);
 		Destroy(gameObject);

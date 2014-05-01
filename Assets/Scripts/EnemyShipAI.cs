@@ -32,23 +32,28 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	float chaseTimeLimit = 8f;
 	float chaseCountDown = 0f;
 
+	// fix for turning after emerged from portal
+	public Quaternion snapRotation = Quaternion.identity;
+
 	void Awake (){
-		// load prefabs
-		Laser = (GameObject)Resources.Load("Laser_Red");
-		Mine = (GameObject)Resources.Load("Mine_Red");
-		Explosion = (GameObject)Resources.Load("Explosion_Player");
-		deathAudioSource = (GameObject)Resources.Load ("enemydeathprefab");
-		
-		// set player
-		player = GameObject.FindGameObjectWithTag("Player");
-		
-		//		OrbitSetup();
 	}
 
 	// Use this for initialization
 	void Start () {
 		
+		// load prefabs
+		Laser = (GameObject)Resources.Load("Laser_Red");
+		Mine = (GameObject)Resources.Load("Mine_Red");
+		
+		// set player
+		player = GameObject.FindGameObjectWithTag("Player");
+		
+		OrbitSetup();
 		StartCoroutine(AvoidObstacle());
+
+		if(snapRotation != Quaternion.identity){
+			transform.rotation = snapRotation;
+		}
 	}
 	
 	// Update is called once per frame
@@ -161,6 +166,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	public void Die(){
+		Explosion = (GameObject)Resources.Load("Explosion_Player");
+		deathAudioSource = (GameObject)Resources.Load ("enemydeathprefab");
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(Instantiate (deathAudioSource, transform.position, transform.rotation), deathSound.length);
 		Destroy(gameObject);

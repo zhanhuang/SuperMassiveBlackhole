@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PortalPower : MonoBehaviour {
 	bool flashing;
-	int health = 10;
+	int health = 1;
 
 	public PortalScript portal1;
 	public PortalScript portal2;

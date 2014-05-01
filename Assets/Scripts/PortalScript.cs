@@ -42,7 +42,8 @@ public class PortalScript : MonoBehaviour {
 		if(enemy.GetComponent<EnemyTurretAI>() != null){
 			// start tanks on the ground
 			PlanetPopulation planet = currentPlanet.GetComponent<PlanetPopulation>();
-			enemy.transform.position = enemy.transform.position - enemy.transform.up.normalized * (planet.orbitLength - planet.surfaceLength);
+			Vector3 startDir = enemy.transform.position - currentPlanet.transform.position;
+			enemy.transform.position = currentPlanet.transform.position + startDir.normalized * planet.surfaceLength;
 			enemy.transform.rotation = Quaternion.LookRotation(transform.position + transform.up.normalized * 1f - enemy.transform.position);
 		} else if(enemy.GetComponent<EnemyShipAI>() != null){
 			enemy.GetComponent<EnemyShipAI>().OrbitSetup();
@@ -57,9 +58,8 @@ public class PortalScript : MonoBehaviour {
 		if(enemy != null){
 			if(enemy.GetComponent<EnemyShipAI>() != null){
 				// store the rotation so OrbitSetup doesn't mess it up
-				Quaternion originalRotation = enemy.transform.rotation;
+				enemy.GetComponent<EnemyShipAI>().snapRotation = enemy.transform.rotation;
 				enemy.GetComponent<EnemyShipAI>().enabled = true;
-				enemy.transform.rotation = originalRotation;
 			} else if(enemy.GetComponent<EnemyTurretAI>() != null){
 				enemy.GetComponent<EnemyTurretAI>().enabled = true;
 			}
@@ -88,6 +88,7 @@ public class PortalScript : MonoBehaviour {
 			Destroy(Instantiate(Explosion, explosionCenter + explosionOffset, transform.rotation), 2f);
 			yield return new WaitForSeconds(1f);
 		}
+		currentPlanet.GetComponent<FinalStageScript>().PortalDestroyed();
 		Destroy(gameObject);
 	}
 

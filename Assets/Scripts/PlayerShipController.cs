@@ -673,6 +673,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 	
 	IEnumerator ActivateEMP(){
+		EMPTransform.GetComponent<EMPBehavior>().EMPDamage = EMPLevel;
 		EMPTransform.renderer.enabled = true;
 		EMPTransform.collider.enabled = true;
 		Vector3 startingScale = EMPTransform.localScale;

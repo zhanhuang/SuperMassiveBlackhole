@@ -169,6 +169,10 @@ public class PlanetPopulation : MonoBehaviour {
 			audio.PlayOneShot (victorySound);
 			audio2.PlayDelayed (5f);
 			ActivateBeam();
+			if(planetType == -2){
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				ShowBeam();
+			}
 		}
 	}
 
@@ -193,10 +197,10 @@ public class PlanetPopulation : MonoBehaviour {
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 			
-			// TODO: test code: port straight to boss fight. comment out in production
-			if(planetType == -1){
-				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
-			}
+//			// TODO: test code: port straight to boss fight. comment out in production
+//			if(planetType == -1){
+//				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+//			}
 
 //			// TODO: test code: start with shop. comment out in production
 //			if(planetType == -1){
@@ -239,9 +243,7 @@ public class PlanetPopulation : MonoBehaviour {
 		BaseBeam.collider.enabled = true;
 		transform.FindChild("ClearPulse").renderer.enabled = true;
 		transform.FindChild("Outline").renderer.enabled = false;
-
-
-		}
+	}
 	
 	public virtual void GenerateLootAt(Vector3 location, int level) {
 		// auto corrects for position of objects on planet surface. choose loot based on level
