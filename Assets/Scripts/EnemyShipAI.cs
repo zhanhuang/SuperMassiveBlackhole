@@ -32,20 +32,28 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	float chaseTimeLimit = 8f;
 	float chaseCountDown = 0f;
 
+	// fix for turning after emerged from portal
+	public Quaternion snapRotation = Quaternion.identity;
+
+	void Awake (){
+	}
+
 	// Use this for initialization
 	void Start () {
-		OrbitSetup();
-		
-		StartCoroutine(AvoidObstacle());
 		
 		// load prefabs
 		Laser = (GameObject)Resources.Load("Laser_Red");
 		Mine = (GameObject)Resources.Load("Mine_Red");
-		Explosion = (GameObject)Resources.Load("Explosion_Player");
-		deathAudioSource = (GameObject)Resources.Load ("enemydeathprefab");
-
+		
 		// set player
 		player = GameObject.FindGameObjectWithTag("Player");
+		
+		OrbitSetup();
+		StartCoroutine("AvoidObstacle");
+
+		if(snapRotation != Quaternion.identity){
+			transform.rotation = snapRotation;
+		}
 	}
 	
 	// Update is called once per frame
@@ -126,6 +134,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 			if(Physics.Raycast(transform.position, transform.forward, out hit, 15f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Player" && hit.transform.tag != "Shield" && hit.transform.tag != "Ally"){
+//					Debug.Log("Avoid Obstacle At:" + hit.transform.position);
 					rigidbody.AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
 					rigidbody.AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
 				}
@@ -151,15 +160,15 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		} else{
 			if(!flashing){
 				flashing = true;
-				StartCoroutine(DamageFlash());
+				StartCoroutine("DamageFlash");
 			}
 		}
 	}
 
 	public void Die(){
-		if(currentPlanet.GetComponent<FinalStageScript>() == null){
-			currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
-		}
+		Explosion = (GameObject)Resources.Load("Explosion_Player");
+		deathAudioSource = (GameObject)Resources.Load ("enemydeathprefab");
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(Instantiate (deathAudioSource, transform.position, transform.rotation), deathSound.length);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);

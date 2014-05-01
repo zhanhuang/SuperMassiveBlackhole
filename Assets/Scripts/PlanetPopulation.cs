@@ -68,32 +68,6 @@ public class PlanetPopulation : MonoBehaviour {
 		BaseBeam = Base.transform.FindChild("BaseBeam");
 	}
 
-//	// test for enemy ship avoiding objects
-//	public void avoidTest(){
-//		Crater = (GameObject)Resources.Load("Crater");
-//		Vector3 startDir = new Vector3(0f,1f,0f);
-//		GameObject nextCrater = (GameObject)Instantiate(Crater, transform.position + startDir * surfaceLength, transform.rotation);
-//		nextCrater.transform.up = nextCrater.transform.position - transform.position;
-//		GenerateLootAt(nextCrater.transform.position,planetRow + 1);
-//		
-//		EnemyShip = (GameObject)Resources.Load("Enemy_Ship");
-//		EnemyShip2 = (GameObject)Resources.Load("Enemy_Ship_2");
-//		GameObject nextEnemyShip;
-//		if(Random.Range(0,2) == 0){
-//			nextEnemyShip = (GameObject)Instantiate(EnemyShip, transform.position + startDir * orbitLength, transform.rotation);
-//			nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = false;
-//		} else{
-//			nextEnemyShip = (GameObject)Instantiate(EnemyShip2, transform.position + startDir * orbitLength, transform.rotation);
-//			nextEnemyShip.transform.GetComponent<EnemyShipAI>().mineEnabled = true;
-//		}
-//		EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
-//		nextShipScript.currentPlanet = gameObject;
-//		nextShipScript.level = planetRow;
-//		nextShipScript.health = (planetRow + 1)/2;
-//		nextShipScript.enemyType = "chase";
-//		EnemyCounter++;
-//	}
-
 	// Called From GalaxyPopulation
 	public void PopulatePlanet(){
 		if(planetType == -2){
@@ -134,6 +108,7 @@ public class PlanetPopulation : MonoBehaviour {
 			}
 			EnemyShipAI nextShipScript = nextEnemyShip.transform.GetComponent<EnemyShipAI>();
 			nextShipScript.currentPlanet = gameObject;
+
 			if(planetType == 3){
 				nextShipScript.enemyType = "random";
 			} else{
@@ -187,31 +162,17 @@ public class PlanetPopulation : MonoBehaviour {
 		AllyCounter--;
 	}
 
-	public void EnemyDied(){
+	public virtual void EnemyDied(){
 		EnemyCounter--;
 		if(EnemyCounter <= 0){
-			if(planetType == -2){
-				// WIN
-				audio3.Stop ();
-				audio.Stop ();
-				audio.PlayOneShot (winSound);
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
-				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
-				ShowBeam();
-				GameObject winTextObj = new GameObject("HUD_winText");
-				winTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-				GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
-				winText.pixelOffset = new Vector2(0f, 100f);
-				winText.anchor = TextAnchor.MiddleCenter;
-				winText.text = "YOU WIN!!!";
-				winText.color = Color.green;
-				winText.fontSize = 48;
-				winText.enabled = true;
-			}
 			audio.Stop ();
 			audio.PlayOneShot (victorySound);
 			audio2.PlayDelayed (5f);
 			ActivateBeam();
+			if(planetType == -2){
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				ShowBeam();
+			}
 		}
 	}
 
@@ -236,16 +197,17 @@ public class PlanetPopulation : MonoBehaviour {
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 			
-//			// TODO: test code. comment out in production
-//			if(planetType == -1){
-//				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
-//			}
-			// TODO: test code. comment out in production
+			// TODO: test code: port straight to boss fight. comment out in production
 			if(planetType == -1){
-				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
-				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
+				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
 			}
+
+//			// TODO: test code: start with shop. comment out in production
+//			if(planetType == -1){
+//				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
+//				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
+//				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
+//			}
 			
 			StartCoroutine(ExpandBeam());
 		}
@@ -281,11 +243,9 @@ public class PlanetPopulation : MonoBehaviour {
 		BaseBeam.collider.enabled = true;
 		transform.FindChild("ClearPulse").renderer.enabled = true;
 		transform.FindChild("Outline").renderer.enabled = false;
-
-
-		}
+	}
 	
-	public void GenerateLootAt(Vector3 location, int level) {
+	public virtual void GenerateLootAt(Vector3 location, int level) {
 		// auto corrects for position of objects on planet surface. choose loot based on level
 		Vector3 direction = (location - transform.position).normalized;
 		float rnd = Random.Range(0f,100f);

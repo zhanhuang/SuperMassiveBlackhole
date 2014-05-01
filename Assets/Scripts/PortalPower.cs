@@ -34,7 +34,7 @@ public class PortalPower : MonoBehaviour {
 		} else{
 			if(!flashing){
 				flashing = true;
-				StartCoroutine(DamageFlash());
+				StartCoroutine("DamageFlash");
 			}
 		}
 	}
@@ -42,14 +42,20 @@ public class PortalPower : MonoBehaviour {
 	
 	IEnumerator DamageFlash(){
 		Material targetMat = transform.FindChild("pCylinder1").renderer.materials[0];
+		Material targetMat2 = transform.FindChild("SpikeGroup").FindChild("Spike").renderer.material;
 		Color origColor = targetMat.color;
+		Color origColor2 = targetMat2.color;
 		targetMat.color = Color.white;
+		targetMat2.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
 		targetMat.color = origColor;
+		targetMat2.color = origColor2;
 		yield return new WaitForSeconds(0.05f);
 		targetMat.color = Color.white;
+		targetMat2.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
 		targetMat.color = origColor;
+		targetMat2.color = origColor2;
 		flashing = false;
 	}
 }

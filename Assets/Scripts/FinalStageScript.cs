@@ -11,10 +11,14 @@ public class FinalStageScript : PlanetPopulation {
 	GameObject FinalEnemyShipB;
 	GameObject FinalEnemyTank;
 
+	GameObject nextEnemy;
+
+	int portalCount = 8;
+
 	void Awake (){
 		// override parent script so we don't resize planet
 		orbitLength = transform.localScale.x / 2 + 8f;
-		surfaceLength = transform.localScale.x / 2;
+		surfaceLength = transform.localScale.x / 2 - 0.02f;
 
 		for(int i = 0; i < 8; i++){
 			portals[i].GetComponent<PortalScript>().currentPlanet = gameObject;
@@ -37,23 +41,82 @@ public class FinalStageScript : PlanetPopulation {
 		FinalEnemyShipB = (GameObject)Resources.Load("Enemy_Ship_B");
 		FinalEnemyTank = (GameObject)Resources.Load("Enemy_Tank");
 
-		StartCoroutine(EnemyWaveStart());
+		StartCoroutine("EnemyWaveStart");
 	}
 
 	IEnumerator EnemyWaveStart(){
-		for(int i = 0; i < 10; i++){
+		// NO TANK in waves since it's impossible to kill now.
+		for(int i = 0; i < 5; i++){
 			int portalIndex = Random.Range(0,8);
-			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(CreateEnemy(0,1))){
+			nextEnemy = CreateEnemy(0,1);
+			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
 				portalIndex = Random.Range(0,8);
 				yield return null;
 			}
-			yield return new WaitForSeconds(2f);
+			EnemyCounter++;
+			yield return new WaitForSeconds(10f);
 		}
-		yield return new WaitForSeconds(5f);
+		yield return new WaitForSeconds(10f);
+		for(int i = 0; i < 8; i++){
+			int portalIndex = Random.Range(0,8);
+			nextEnemy = CreateEnemy(0,2);
+			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
+				portalIndex = Random.Range(0,8);
+				yield return null;
+			}
+			EnemyCounter ++;
+			yield return new WaitForSeconds(8f);
+		}
+		yield return new WaitForSeconds(10f);
+		for(int i = 0; i < 10; i++){
+			int portalIndex = Random.Range(0,8);
+			nextEnemy = CreateEnemy(1,2);
+			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
+				portalIndex = Random.Range(0,8);
+				yield return null;
+			}
+			EnemyCounter ++;
+			yield return new WaitForSeconds(6f);
+		}
 	}
 
-	public void EnemyDied(){
+	public override void EnemyDied(){
 		EnemyCounter--;
+	}
+
+	public void PortalDestroyed(){
+		portalCount--;
+
+		if(portalCount <= 0){
+			Debug.Log("portals cleared");
+			StopCoroutine("EnemyWaveStart");
+			if(nextEnemy != null){
+				Destroy(nextEnemy);
+				EnemyCounter--;
+			}
+			StartCoroutine(ChangeBeam());
+		}
+		
+		
+//		// Test - kill one portal to win, Comment out for release
+//		Debug.Log("portals cleared");
+//		StopCoroutine("EnemyWaveStart");
+//		if(nextEnemy != null){
+//			Destroy(nextEnemy);
+//			EnemyCounter--;
+//		}
+//		StartCoroutine(ChangeBeam());
+	}
+
+	IEnumerator ChangeBeam() {
+		// change beam color and enable
+		BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
+			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 50f, BaseBeam.localPosition.z);
+			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x + Time.deltaTime * 40f, BaseBeam.localScale.y + Time.deltaTime * 100f, BaseBeam.localScale.z + Time.deltaTime * 40f);
+			yield return null;
+		}
+		BaseBeam.collider.enabled = true;
 	}
 
 	GameObject CreateEnemy(int lowType, int highType){
@@ -89,12 +152,11 @@ public class FinalStageScript : PlanetPopulation {
 			nextTurretScript.enabled = false;
 			break;
 		}
-		EnemyCounter++;
 
 		return nextEnemy;
 	}
 
-	public void GenerateLootAt(Vector3 location, int level) {
+	public override void GenerateLootAt(Vector3 location, int level) {
 		//don't generate loot
 		return;
 	}

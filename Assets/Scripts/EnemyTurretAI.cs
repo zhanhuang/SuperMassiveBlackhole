@@ -28,19 +28,17 @@ public class EnemyTurretAI : MonoBehaviour {
 	float rotationDir = 1f;
 	float rotationTime = 0f;
 	GameObject turretDeathAudioSource;
+	
+	void Awake (){
+	}
 
 	// Use this for initialization
 	void Start () {
-		
 		// load prefabs
 		Laser = (GameObject)Resources.Load("Laser_Red");
-		Explosion = (GameObject)Resources.Load("Explosion_Player");
-		turretDeathAudioSource = (GameObject)Resources.Load ("turretdeathprefab");
 
 		// set player
-		player = GameObject.Find("Player(Clone)");
-
-
+		player = GameObject.FindGameObjectWithTag("Player");
 	}
 	
 	// Update is called once per frame
@@ -150,15 +148,15 @@ public class EnemyTurretAI : MonoBehaviour {
 		} else{
 			if(!flashing){
 				flashing = true;
-				StartCoroutine(DamageFlash());
+				StartCoroutine("DamageFlash");
 			}
 		}
 	}
 	
 	public void Die(){
-		if(currentPlanet.GetComponent<FinalStageScript>() == null){
-			currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
-		}
+		Explosion = (GameObject)Resources.Load("Explosion_Player");
+		turretDeathAudioSource = (GameObject)Resources.Load ("turretdeathprefab");
+		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(Instantiate (turretDeathAudioSource, transform.position, transform.rotation), turretDeadSound.length);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);

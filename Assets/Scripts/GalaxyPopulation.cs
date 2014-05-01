@@ -4,8 +4,8 @@ using System.Collections;
 public class GalaxyPopulation : MonoBehaviour {
 	GameObject player;
 	GameObject planet;
-	
-	GameObject startingPlanet;
+
+	public GameObject startingPlanet;
 
 	public int specificType;
 	int[,] planetTypeArray = new int[5,5];
@@ -61,7 +61,6 @@ public class GalaxyPopulation : MonoBehaviour {
 					// starting planet, earth texture
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[0];
 					startingPlanet = nextPlanet;
-//					nextPlanetScript.avoidTest();
 					nextPlanetScript.ActivateBeam();
 					nextPlanetScript.ShowBeam();
 					break;
@@ -70,7 +69,7 @@ public class GalaxyPopulation : MonoBehaviour {
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[9];
 					nextPlanetScript.ActivateBeam();
 
-//					// testing purposes. start at the last planet
+//					// Test Code -- start at the last planet. Comment out for release
 //					startingPlanet = nextPlanet;
 //					nextPlanetScript.PopulatePlanet();
 					break;

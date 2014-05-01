@@ -34,7 +34,7 @@ public class LaserBehavior : MonoBehaviour {
 //				Debug.Log("player hit");
 				Destroy(gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
-				if(other.transform.GetComponent<PlayerShipController>() != null){
+				if(other.transform.GetComponent<PlayerShipController>() != null && other.transform.GetComponent<PlayerShipController>().shieldTimeRemaining <= 0f){
 					other.gameObject.SendMessage("TakeDamage", 1);
 					other.audio.PlayOneShot (playerHitSound);
 				}

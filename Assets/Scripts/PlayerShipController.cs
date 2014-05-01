@@ -67,6 +67,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GUIText weaponText;
 	GUIText enemyText;
 	GUIText allyText;
+	GUIText gameText;
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
@@ -206,9 +207,22 @@ public class PlayerShipController : ShipOrbitBehavior {
 		allyText.font = GUIFont;
 		allyText.color = Color.green;
 		allyText.enabled = false;
-
+		
+		// game text
+		GameObject gameTextObj = new GameObject("HUD_gameText");
+		gameTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		gameText = (GUIText)gameTextObj.AddComponent(typeof(GUIText));
+		gameText.anchor = TextAnchor.UpperCenter;
+		gameText.alignment = TextAlignment.Center;
+		gameText.pixelOffset = new Vector2(0, Screen.height/2 - 100f);
+		gameText.fontSize = 24;
+		gameText.font = GUIFont;
+		gameText.color = new Color(0f,0.67f,1f);
 		
 		UpdateWeaponText();
+
+		DisplayTextInstant("INCOMING TRANSMISSION:\n\n", 5f);
+		DisplayAdditionalText("\"...You're our last ship with an\noperational planar drive now.\n\n......It's time to make them pay!!!\"", 3f);
 	}
 	
 	// Update is called once per frame
@@ -269,7 +283,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			// shooting
 			if (Input.GetKeyDown(KeyCode.J)){
 				FireLaser();
-				overHeatMeter += .4f * laserLevel;
+				overHeatMeter += .7f + .3f * laserLevel;
 				coolOffCounter = 0f;
 			}
 			
@@ -295,7 +309,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 				if(deathRayLevel > 0 && !deathRayActivated){
 					audio.PlayOneShot (deathRaySound);
 					deathRayActivated = true;
-					StartCoroutine(ActivateDeathRay());
+					StartCoroutine("ActivateDeathRay");
 					overHeatMeter += 8f;
 					coolOffCounter = 0f;
 				}
@@ -318,14 +332,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 					EMPActivated = true;
 					shieldCharges --;
 					UpdateWeaponText();
-					StartCoroutine(ActivateEMP());
+					StartCoroutine("ActivateEMP");
 				}
 			}
 			if (overHeatMeter > overHeatLimit){
 				overHeatMeter = overHeatLimit + 2;
 				coolOffCounter = -.5f;
 				StopCoroutine("OverheatFlash");
-				StartCoroutine(OverheatFlash());
+				StartCoroutine("OverheatFlash");
 			}
 		} 
 		else{
@@ -445,7 +459,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			}
 			if(!dmgFlashing){
 				dmgFlashing = true;
-				StartCoroutine(DamageFlash());
+				StartCoroutine("DamageFlash");
 			}
 		}
 	}
@@ -502,9 +516,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		currentPlanet.GetComponent<PlanetPopulation> ().audio.Stop ();
+		currentPlanet.GetComponent<PlanetPopulation>().audio.Stop ();
 		audio.PlayOneShot (gameOverSound);
-		Destroy(transform.Find("Ship").gameObject);
+		DeactivateAllWeapons();
+		transform.Find("Ship").gameObject.SetActive(false);
 		transform.collider.enabled = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
 		
@@ -672,6 +687,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 	
 	IEnumerator ActivateEMP(){
+		EMPTransform.GetComponent<EMPBehavior>().EMPDamage = EMPLevel;
 		EMPTransform.renderer.enabled = true;
 		EMPTransform.collider.enabled = true;
 		Vector3 startingScale = EMPTransform.localScale;
@@ -700,6 +716,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 		DisableShield();
 		DeactivateDeathRay();
 		DeactivateEMP();
+		RemoveDisplayText();
+		enemyText.text = "";
+		allyText.text = "";
 	}
 	
 	public void GetLoot(string lootType, int lootValue){
@@ -872,5 +891,55 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		}
 		return 0;
+	}
+
+	public void EngineOff(){
+		// turn off tail flame
+		transform.Find("Ship").Find("_TailFlameLeft").gameObject.SetActive(false);
+		transform.Find("Ship").Find("_TailFlameRight").gameObject.SetActive(false);
+	}
+
+
+	// TEXT FUNCTIONS
+	public void DisplayText(string text, float time){
+		float HideTime = time + text.Length * 0.08f;
+		StopCoroutine("DisplayTextChars");
+		StopCoroutine("RemoveDisplayTextWithDelay");
+		gameText.text = "";
+		StartCoroutine("DisplayTextChars", text);
+		StartCoroutine("RemoveDisplayTextWithDelay", HideTime);
+	}
+	
+	public void DisplayTextInstant(string text, float time){
+		StopCoroutine("DisplayTextChars");
+		StopCoroutine("RemoveDisplayTextWithDelay");
+		gameText.text = text;
+		StartCoroutine("RemoveDisplayTextWithDelay", time);
+	}
+
+	public void DisplayAdditionalText(string text, float time){
+		float HideTime = time + text.Length * 0.08f;
+		StopCoroutine("DisplayTextChars");
+		StopCoroutine("RemoveDisplayTextWithDelay");
+		gameText.text += "\n";
+		StartCoroutine("DisplayTextChars", text);
+		StartCoroutine("RemoveDisplayTextWithDelay", HideTime);
+	}
+
+	IEnumerator DisplayTextChars(string text){
+		for(int i = 0; i < text.Length; i++){
+			gameText.text += text[i];
+			yield return new WaitForSeconds(0.08f);
+		}
+	}
+	
+	public void RemoveDisplayText(){
+		StopCoroutine("DisplayTextChars");
+		gameText.text = "";
+	}
+
+	IEnumerator RemoveDisplayTextWithDelay(float time){
+		yield return new WaitForSeconds(time);
+		RemoveDisplayText();
 	}
 }
