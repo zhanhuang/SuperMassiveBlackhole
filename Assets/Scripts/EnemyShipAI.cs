@@ -49,7 +49,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		player = GameObject.FindGameObjectWithTag("Player");
 		
 		OrbitSetup();
-		StartCoroutine(AvoidObstacle());
+		StartCoroutine("AvoidObstacle");
 
 		if(snapRotation != Quaternion.identity){
 			transform.rotation = snapRotation;
@@ -160,7 +160,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		} else{
 			if(!flashing){
 				flashing = true;
-				StartCoroutine(DamageFlash());
+				StartCoroutine("DamageFlash");
 			}
 		}
 	}

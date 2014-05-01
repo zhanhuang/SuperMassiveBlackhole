@@ -30,7 +30,7 @@ public class PortalScript : MonoBehaviour {
 		} else{
 			porting = true;
 			enemy = nextEnemy;
-			StartCoroutine(EnemyEmergence());
+			StartCoroutine("EnemyEmergence");
 		}
 
 		return true;

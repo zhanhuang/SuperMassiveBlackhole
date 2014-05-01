@@ -41,7 +41,7 @@ public class FinalStageScript : PlanetPopulation {
 		FinalEnemyShipB = (GameObject)Resources.Load("Enemy_Ship_B");
 		FinalEnemyTank = (GameObject)Resources.Load("Enemy_Tank");
 
-		StartCoroutine(EnemyWaveStart());
+		StartCoroutine("EnemyWaveStart");
 	}
 
 	IEnumerator EnemyWaveStart(){
@@ -86,6 +86,7 @@ public class FinalStageScript : PlanetPopulation {
 
 	public void PortalDestroyed(){
 		portalCount--;
+
 		if(portalCount <= 0){
 			Debug.Log("portals cleared");
 			StopCoroutine("EnemyWaveStart");
@@ -95,6 +96,16 @@ public class FinalStageScript : PlanetPopulation {
 			}
 			StartCoroutine(ChangeBeam());
 		}
+		
+		
+//		// Test - kill one portal to win, Comment out for release
+//		Debug.Log("portals cleared");
+//		StopCoroutine("EnemyWaveStart");
+//		if(nextEnemy != null){
+//			Destroy(nextEnemy);
+//			EnemyCounter--;
+//		}
+//		StartCoroutine(ChangeBeam());
 	}
 
 	IEnumerator ChangeBeam() {
