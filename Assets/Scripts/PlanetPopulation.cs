@@ -200,12 +200,12 @@ public class PlanetPopulation : MonoBehaviour {
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 			
-//			// TODO: test code: port straight to boss fight. comment out in production
+//			// test code: port straight to boss fight. comment out in production
 //			if(planetType == -1){
 //				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
 //			}
 
-//			// TODO: test code: start with shop. comment out in production
+//			// test code: start with shop. comment out in production
 //			if(planetType == -1){
 //				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
 //				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);

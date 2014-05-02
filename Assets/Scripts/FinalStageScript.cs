@@ -59,8 +59,7 @@ public class FinalStageScript : PlanetPopulation {
 	}
 
 	IEnumerator EnemyWaveStart(){
-		// NO TANK in waves since it's impossible to kill now.
-		for(int i = 0; i < 5; i++){
+		for(int i = 0; i < 3; i++){
 			int portalIndex = Random.Range(0,8);
 			nextEnemy = CreateEnemy(0,1);
 			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
@@ -70,9 +69,9 @@ public class FinalStageScript : PlanetPopulation {
 			EnemyCounter++;
 			yield return new WaitForSeconds(10f);
 		}
-		for(int i = 0; i < 8; i++){
+		for(int i = 0; i < 5; i++){
 			int portalIndex = Random.Range(0,8);
-			nextEnemy = CreateEnemy(0,2);
+			nextEnemy = CreateEnemy(0,3);
 			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
 				portalIndex = Random.Range(0,8);
 				yield return null;
@@ -83,7 +82,7 @@ public class FinalStageScript : PlanetPopulation {
 		while(true){
 			if(EnemyCounter < 15){
 				int portalIndex = Random.Range(0,8);
-				nextEnemy = CreateEnemy(1,2);
+				nextEnemy = CreateEnemy(1,3);
 				while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
 					portalIndex = Random.Range(0,8);
 					yield return null;

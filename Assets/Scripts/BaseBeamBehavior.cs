@@ -290,13 +290,14 @@ public class BaseBeamBehavior : MonoBehaviour {
 			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
-		player.position = startPos + lookDirection * timeElapsed / 50f;
-		playerScript.DisplayText("SPECIAL THANKS TO\n\n\nDuael Designs - Planet Textures\nIconian Fonts - Font", 5f);
+		playerScript.DisplayText("SPECIAL THANKS TO:\n\n\nDuael Designs\nIconian Fonts", 5f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
-			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.3f);
+			// fly slow on the home stretch
+			timeElapsed += Time.deltaTime/1.5f;
+			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
-		for(float t = 0f; t < 10f; t += Time.deltaTime){
+		for(float t = 0f; t < 15f; t += Time.deltaTime){
 			player.position = Vector3.Lerp(player.position, landTarget, Time.deltaTime * 0.4f);
 			yield return null;
 		}
