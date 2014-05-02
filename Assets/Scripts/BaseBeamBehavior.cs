@@ -155,12 +155,16 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	IEnumerator BeamMeUp(){
 		beamText.enabled = false;
+
+		// disconnect and freeze player
 		Destroy(player.GetComponent<ConfigurableJoint>());
 		playerScript.DeactivateAllWeapons();
 		playerScript.enabled = false;
 		player.rigidbody.velocity = Vector3.zero;
 		player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
 		playerScript.shipTransform.localRotation = Quaternion.identity;
+
+		// play beam audio
 		player.audio.Stop ();
 		playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
 		playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
