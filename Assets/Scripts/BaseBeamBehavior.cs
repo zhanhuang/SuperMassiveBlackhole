@@ -33,6 +33,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 	public AudioClip storeScroll;
 	public AudioClip storeBuy;
 	public AudioClip storeCantBuy;
+	public AudioClip takeoff;
 
 	// Use this for initialization
 	void Start () {
@@ -211,7 +212,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 	IEnumerator FlyOff(){
 		// set flying direction
 		Vector3 flyTarget = surroundingPlanets[lookingPlanet].transform.position;
-
+		audio.PlayOneShot (takeoff);
 		// detach ship body from camera
 		Transform ship = player.transform.FindChild("Ship");
 		Vector3 shipLocalPos = ship.localPosition;
