@@ -5,7 +5,6 @@ public class BombExplosion : MonoBehaviour {
 	GameObject dustCloud;
 	// Use this for initialization
 	void Start () {
-		dustCloud = (GameObject)Resources.Load ("Crater_Dust");
 	}
 	
 	// Update is called once per frame
@@ -21,10 +20,10 @@ public class BombExplosion : MonoBehaviour {
 //			Debug.Log("ally hit");
 			other.gameObject.SendMessage("TakeDamage", 1);
 		} else if(other.tag == "Destructible"){
+			dustCloud = (GameObject)Resources.Load ("Crater_Dust");
 //			Debug.Log("destruction!");
 			Destroy(other.gameObject);
 			Destroy(Instantiate (dustCloud, transform.position, transform.rotation), 2f);
-			// TODO: dust puff
 		} 
 	}
 }

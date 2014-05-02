@@ -238,7 +238,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 		
 		if(targetPlanet.planetType == 3){
 			playerScript.DisplayTextInstant("INCOMING TRANSMISSION:\n\n", 5f);
-			playerScript.DisplayAdditionalText("\"HELP US!\"",5f);
+			playerScript.DisplayAdditionalText("\"HELP US!\"",2f);
 		}
 	}
 

@@ -20,7 +20,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float shieldLimit = 3f;
 	public float shieldTimeRemaining = 0f;
 	// death ray
-	int deathRayLevel = 0;
+	int deathRayLevel = 1;
 	bool deathRayActivated = false;
 	// mine
 	int mineCharges = 2;
@@ -533,7 +533,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	IEnumerator DamageFlash(){
-		Material targetMat = transform.FindChild("Ship").FindChild("MainBody").renderer.material;
+		Material targetMat = shipTransform.FindChild("MainBody").renderer.material;
 		Color origColor = targetMat.color;
 		targetMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
@@ -552,7 +552,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		}
 		audio.PlayOneShot (gameOverSound);
 		DeactivateAllWeapons();
-		transform.Find("Ship").gameObject.SetActive(false);
+		shipTransform.gameObject.SetActive(false);
 		transform.collider.enabled = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
 		
@@ -682,42 +682,59 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	IEnumerator ActivateDeathRay(){
-		LineRenderer line = transform.GetComponent<LineRenderer>();
-		line.enabled = true;
-		line.SetWidth(0.2f,0.2f);
+		Transform deathRay1 = shipTransform.FindChild("DeathRay1");
+		Transform deathRay2 = shipTransform.FindChild("DeathRay2");
+		LineRenderer line1 = deathRay1.GetComponent<LineRenderer>();
+		LineRenderer line2 = deathRay2.GetComponent<LineRenderer>();
+		float width = 0.05f + deathRayLevel * 0.05f;
+		line1.enabled = true;
+		line2.enabled = true;
+		line1.SetWidth(width,width);
+		line2.SetWidth(width,width);
 
 		Transform lastTarget = transform;
 		float countDown = 0f;
 
 		float deathRayDuration = 2f;
 		for(float t = 0f; t < (deathRayDuration + 1f); t += Time.deltaTime){
-			line.SetPosition(0, (transform.position - transform.up.normalized * 0.5f));
-			Vector3 rayDirection = Quaternion.AngleAxis(-45f * Mathf.Clamp01(1f - t/deathRayDuration), -transform.right) * transform.forward;
+			line1.SetPosition(0, deathRay1.position);
+			line2.SetPosition(0, deathRay2.position);
+
+//			// pattern A: death ray swings upwards
+//			Vector3 rayDirection = Quaternion.AngleAxis(-45f * Mathf.Clamp01(1f - t/deathRayDuration), -transform.right) * transform.forward;
+
+			// pattern B: death ray focuses on the ground
+			Vector3 rayDirection = Quaternion.AngleAxis(-30f, -transform.right) * transform.forward;
+
 			RaycastHit hit = new RaycastHit();
 			if(Physics.Raycast((transform.position - transform.up.normalized * 0.5f), rayDirection, out hit, 40f)){
 				if (hit.transform.tag == "Enemy" || hit.transform.tag == "Ally"){
 					if(lastTarget == hit.transform && countDown > 0f){
 						countDown -= Time.deltaTime;
 					} else{
-						hit.transform.SendMessage("TakeDamage", deathRayLevel);
+						hit.transform.SendMessage("TakeDamage", 1);
 						lastTarget = hit.transform;
 						countDown = 1f/deathRayLevel;
 					}
 				}
-				line.SetPosition(1, hit.point);
+				line1.SetPosition(1, hit.point - transform.right.normalized * 0.2f);
+				line2.SetPosition(1, hit.point + transform.right.normalized * 0.2f);
 			} else{
-				line.SetPosition(1, transform.position + rayDirection * 100f);
+				line1.SetPosition(1, transform.position + rayDirection * 50f - transform.right.normalized * 0.2f);
+				line2.SetPosition(1, transform.position + rayDirection * 50f + transform.right.normalized * 0.2f);
 			}
 			yield return null;
 		}
 		
-		line.enabled = false;
+		line1.enabled = false;
+		line2.enabled = false;
 		deathRayActivated = false;
 	}
 
 	void DeactivateDeathRay(){
 		StopCoroutine("ActivateDeathRay");
-		transform.GetComponent<LineRenderer>().enabled = false;
+		shipTransform.FindChild("DeathRay1").GetComponent<LineRenderer>().enabled = false;
+		shipTransform.FindChild("DeathRay2").GetComponent<LineRenderer>().enabled = false;
 		deathRayActivated = false;
 	}
 	
@@ -946,8 +963,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	public void EngineOff(){
 		// turn off tail flame
-		transform.Find("Ship").Find("_TailFlameLeft").gameObject.SetActive(false);
-		transform.Find("Ship").Find("_TailFlameRight").gameObject.SetActive(false);
+		shipTransform.Find("_TailFlameLeft").gameObject.SetActive(false);
+		shipTransform.Find("_TailFlameRight").gameObject.SetActive(false);
 	}
 
 

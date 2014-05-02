@@ -2,11 +2,11 @@
 using System.Collections;
 
 public class MineExplosion : MonoBehaviour {
+	GameObject dustCloud;
 	float countDown = 0.3f;
 
 	// Use this for initialization
 	void Start () {
-	
 	}
 	
 	// Update is called once per frame
@@ -23,9 +23,10 @@ public class MineExplosion : MonoBehaviour {
 		} else if(other.tag == "Enemy" || other.tag == "Ally"){
 			other.gameObject.SendMessage("TakeDamage", 2);
 		} else if(other.tag == "Destructible"){
+			dustCloud = (GameObject)Resources.Load ("Crater_Dust");
 //			Debug.Log("destruction!");
 			Destroy(other.gameObject);
-			// TODO: dust puff
+			Destroy(Instantiate (dustCloud, transform.position, transform.rotation), 2f);
 		} 
 	}
 }
