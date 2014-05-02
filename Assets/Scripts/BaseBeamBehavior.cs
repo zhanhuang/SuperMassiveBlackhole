@@ -24,6 +24,16 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	Font GUIFont;
 
+	// last two planets
+	public bool isFinalBeam = false;
+	public bool isEndBeam = false;
+
+	public AudioSource audio2;
+
+	public AudioClip storeScroll;
+	public AudioClip storeBuy;
+	public AudioClip storeCantBuy;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -37,19 +47,35 @@ public class BaseBeamBehavior : MonoBehaviour {
 		beamText.font = GUIFont;
 		beamText.anchor = TextAnchor.MiddleCenter;
 		beamText.color = Color.black;
-		beamText.text = "Press [Space] To Engage Planar Drive";
+		beamText.text = "[Space]: Engage Planar Drive";
 		beamText.enabled = false;
 
 		surroundingPlanets = new GameObject[8];
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (isEndBeam && beamText.enabled){
+			if(Input.GetKeyDown(KeyCode.Space)){
+				StartCoroutine(BeamMeUp());
+			}
+			return;
+		}
+
 		if (shopping){
 			if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){
+				audio2.Stop ();
+				if(playerScript.currentPlanet.GetComponent<PlanetPopulation>().planetType == -1){
+					player.audio.Play ();
+					playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Play ();}
+				else{
+					playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Play ();
+					playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Play ();}
 				shopping = false;
 				CloseDownShop();
 			} else if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)){
+				audio.PlayOneShot (storeScroll);
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex --;
@@ -59,6 +85,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 				HighLight(selectedIndex);
 			} else if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)){
+				audio.PlayOneShot (storeScroll);
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex ++;
@@ -70,8 +97,12 @@ public class BaseBeamBehavior : MonoBehaviour {
 			} else if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.J)){
 				// purchased an item
 				if(playerScript.currency >= prices[selectedIndex] && itemTexts[selectedIndex].text != "Sold Out"){
+					audio.PlayOneShot (storeBuy);
 					playerScript.PurchaseItem(items[selectedIndex], prices[selectedIndex]);
 					UpdateItem(selectedIndex);
+				}
+				else{
+					audio.PlayOneShot (storeCantBuy);
 				}
 			}
 			return;
@@ -80,17 +111,13 @@ public class BaseBeamBehavior : MonoBehaviour {
 		if (!liftOff && beamText.enabled){
 			if(Input.GetKeyDown(KeyCode.Space)){
 				liftOff = true;
-				beamText.enabled = false;
-				Destroy(player.GetComponent<ConfigurableJoint>());
-				playerScript.DeactivateAllWeapons();
-				playerScript.enabled = false;
-				player.rigidbody.velocity = Vector3.zero;
-				player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
-				playerScript.shipTransform.localRotation = Quaternion.identity;
-				player.audio.Stop ();
-				audio.Play ();
 				StartCoroutine(BeamMeUp());
-			} else if(Input.GetKeyDown(KeyCode.P)){
+			} else if(Input.GetKeyDown(KeyCode.P) && shopEnabled == true){
+				playerScript.DeactivateAllWeapons();
+				player.audio.Stop ();
+				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
+				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
+				audio2.Play ();
 				shopping = true;
 				OpenUpShop();
 			}
@@ -118,31 +145,144 @@ public class BaseBeamBehavior : MonoBehaviour {
 					lookingPlanet ++;
 				}
 			} else if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.J)){
-				player.position = surroundingPlanets[lookingPlanet].transform.position + new Vector3(0f,200f,0f);
-				playerScript.enabled = true;
-				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().HideBeam();
-				playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
-				playerScript.OrbitSetup();
-				playerScript.ActivateShield(2f);
-				surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>().PopulatePlanet();
 				liftOff = false;
 				inSpace = false;
 				audio.Stop();
+				StartCoroutine(FlyOff());
 			}
 		}
 	}
 
 	IEnumerator BeamMeUp(){
+		beamText.enabled = false;
+		Destroy(player.GetComponent<ConfigurableJoint>());
+		playerScript.DeactivateAllWeapons();
+		playerScript.enabled = false;
+		player.rigidbody.velocity = Vector3.zero;
+		player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
+		playerScript.shipTransform.localRotation = Quaternion.identity;
+		player.audio.Stop ();
+		playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
+		playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
+		audio.Play ();
+
+		if(isFinalBeam){
+			gameObject.renderer.material.SetColor("_TintColor", Color.red);
+		}
+
+		// beaming
 		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
 			player.position += new Vector3(0f, 1f, 0f) * Time.deltaTime * 50f;
 			yield return null;
 		}
-		GalaxyPopulation galaxy = playerScript.Galaxy;
-		PlanetPopulation currentPlanet = playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>();
-		surroundingPlanets = galaxy.GetSurroundingPlanets(currentPlanet);
-		lookingPlanet = 0;
-		inSpace = true;
 
+		if(isEndBeam){
+			// ending sequence --- fly back to earth
+			Debug.Log("Win");
+			StartCoroutine(Ending());
+		} else if(isFinalBeam){
+			// teleport and freeze player
+			playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().HideBeam();
+
+			GameObject finalPlanet = GameObject.Find("FinalPlanet");
+			player.position = finalPlanet.transform.position + new Vector3(0f,finalPlanet.GetComponent<FinalStageScript>().orbitLength,0.9f);
+			playerScript.enabled = true;
+			playerScript.currentPlanet = finalPlanet;
+			playerScript.OrbitSetup();
+			player.rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+			playerScript.DisplayTextInstant("WARNING!\n\nSHIP TURNING - AVAILABLE\nWEAPONS - AVAILABLE\nSHIP MOVEMENT - LOCKED!!", 2f);
+			finalPlanet.GetComponent<FinalStageScript>().StageStart();
+			liftOff = false;
+			inSpace = false;
+			audio.Stop();
+		} else{
+			GalaxyPopulation galaxy = playerScript.Galaxy;
+			PlanetPopulation currentPlanet = playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>();
+			surroundingPlanets = galaxy.GetSurroundingPlanets(currentPlanet);
+			lookingPlanet = 0;
+			inSpace = true;
+		}
+	}
+
+	IEnumerator FlyOff(){
+		// set flying direction
+		Vector3 flyTarget = surroundingPlanets[lookingPlanet].transform.position;
+
+		// detach ship body from camera
+		Transform ship = player.transform.FindChild("Ship");
+		Vector3 shipLocalPos = ship.localPosition;
+		Quaternion shipLocalRot = ship.localRotation;
+		ship.parent = null;
+		for(float t = 0f; t < 1.5f; t += Time.deltaTime){
+			ship.position = Vector3.Lerp(ship.position, flyTarget, Time.deltaTime * 0.2f);
+			ship.rotation = Quaternion.Lerp(ship.rotation, Quaternion.LookRotation(flyTarget-ship.position), Time.deltaTime * 5f);
+			yield return null;
+		}
+		// populate next planet
+		surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>().PopulatePlanet();
+
+		// move player over and re-attach ship body
+		player.position = surroundingPlanets[lookingPlanet].transform.position + new Vector3(0f,200f,0f);
+		ship.parent = player;
+		ship.localPosition = shipLocalPos;
+		ship.localRotation = shipLocalRot;
+
+		// enable player movement
+		playerScript.enabled = true;
+		playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().HideBeam();
+		playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
+		playerScript.OrbitSetup();
+		playerScript.ActivateShield(2f);
+	}
+
+	IEnumerator Ending(){
+		Transform startPlanet = playerScript.Galaxy.startingPlanet.transform;
+		float startPlanetSurfaceDist = startPlanet.GetComponent<PlanetPopulation>().surfaceLength;
+		Vector3 flyTarget = startPlanet.transform.position + new Vector3(0f, startPlanetSurfaceDist * 2f, -7f);
+		Vector3 midPoint = (player.position + flyTarget) / 2f;
+		Vector3 landTarget = startPlanet.transform.position + new Vector3(0f, startPlanetSurfaceDist, -7f);
+
+		Vector3 lookDirection = flyTarget - player.position;
+		Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+		targetRotation *= Quaternion.Inverse(player.FindChild("Camera").localRotation);
+		
+		startPlanet.GetComponent<PlanetPopulation>().ShowBeam();
+
+		for(float t = 0f; t < 2f; t += Time.deltaTime){
+			player.rotation = Quaternion.Lerp(player.rotation, targetRotation, Time.deltaTime * 6f);
+			yield return null;
+		}
+		playerScript.DisplayText("SUPER MASSIVE BLACKHOLE\nA GAME BY\n\nBEN WALTHALL\nJAMES ZHANG\nZHAN HUANG", 6f);
+		for(float t = 0f; t < 10f; t += Time.deltaTime){
+			player.position = Vector3.Lerp(player.position, midPoint, Time.deltaTime * 0.1f);
+			yield return null;
+		}
+		playerScript.DisplayText("PROGRAMMER\n\n\nZHAN HUANG", 5f);
+		for(float t = 0f; t < 10f; t += Time.deltaTime){
+			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.1f);
+			yield return null;
+		}
+		playerScript.DisplayText("MODELING\n\n\nJAMES ZHANG", 5f);
+		for(float t = 0f; t < 10f; t += Time.deltaTime){
+			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.1f);
+			yield return null;
+		}
+		playerScript.DisplayText("SOUNDS\n\n\nBEN WALTHALL", 5f);
+		for(float t = 0f; t < 10f; t += Time.deltaTime){
+			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.1f);
+			yield return null;
+		}
+		playerScript.DisplayText("SPECIAL THANKS TO\n\n\nDuael Designs - Planet Textures\nIconian Fonts - Font", 5f);
+		for(float t = 0f; t < 10f; t += Time.deltaTime){
+			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.2f);
+			yield return null;
+		}
+		for(float t = 0f; t < 10f; t += Time.deltaTime){
+			player.position = Vector3.Lerp(player.position, landTarget, Time.deltaTime * 0.3f);
+			yield return null;
+		}
+		playerScript.EngineOff();
+		playerScript.DisplayText("THANK YOU FOR PLAYING!!!", 500f);
 	}
 
 	public void EnableShop(){

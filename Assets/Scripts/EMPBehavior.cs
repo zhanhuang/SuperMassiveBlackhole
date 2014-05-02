@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class EMPBehavior : MonoBehaviour {
+	public int EMPDamage;
 
 	// Use this for initialization
 	void Start () {
@@ -15,8 +16,8 @@ public class EMPBehavior : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if(other.tag == "Enemy" || other.tag == "Ally"){
-			Debug.Log("enemy hit");
-			other.gameObject.SendMessage("TakeDamage", 1);
+//			Debug.Log("enemy hit");
+			other.gameObject.SendMessage("TakeDamage", EMPDamage + 1);
 		} else if(other.GetComponent<LaserBehavior>() != null && other.GetComponent<LaserBehavior>().laserOrigin != "Player"){
 			Destroy(other.gameObject);
 		} else if(other.GetComponent<MineMovement>() != null && other.GetComponent<MineMovement>().mineOrigin != "Player"){

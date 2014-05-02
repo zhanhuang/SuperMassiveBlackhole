@@ -26,6 +26,10 @@ public class BombMovement : MonoBehaviour {
 		if(other.tag != "Player" && other.tag != "Ally" && other.tag != "Shield" && !other.isTrigger){
 			Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 			Destroy(gameObject);
+		} else if(other.tag == "Enemy"){
+			// special case here is made for tanks
+			Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
+			Destroy(gameObject);
 		}
 	}
 }

@@ -7,6 +7,8 @@ public class LaserBehavior : MonoBehaviour {
 	public float laserSpeed;
 	public Vector3 gravityCenter;
 	GameObject Explosion;
+
+	public AudioClip playerHitSound;
 	// Use this for initialization
 	void Start () {
 		Explosion = (GameObject)Resources.Load ("Explosion_Laser");
@@ -29,16 +31,17 @@ public class LaserBehavior : MonoBehaviour {
 		 */ 
 		if(other.tag == "Player" || other.tag == "Shield"){
 			if(laserOrigin == "Enemy"){
-				Debug.Log("player hit");
+//				Debug.Log("player hit");
 				Destroy(gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
-				if(other.transform.GetComponent<PlayerShipController>() != null){
+				if(other.transform.GetComponent<PlayerShipController>() != null && other.transform.GetComponent<PlayerShipController>().shieldTimeRemaining <= 0f){
 					other.gameObject.SendMessage("TakeDamage", 1);
+					other.audio.PlayOneShot (playerHitSound);
 				}
 			}
 		} else if(other.tag == "Ally"){
 			if(laserOrigin == "Player" || laserOrigin == "Enemy"){
-				Debug.Log("ally hit");
+//				Debug.Log("ally hit");
 				Destroy(gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				if(other.transform.GetComponent<AllyShipAI>() != null){
@@ -47,7 +50,7 @@ public class LaserBehavior : MonoBehaviour {
 			}
 		} else if(other.tag == "Enemy"){
 			if(laserOrigin == "Player" || laserOrigin == "Ally"){
-				Debug.Log("enemy hit");
+//				Debug.Log("enemy hit");
 				Destroy(gameObject);
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				if(other.transform.GetComponent<EnemyShipAI>() != null || other.transform.GetComponent<EnemyTurretAI>() != null){
@@ -60,6 +63,9 @@ public class LaserBehavior : MonoBehaviour {
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				Destroy(gameObject);
 			} else if(other.transform.GetComponent<LaserBehavior>() != null && other.transform.GetComponent<LaserBehavior>().laserOrigin != laserOrigin){
+				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
+				Destroy(gameObject);
+			}  else if(other.transform.GetComponent<MineMovement>() != null && other.transform.GetComponent<MineMovement>().mineOrigin != laserOrigin){
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				Destroy(gameObject);
 			} 

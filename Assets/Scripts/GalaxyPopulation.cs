@@ -4,10 +4,10 @@ using System.Collections;
 public class GalaxyPopulation : MonoBehaviour {
 	GameObject player;
 	GameObject planet;
-	
-	GameObject startingPlanet;
 
+	public GameObject startingPlanet;
 
+	public int specificType;
 	int[,] planetTypeArray = new int[5,5];
 	public GameObject[,] planetGrid = new GameObject[5,5];
 
@@ -61,7 +61,6 @@ public class GalaxyPopulation : MonoBehaviour {
 					// starting planet, earth texture
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[0];
 					startingPlanet = nextPlanet;
-//					nextPlanetScript.avoidTest();
 					nextPlanetScript.ActivateBeam();
 					nextPlanetScript.ShowBeam();
 					break;
@@ -70,7 +69,7 @@ public class GalaxyPopulation : MonoBehaviour {
 					nextPlanet.GetComponent<MeshRenderer>().material = planetMats[9];
 					nextPlanetScript.ActivateBeam();
 
-//					// testing purposes. start at the last planet
+//					// Test Code -- start at the last planet. Comment out for release
 //					startingPlanet = nextPlanet;
 //					nextPlanetScript.PopulatePlanet();
 					break;
@@ -163,7 +162,7 @@ public class GalaxyPopulation : MonoBehaviour {
 		return planets;
 	}
 
-	void MarkPlanetTypes (){
+	public void MarkPlanetTypes (){
 		/* PLANET TYPES:
 		 * -2: Boss Planet
 		 * -1: Starting Planet
@@ -249,7 +248,7 @@ public class GalaxyPopulation : MonoBehaviour {
 		for(int r = 1; r < 5; r++){
 			for(int c = 0; c < 5; c++){
 				if(planetTypeArray[r, c] == 1){
-					int specificType = Random.Range(-1,4);
+					specificType = Random.Range(-1,4);
 					if(specificType < 1){
 						if(friendlyCount == 0 && totalCount >= 6){
 							// too few friendlies
