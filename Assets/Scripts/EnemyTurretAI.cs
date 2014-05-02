@@ -119,7 +119,9 @@ public class EnemyTurretAI : MonoBehaviour {
 					} else if(Vector3.Dot(cross, transform.up) == 0f){
 						angle = 0f;
 					}
-					transform.Rotate(new Vector3(0f, angle/Mathf.Abs(angle) * 2f, 0f));
+					if(angle != 0f){
+						transform.Rotate(new Vector3(0f, angle/Mathf.Abs(angle) * 2f, 0f));
+					}
 				}
 			} else{
 				// random walk
@@ -185,12 +187,11 @@ public class EnemyTurretAI : MonoBehaviour {
 		flashing = false;
 	}
 
-	void OnTriggerEnter(Collider other) {
-		if(level > 0){
-			if(other.tag == "Destructible" || other.tag == "Enemy"){
-				transform.RotateAround(currentPlanet.transform.position, -transform.right, 1f);
-				transform.Rotate(new Vector3(0f, -30f * rotationDir, 0f));
-			}
+	// called by TankCollision in child
+	public void TankAvoid(){
+		if(enabled){
+			transform.RotateAround(currentPlanet.transform.position, -transform.right, 1f);
+//			transform.Rotate(new Vector3(0f, -15f * rotationDir, 0f));
 		}
 	}
 }

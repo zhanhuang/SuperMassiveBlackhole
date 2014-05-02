@@ -20,7 +20,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float shieldLimit = 3f;
 	public float shieldTimeRemaining = 0f;
 	// death ray
-	int deathRayLevel = 1;
+	int deathRayLevel = 3;
 	bool deathRayActivated = false;
 	// mine
 	int mineCharges = 2;

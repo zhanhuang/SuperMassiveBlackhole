@@ -201,9 +201,9 @@ public class PlanetPopulation : MonoBehaviour {
 			}
 			
 //			// test code: port straight to boss fight. comment out in production
-//			if(planetType == -1){
-//				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
-//			}
+			if(planetType == -1){
+				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+			}
 
 //			// test code: start with shop. comment out in production
 //			if(planetType == -1){

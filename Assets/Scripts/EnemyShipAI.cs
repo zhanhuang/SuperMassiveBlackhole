@@ -120,7 +120,9 @@ public class EnemyShipAI : ShipOrbitBehavior {
 			} else if(Vector3.Dot(cross, transform.up) == 0f){
 				angle = 0f;
 			}
-			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * angle, ForceMode.Force);
+			if(angle != 0f){
+				rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * angle, ForceMode.Force);
+			}
 		} else{
 			// random walk
 			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);

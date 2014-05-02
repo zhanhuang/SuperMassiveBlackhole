@@ -59,25 +59,15 @@ public class FinalStageScript : PlanetPopulation {
 	}
 
 	IEnumerator EnemyWaveStart(){
-		for(int i = 0; i < 3; i++){
+		for(int i = 0; i < 4; i++){
 			int portalIndex = Random.Range(0,8);
 			nextEnemy = CreateEnemy(0,1);
 			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
 				portalIndex = Random.Range(0,8);
 				yield return null;
 			}
-			EnemyCounter++;
-			yield return new WaitForSeconds(10f);
-		}
-		for(int i = 0; i < 5; i++){
-			int portalIndex = Random.Range(0,8);
-			nextEnemy = CreateEnemy(0,3);
-			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
-				portalIndex = Random.Range(0,8);
-				yield return null;
-			}
 			EnemyCounter ++;
-			yield return new WaitForSeconds(8f);
+			yield return new WaitForSeconds(6f);
 		}
 		while(true){
 			if(EnemyCounter < 15){
@@ -89,7 +79,7 @@ public class FinalStageScript : PlanetPopulation {
 				}
 				EnemyCounter ++;
 			}
-			yield return new WaitForSeconds(6f);
+			yield return new WaitForSeconds(4f);
 		}
 	}
 
@@ -116,6 +106,9 @@ public class FinalStageScript : PlanetPopulation {
 	}
 
 	void Win(){
+		audio.Stop ();
+		audio.PlayOneShot (victorySound);
+		audio2.PlayDelayed (5f);
 		// called only when no enemy or portals are left
 		transform.FindChild("ClearPulse").renderer.material.color = Color.green;
 		StartCoroutine(DisableDome());

@@ -60,10 +60,10 @@ public class PortalScript : MonoBehaviour {
 				// store the rotation so OrbitSetup doesn't mess it up
 				enemy.GetComponent<EnemyShipAI>().snapRotation = enemy.transform.rotation;
 				enemy.GetComponent<EnemyShipAI>().enabled = true;
+				enemy.rigidbody.constraints = RigidbodyConstraints.None;
 			} else if(enemy.GetComponent<EnemyTurretAI>() != null){
 				enemy.GetComponent<EnemyTurretAI>().enabled = true;
 			}
-			enemy.rigidbody.constraints = RigidbodyConstraints.None;
 		}
 		porting = false;
 	}
