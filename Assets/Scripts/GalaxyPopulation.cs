@@ -100,7 +100,9 @@ public class GalaxyPopulation : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if(Input.GetKey(KeyCode.BackQuote) && Input.GetKey(KeyCode.Equals)){
+			Application.LoadLevel(0);
+		}
 	}
 
 	// check all 8 accessible places on grid and return a list of planets

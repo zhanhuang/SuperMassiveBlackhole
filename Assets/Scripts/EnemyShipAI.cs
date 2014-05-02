@@ -54,6 +54,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		if(snapRotation != Quaternion.identity){
 			transform.rotation = snapRotation;
 		}
+
+		mineCoolDownRemaining = Random.Range(0f, mineCoolDown/2f);
 	}
 	
 	// Update is called once per frame
