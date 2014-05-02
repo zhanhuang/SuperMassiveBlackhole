@@ -178,19 +178,19 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 		if(isEndBeam){
 			// ending sequence --- fly back to earth
-			Debug.Log("Win");
+			playerScript.HUDOff();
 			StartCoroutine(Ending());
 		} else if(isFinalBeam){
 			// teleport and freeze player
 			playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().HideBeam();
 
 			GameObject finalPlanet = GameObject.Find("FinalPlanet");
-			player.position = finalPlanet.transform.position + new Vector3(0f,finalPlanet.GetComponent<FinalStageScript>().orbitLength,0.9f);
+			player.position = finalPlanet.transform.position + new Vector3(0f,-finalPlanet.GetComponent<FinalStageScript>().orbitLength,0.9f);
 			playerScript.enabled = true;
 			playerScript.currentPlanet = finalPlanet;
 			playerScript.OrbitSetup();
-			player.rigidbody.constraints = RigidbodyConstraints.FreezePosition;
-			playerScript.DisplayTextInstant("WARNING!\n\nSHIP TURNING - AVAILABLE\nWEAPONS - AVAILABLE\nSHIP MOVEMENT - LOCKED!!", 2f);
+			playerScript.isFinalStage = true;
+			playerScript.DisplayTextInstant("WARNING!\n\nENEMY SHIPS INCOMING!!!", 2f);
 			finalPlanet.GetComponent<FinalStageScript>().StageStart();
 			liftOff = false;
 			inSpace = false;
@@ -219,7 +219,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 			yield return null;
 		}
 		// populate next planet
-		surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>().PopulatePlanet();
+		PlanetPopulation targetPlanet = surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>();
+		targetPlanet.PopulatePlanet();
 
 		// move player over and re-attach ship body
 		player.position = surroundingPlanets[lookingPlanet].transform.position + new Vector3(0f,200f,0f);
@@ -233,52 +234,70 @@ public class BaseBeamBehavior : MonoBehaviour {
 		playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
 		playerScript.OrbitSetup();
 		playerScript.ActivateShield(2f);
+
+		
+		if(targetPlanet.planetType == 3){
+			playerScript.DisplayTextInstant("INCOMING TRANSMISSION:\n\n", 5f);
+			playerScript.DisplayAdditionalText("\"HELP US!\"",5f);
+		}
 	}
 
 	IEnumerator Ending(){
+		// get target positions
 		Transform startPlanet = playerScript.Galaxy.startingPlanet.transform;
 		float startPlanetSurfaceDist = startPlanet.GetComponent<PlanetPopulation>().surfaceLength;
+		Vector3 startPos = player.position;
 		Vector3 flyTarget = startPlanet.transform.position + new Vector3(0f, startPlanetSurfaceDist * 2f, -7f);
-		Vector3 midPoint = (player.position + flyTarget) / 2f;
 		Vector3 landTarget = startPlanet.transform.position + new Vector3(0f, startPlanetSurfaceDist, -7f);
 
-		Vector3 lookDirection = flyTarget - player.position;
+		// get target rotation
+		Vector3 lookDirection = flyTarget - startPos;
 		Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
 		targetRotation *= Quaternion.Inverse(player.FindChild("Camera").localRotation);
-		
+
+		// show beacon on starting planet
 		startPlanet.GetComponent<PlanetPopulation>().ShowBeam();
 
+		// turn first
 		for(float t = 0f; t < 2f; t += Time.deltaTime){
 			player.rotation = Quaternion.Lerp(player.rotation, targetRotation, Time.deltaTime * 6f);
 			yield return null;
 		}
-		playerScript.DisplayText("SUPER MASSIVE BLACKHOLE\nA GAME BY\n\nBEN WALTHALL\nJAMES ZHANG\nZHAN HUANG", 6f);
+
+		// start on the way home
+		float timeElapsed = 0f;
+		playerScript.DisplayText("SUPER MASSIVE BLACKHOLE\n\nA GAME BY\n\nBEN WALTHALL\nJAMES ZHANG\nZHAN HUANG", 6f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
-			player.position = Vector3.Lerp(player.position, midPoint, Time.deltaTime * 0.1f);
+			timeElapsed += Time.deltaTime;
+			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
 		playerScript.DisplayText("PROGRAMMER\n\n\nZHAN HUANG", 5f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
-			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.1f);
+			timeElapsed += Time.deltaTime;
+			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
 		playerScript.DisplayText("MODELING\n\n\nJAMES ZHANG", 5f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
-			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.1f);
+			timeElapsed += Time.deltaTime;
+			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
 		playerScript.DisplayText("SOUNDS\n\n\nBEN WALTHALL", 5f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
-			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.1f);
+			timeElapsed += Time.deltaTime;
+			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
+		player.position = startPos + lookDirection * timeElapsed / 50f;
 		playerScript.DisplayText("SPECIAL THANKS TO\n\n\nDuael Designs - Planet Textures\nIconian Fonts - Font", 5f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
-			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.2f);
+			player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 0.3f);
 			yield return null;
 		}
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
-			player.position = Vector3.Lerp(player.position, landTarget, Time.deltaTime * 0.3f);
+			player.position = Vector3.Lerp(player.position, landTarget, Time.deltaTime * 0.4f);
 			yield return null;
 		}
 		playerScript.EngineOff();

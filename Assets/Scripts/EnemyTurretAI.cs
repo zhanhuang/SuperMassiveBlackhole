@@ -22,7 +22,7 @@ public class EnemyTurretAI : MonoBehaviour {
 	float speed = 5f;
 	float turnSpeed = 10f;
 
-	bool chasing = false;
+	public bool chasing = false;
 	float chaseTimeLimit = 8f;
 	float chaseCountDown = 0f;
 	float rotationDir = 1f;
@@ -145,6 +145,11 @@ public class EnemyTurretAI : MonoBehaviour {
 		if(health <= 0){
 			Die();
 		} else{
+			if(level > 0){
+				// chase on hit for tanks only
+				chasing = true;
+			}
+			// flash on hit
 			if(!flashing){
 				flashing = true;
 				StartCoroutine("DamageFlash");

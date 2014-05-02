@@ -28,7 +28,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	// AI types
 	public string enemyType;	// random, chase
 	public bool mineEnabled = false;
-	bool chasing = false;
+	public bool chasing = false;
 	float chaseTimeLimit = 8f;
 	float chaseCountDown = 0f;
 
@@ -157,6 +157,10 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		if(health <= 0){
 			Die();
 		} else{
+			// chase on hit
+			chasing = true;
+
+			// flash on hit
 			if(!flashing){
 				flashing = true;
 				StartCoroutine("DamageFlash");

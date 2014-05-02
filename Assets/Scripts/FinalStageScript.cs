@@ -3,6 +3,7 @@ using System.Collections;
 
 public class FinalStageScript : PlanetPopulation {
 	public GameObject[] portals = new GameObject[8];
+	public GameObject[] portalPowers = new GameObject[8];
 	
 	GameObject Portal;
 
@@ -23,11 +24,15 @@ public class FinalStageScript : PlanetPopulation {
 		for(int i = 0; i < 8; i++){
 			portals[i].GetComponent<PortalScript>().currentPlanet = gameObject;
 		}
+		// so they don't interfere with the compass
+		for(int i = 0; i < 8; i++){
+			portalPowers[i].SetActive(false);
+		}
 	}
 
 	// Use this for initialization
 	void Start () {
-	
+		ActivateBeam();
 	}
 	
 	// Update is called once per frame
@@ -40,8 +45,17 @@ public class FinalStageScript : PlanetPopulation {
 		FinalEnemyShipA = (GameObject)Resources.Load("Enemy_Ship_A");
 		FinalEnemyShipB = (GameObject)Resources.Load("Enemy_Ship_B");
 		FinalEnemyTank = (GameObject)Resources.Load("Enemy_Tank");
+		
+		audio3.Play ();
+
+		for(int i = 0; i < 8; i++){
+			portalPowers[i].SetActive(true);
+		}
 
 		StartCoroutine("EnemyWaveStart");
+		
+//		// Test - win, Comment out for release
+//		Win();
 	}
 
 	IEnumerator EnemyWaveStart(){
@@ -56,7 +70,6 @@ public class FinalStageScript : PlanetPopulation {
 			EnemyCounter++;
 			yield return new WaitForSeconds(10f);
 		}
-		yield return new WaitForSeconds(10f);
 		for(int i = 0; i < 8; i++){
 			int portalIndex = Random.Range(0,8);
 			nextEnemy = CreateEnemy(0,2);
@@ -67,56 +80,55 @@ public class FinalStageScript : PlanetPopulation {
 			EnemyCounter ++;
 			yield return new WaitForSeconds(8f);
 		}
-		yield return new WaitForSeconds(10f);
-		for(int i = 0; i < 10; i++){
-			int portalIndex = Random.Range(0,8);
-			nextEnemy = CreateEnemy(1,2);
-			while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
-				portalIndex = Random.Range(0,8);
-				yield return null;
+		while(true){
+			if(EnemyCounter < 15){
+				int portalIndex = Random.Range(0,8);
+				nextEnemy = CreateEnemy(1,2);
+				while(portals[portalIndex] == null || !portals[portalIndex].GetComponent<PortalScript>().PortInEnemy(nextEnemy)){
+					portalIndex = Random.Range(0,8);
+					yield return null;
+				}
+				EnemyCounter ++;
 			}
-			EnemyCounter ++;
 			yield return new WaitForSeconds(6f);
 		}
 	}
 
 	public override void EnemyDied(){
 		EnemyCounter--;
+		if(portalCount <= 0){
+			Win();
+		}
 	}
 
 	public void PortalDestroyed(){
 		portalCount--;
 
 		if(portalCount <= 0){
-			Debug.Log("portals cleared");
 			StopCoroutine("EnemyWaveStart");
 			if(nextEnemy != null){
 				Destroy(nextEnemy);
 				EnemyCounter--;
 			}
-			StartCoroutine(ChangeBeam());
+			if(EnemyCounter == 0){
+				Win();
+			}
 		}
-		
-		
-//		// Test - kill one portal to win, Comment out for release
-//		Debug.Log("portals cleared");
-//		StopCoroutine("EnemyWaveStart");
-//		if(nextEnemy != null){
-//			Destroy(nextEnemy);
-//			EnemyCounter--;
-//		}
-//		StartCoroutine(ChangeBeam());
 	}
 
-	IEnumerator ChangeBeam() {
-		// change beam color and enable
-		BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
-		for(float counter = 0f; counter < 2f; counter += Time.deltaTime){
-			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 50f, BaseBeam.localPosition.z);
-			BaseBeam.localScale = new Vector3(BaseBeam.localScale.x + Time.deltaTime * 40f, BaseBeam.localScale.y + Time.deltaTime * 100f, BaseBeam.localScale.z + Time.deltaTime * 40f);
+	void Win(){
+		// called only when no enemy or portals are left
+		transform.FindChild("ClearPulse").renderer.material.color = Color.green;
+		StartCoroutine(DisableDome());
+	}
+
+	IEnumerator DisableDome(){
+		Transform dome = transform.FindChild("Dome");
+		Vector3 origScale = dome.transform.localScale;
+		for(float t = 0f; t < 1f; t+= Time.deltaTime){
+			dome.transform.localScale = (1 - t) * origScale;
 			yield return null;
 		}
-		BaseBeam.collider.enabled = true;
 	}
 
 	GameObject CreateEnemy(int lowType, int highType){
@@ -131,24 +143,28 @@ public class FinalStageScript : PlanetPopulation {
 			nextEnemy = (GameObject)Instantiate(FinalEnemyDrone, transform.position + startDir * orbitLength, transform.rotation);
 			nextEnemy.transform.GetComponent<EnemyShipAI>().currentPlanet = gameObject;
 			nextEnemy.transform.GetComponent<EnemyShipAI>().enemyType = "chase";
+			nextEnemy.transform.GetComponent<EnemyShipAI>().chasing = true;
 			nextEnemy.transform.GetComponent<EnemyShipAI>().enabled = false;
 			break;
 		case 1:
 			nextEnemy = (GameObject)Instantiate(FinalEnemyShipA, transform.position + startDir * orbitLength, transform.rotation);
 			nextEnemy.transform.GetComponent<EnemyShipAI>().currentPlanet = gameObject;
 			nextEnemy.transform.GetComponent<EnemyShipAI>().enemyType = "chase";
+			nextEnemy.transform.GetComponent<EnemyShipAI>().chasing = true;
 			nextEnemy.transform.GetComponent<EnemyShipAI>().enabled = false;
 			break;
 		case 2:
 			nextEnemy = (GameObject)Instantiate(FinalEnemyShipB, transform.position + startDir * orbitLength, transform.rotation);
 			nextEnemy.transform.GetComponent<EnemyShipAI>().currentPlanet = gameObject;
 			nextEnemy.transform.GetComponent<EnemyShipAI>().enemyType = "chase";
+			nextEnemy.transform.GetComponent<EnemyShipAI>().chasing = true;
 			nextEnemy.transform.GetComponent<EnemyShipAI>().enabled = false;
 			break;
 		case 3:
 			nextEnemy = (GameObject)Instantiate(FinalEnemyTank, transform.position + startDir * surfaceLength, transform.rotation);
 			EnemyTurretAI nextTurretScript = nextEnemy.transform.GetComponent<EnemyTurretAI>();
 			nextTurretScript.currentPlanet = gameObject;
+			nextTurretScript.chasing = true;
 			nextTurretScript.enabled = false;
 			break;
 		}

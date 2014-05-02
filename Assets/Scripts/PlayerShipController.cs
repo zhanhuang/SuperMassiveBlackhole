@@ -58,6 +58,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	bool dmgFlashing = false;
 	bool heatFlashing = false;
 
+	Font GUIFont;
+
 	GUIText healthText;
 	GUIText currencyText;
 	GUIText heatText;
@@ -80,6 +82,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	int soundCount = 0;
 
+	GameObject compass;
+	Transform lastEnemy;
+	public bool isFinalStage = false;
 
 	// Use this for initialization
 	void Start () {
@@ -99,7 +104,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 
 		// load font
-		Font GUIFont = (Font)Resources.Load("AirStrike");
+		GUIFont = (Font)Resources.Load("AirStrike");
 
 		// set camera
 		shipTransform = transform.FindChild("Ship");
@@ -109,6 +114,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// set emp
 		EMPTransform = transform.FindChild("EMP");
 		EMPStartingScale = EMPTransform.localScale;
+
+		// set compass
+		compass = transform.FindChild("Arrow").gameObject;
+		compass.SetActive(false);
 		
 		// health counter 
 		// TODO: Have a bar for this
@@ -195,14 +204,13 @@ public class PlayerShipController : ShipOrbitBehavior {
 		enemyText.fontSize = 18;
 		enemyText.font = GUIFont;
 		enemyText.color = Color.red;
-		enemyText.text = "Enemies Left: 0";
 		
 		// ally counter for current planet
 		GameObject allyTextObj = new GameObject("HUD_allyCounter");
 		allyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		allyText = (GUIText)allyTextObj.AddComponent(typeof(GUIText));
 		allyText.anchor = TextAnchor.MiddleCenter;
-		allyText.pixelOffset = new Vector2(0f, Screen.height/2 - 50f);
+		allyText.pixelOffset = new Vector2(0f, Screen.height/2 - 70f);
 		allyText.fontSize = 18;
 		allyText.font = GUIFont;
 		allyText.color = Color.green;
@@ -373,20 +381,42 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		// enemy and ally counters
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
-		if(enemyCounter > 0){
+		if(isFinalStage){
 			enemyText.color = Color.red;
-			enemyText.text = "Enemies Left: " + enemyCounter;
+			enemyText.text = "Enemies: " + enemyCounter;
+		} else if(enemyCounter > 0){
+			if(enemyCounter > 1){
+				enemyText.color = Color.red;
+				enemyText.text = "Enemies Left: " + enemyCounter;
+			} else{
+				enemyText.text = "";
+				if(lastEnemy == null){
+					compass.SetActive(true);
+					lastEnemy = GameObject.FindGameObjectWithTag("Enemy").transform;
+				}
+				compass.transform.rotation = Quaternion.LookRotation(lastEnemy.position - transform.position, transform.up);
+			}
 		} else{
+			lastEnemy = null;
+			compass.SetActive(false);
 			enemyText.color = Color.cyan;
 			enemyText.text = "Planet Cleared!";
+			if(allyText.enabled == true){
+				allyText.enabled = false;
+				int reward = 50 + Random.Range(5,15);
+				GetLoot("Currency", reward);
+				DisplayText(reward + " CURRENCY RECEIVED\n\n\n\"This is a token of our gratitude.\nThank you for your aid, friend.\"", 3f);
+			}
 		}
-		
-		int allyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().AllyCounter;
-		if(allyCounter > 0){
-			allyText.enabled = true;
-			allyText.text = "Allies Left: " + allyCounter;
-		} else{
-			allyText.enabled = false;
+
+		if(!isFinalStage && enemyCounter > 0){
+			int allyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().AllyCounter;
+			if(allyCounter > 0){
+				allyText.enabled = true;
+				allyText.text = "Allies Left: " + allyCounter;
+			} else{
+				allyText.enabled = false;
+			}
 		}
 	}
 
@@ -529,9 +559,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		GameObject loseTextObj = new GameObject("HUD_loseText");
 		loseTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		GUIText loseText = (GUIText)loseTextObj.AddComponent(typeof(GUIText));
+		loseText.font = GUIFont;
 		loseText.pixelOffset = new Vector2(0f, 100f);
 		loseText.anchor = TextAnchor.LowerCenter;
-		loseText.text = "YOU DIED...";
+		loseText.text = "MISSION FAILED...";
 		loseText.color = Color.red;
 		loseText.fontSize = 48;
 		loseText.enabled = true;
@@ -539,6 +570,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		GameObject restartTextObj = new GameObject("HUD_restartText");
 		restartTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
 		GUIText restartText = (GUIText)restartTextObj.AddComponent(typeof(GUIText));
+		restartText.font = GUIFont;
 		restartText.pixelOffset = new Vector2(0f, 80f);
 		restartText.anchor = TextAnchor.MiddleCenter;
 		restartText.text = "(Press [R] To Restart)";
@@ -667,7 +699,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 					if(lastTarget == hit.transform && countDown > 0f){
 						countDown -= Time.deltaTime;
 					} else{
-						hit.transform.SendMessage("TakeDamage", 1);
+						hit.transform.SendMessage("TakeDamage", deathRayLevel);
 						lastTarget = hit.transform;
 						countDown = 1f/deathRayLevel;
 					}
@@ -723,6 +755,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		overHeatMeter = 0f;
 		enemyText.text = "";
 		allyText.text = "";
+		compass.SetActive(false);
+		lastEnemy = null;
 	}
 	
 	public void GetLoot(string lootType, int lootValue){
@@ -895,6 +929,19 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		}
 		return 0;
+	}
+
+	// ENDING SEQUENCE
+	public void HUDOff(){
+		healthText.enabled = false;
+		currencyText.enabled = false;
+		shieldText.enabled = false;
+		mineText.enabled = false;
+		movementText.enabled = false;
+		weaponText.enabled = false;
+		enemyText.enabled = false;
+		allyText.enabled = false;
+		transform.FindChild("Heat Bar").gameObject.SetActive(false);
 	}
 
 	public void EngineOff(){

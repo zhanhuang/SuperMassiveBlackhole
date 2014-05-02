@@ -192,6 +192,9 @@ public class PlanetPopulation : MonoBehaviour {
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
+			} else if(planetType == 0){
+				// final stage planet
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 			} else{
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
@@ -257,7 +260,7 @@ public class PlanetPopulation : MonoBehaviour {
 		} else if(rnd < 40f){
 			GameObject nextLoot = (GameObject)Instantiate(Loot_Currency, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Currency";
-			nextLoot.GetComponent<Loot>().lootValue = level * 5 + planetRow * 3 + Random.Range(5,15);
+			nextLoot.GetComponent<Loot>().lootValue = level * 10 + planetRow * 5 + Random.Range(5,15);
 			nextLoot.transform.up = nextLoot.transform.position - transform.position;
 		}
 	}
