@@ -237,7 +237,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	void Update () {
 		
 		// reset
-		if ((health == 0 && Input.GetKey(KeyCode.R)) || (Input.GetKey(KeyCode.R) && Input.GetKey(KeyCode.T))){
+		if (health == 0 && Input.GetKey(KeyCode.R)){
 			Application.LoadLevel(0);
 		}
 
@@ -304,14 +304,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 				coolOffCounter = 0f;
 			}
 			
-			// shielding
-			if (Input.GetKeyDown (KeyCode.L)) {
-				if(shieldCharges > 0 && shieldTimeRemaining <= 0f && !EMPActivated){
-					shieldCharges --;
-					ActivateShield(shieldLimit);
-				}
-			}
-			
 			// death ray
 			if (Input.GetKeyDown (KeyCode.U)) {
 				if(deathRayLevel > 0 && !deathRayActivated){
@@ -354,6 +346,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 			//TODO: show overheat meter
 //			heatText.color = Color.red;
 			heatMat.color = new Color(1f, .118f, .118f);
+		}
+		
+		// shielding
+		if (Input.GetKeyDown (KeyCode.L)) {
+			if(shieldCharges > 0 && shieldTimeRemaining <= 0f && !EMPActivated){
+				shieldCharges --;
+				ActivateShield(shieldLimit);
+			}
 		}
 			
 		// tail particle effect
@@ -686,11 +686,16 @@ public class PlayerShipController : ShipOrbitBehavior {
 		Transform deathRay2 = shipTransform.FindChild("DeathRay2");
 		LineRenderer line1 = deathRay1.GetComponent<LineRenderer>();
 		LineRenderer line2 = deathRay2.GetComponent<LineRenderer>();
-		float width = 0.05f + deathRayLevel * 0.05f;
 		line1.enabled = true;
 		line2.enabled = true;
+		float width = 0.05f + deathRayLevel * 0.05f;
 		line1.SetWidth(width,width);
 		line2.SetWidth(width,width);
+
+		Transform spark1 = deathRay1.FindChild("Sparks");
+		Transform spark2 = deathRay2.FindChild("Sparks");
+		spark1.gameObject.SetActive(true);
+		spark2.gameObject.SetActive(true);
 
 		Transform lastTarget = transform;
 		float countDown = 0f;
@@ -719,22 +724,25 @@ public class PlayerShipController : ShipOrbitBehavior {
 				}
 				line1.SetPosition(1, hit.point - transform.right.normalized * 0.2f);
 				line2.SetPosition(1, hit.point + transform.right.normalized * 0.2f);
+				spark1.position = hit.point - transform.right.normalized * 0.2f;
+				spark2.position = hit.point + transform.right.normalized * 0.2f;
 			} else{
 				line1.SetPosition(1, transform.position + rayDirection * 50f - transform.right.normalized * 0.2f);
 				line2.SetPosition(1, transform.position + rayDirection * 50f + transform.right.normalized * 0.2f);
+				spark1.position = transform.position + rayDirection * 50f - transform.right.normalized * 0.2f;
+				spark2.position = transform.position + rayDirection * 50f + transform.right.normalized * 0.2f;
 			}
 			yield return null;
 		}
-		
-		line1.enabled = false;
-		line2.enabled = false;
-		deathRayActivated = false;
+		DeactivateDeathRay();
 	}
 
 	void DeactivateDeathRay(){
 		StopCoroutine("ActivateDeathRay");
 		shipTransform.FindChild("DeathRay1").GetComponent<LineRenderer>().enabled = false;
 		shipTransform.FindChild("DeathRay2").GetComponent<LineRenderer>().enabled = false;
+		shipTransform.FindChild("DeathRay1").FindChild("Sparks").gameObject.SetActive(false);
+		shipTransform.FindChild("DeathRay2").FindChild("Sparks").gameObject.SetActive(false);
 		deathRayActivated = false;
 	}
 	
