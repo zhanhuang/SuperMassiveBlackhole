@@ -720,6 +720,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		DeactivateDeathRay();
 		DeactivateEMP();
 		RemoveDisplayText();
+		overHeatMeter = 0f;
 		enemyText.text = "";
 		allyText.text = "";
 	}
