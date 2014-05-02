@@ -77,6 +77,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public AudioClip gameOverSound;
 	public AudioClip deathRaySound;
 	public AudioClip empSound;
+	public AudioClip transmissionSound;
 
 	public AudioSource audio2;
 
@@ -998,7 +999,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		for(int i = 0; i < text.Length; i++){
 			gameText.text += text[i];
 			yield return new WaitForSeconds(0.08f);
+			audio.PlayOneShot (transmissionSound);
+	
 		}
+		audio.Stop ();
 	}
 	
 	public void RemoveDisplayText(){

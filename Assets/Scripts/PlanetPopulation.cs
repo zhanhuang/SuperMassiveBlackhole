@@ -171,6 +171,7 @@ public class PlanetPopulation : MonoBehaviour {
 			ActivateBeam();
 			if(planetType == -2){
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				audio3.Stop ();
 				ShowBeam();
 			}
 		}
@@ -188,6 +189,7 @@ public class PlanetPopulation : MonoBehaviour {
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
 				BaseBeam.collider.enabled = true;
 				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop ();
 			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
