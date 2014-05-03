@@ -345,7 +345,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 				beamText.text = "[Space]: Engage Planar Drive";
 			}
 		} else if(BeamState == "Space"){
-			beamText.pixelOffset = new Vector2(0f, Screen.height/2 - 50f);
+			beamText.pixelOffset = new Vector2(0f, -Screen.height/2 + 60f);
 			beamText.color = Color.white;
 			beamText.text = "[Space]: Onward!\n    [S]     : Drop Down";
 		} else{
@@ -485,7 +485,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			itemTexts[index].text = items[index];
 			break;
 		case 3:
-			// death ray ramp up according to current level
+			// death ray - ramp up according to current level
 			level = playerScript.GetItemLevel(items[index]);
 			if(level == 0){
 				prices[index] = 25;
