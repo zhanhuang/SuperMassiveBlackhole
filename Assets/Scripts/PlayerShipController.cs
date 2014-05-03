@@ -94,6 +94,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 	Transform lastEnemy;
 	public bool isFinalStage = false;
 
+	int konamiIndex = 0;
+	KeyCode[] konamiCode = new KeyCode[11];
+
 	// Use this for initialization
 	void Start () {
 
@@ -268,6 +271,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 		DisplayTextInstant("INCOMING TRANSMISSION:\n\n", 5f);
 		DisplayAdditionalText("\"...You're our last ship with an\noperational planar drive now.\n\n......It's time to make them pay!!!\"", 3f);
 
+
+		konamiCode[0] = KeyCode.UpArrow;
+		konamiCode[1] = KeyCode.UpArrow;
+		konamiCode[2] = KeyCode.DownArrow;
+		konamiCode[3] = KeyCode.DownArrow;
+		konamiCode[4] = KeyCode.LeftArrow;
+		konamiCode[5] = KeyCode.RightArrow;
+		konamiCode[6] = KeyCode.LeftArrow;
+		konamiCode[7] = KeyCode.RightArrow;
+		konamiCode[8] = KeyCode.B;
+		konamiCode[9] = KeyCode.A;
 	}
 	
 	// Update is called once per frame
@@ -459,6 +473,65 @@ public class PlayerShipController : ShipOrbitBehavior {
 			}
 		}
 
+		if(konamiIndex < 10){
+			if(Input.GetKeyDown(KeyCode.UpArrow)){
+				if(konamiCode[konamiIndex] != KeyCode.UpArrow){
+					konamiIndex = 0;
+				} else{
+					konamiIndex ++;
+				}
+			}
+			
+			if(Input.GetKeyDown(KeyCode.DownArrow)){
+				if(konamiCode[konamiIndex] != KeyCode.DownArrow){
+					konamiIndex = 0;
+				} else{
+					konamiIndex ++;
+				}
+			}
+			if(Input.GetKeyDown(KeyCode.LeftArrow)){
+				if(konamiCode[konamiIndex] != KeyCode.LeftArrow){
+					konamiIndex = 0;
+				} else{
+					konamiIndex ++;
+				}
+			}
+			if(Input.GetKeyDown(KeyCode.RightArrow)){
+				if(konamiCode[konamiIndex] != KeyCode.RightArrow){
+					konamiIndex = 0;
+				} else{
+					konamiIndex ++;
+				}
+			}
+			if(Input.GetKeyDown(KeyCode.B)){
+				if(konamiCode[konamiIndex] != KeyCode.B){
+					konamiIndex = 0;
+				} else{
+					konamiIndex ++;
+				}
+			}
+			if(Input.GetKeyDown(KeyCode.A)){
+				if(konamiCode[konamiIndex] != KeyCode.A){
+					konamiIndex = 0;
+				} else{
+					konamiIndex ++;
+				}
+			}
+//			Debug.Log(konamiIndex);
+			if(konamiIndex == 10){
+				health = 10000000;
+				UpdateHealth();
+				GetLoot("Currency", 9001 - currency);
+				overHeatLimit = 100000000000f;
+				laserLevel = 5;
+				bombLevel = 3;
+				shieldCharges = 100;
+				deathRayLevel = 3;
+				mineCharges = 100;
+				EMPLevel = 3;
+				UpdateWeaponText();
+			}
+		}
 	}
 
 	void FixedUpdate () {
@@ -554,7 +627,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			} else{
 				healthMat.color = new Color(1f, 0f, 0f);
 			}
-			HealthMoveJoint.transform.localPosition = new Vector3(health*-2, MoveJoint.transform.localPosition.y, MoveJoint.transform.localPosition.z);
+			HealthMoveJoint.transform.localPosition = new Vector3(Mathf.Clamp(health*-2,-10f,0f), MoveJoint.transform.localPosition.y, MoveJoint.transform.localPosition.z);
 		}
 	}
 
