@@ -17,12 +17,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 	 */
 	public string BeamState = "Inactive";
 
-
-	bool liftOff = false;
-	public bool inSpace = false;
-	bool shopping = false;
-
-	GameObject[] surroundingPlanets;
+	GameObject[] surroundingPlanets = new GameObject[8];
 	int lookingPlanet = 0;
 	
 	// shop
@@ -44,6 +39,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 	public AudioClip storeBuy;
 	public AudioClip storeCantBuy;
 	public AudioClip takeoff;
+	
+	public GUIText[] beamTexts = new GUIText[5];
 
 	// Use this for initialization
 	void Start () {
@@ -51,17 +48,21 @@ public class BaseBeamBehavior : MonoBehaviour {
 		// load font
 		GUIFont = (Font)Resources.Load("AirStrike");
 
-		GameObject beamTextObj = new GameObject("HUD_beamText");
-		beamTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		beamText = (GUIText)beamTextObj.AddComponent(typeof(GUIText));
-		beamText.fontSize = 24;
-		beamText.font = GUIFont;
-		beamText.anchor = TextAnchor.MiddleCenter;
-		beamText.color = Color.black;
-		beamText.text = "[Space]: Engage Planar Drive";
-		beamText.enabled = false;
-
-		surroundingPlanets = new GameObject[8];
+		for(int i = 0; i < 5; i++){
+			GameObject beamTextObj = new GameObject("HUD_beamText");
+			beamTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+			beamText = (GUIText)beamTextObj.AddComponent(typeof(GUIText));
+			beamText.fontSize = 24;
+			beamText.font = GUIFont;
+			beamText.color = Color.black;
+			beamText.alignment = TextAlignment.Center;
+			beamText.anchor = TextAnchor.MiddleCenter;
+			beamText.text = "[Space]:\nEngage Planar Drive";
+			beamText.enabled = false;
+			beamTexts[i] = beamText;
+		}
+		beamTexts[0].color = Color.yellow;
+		SetTextOutlineOffsets();
 	}
 	
 	// Update is called once per frame
@@ -207,8 +208,6 @@ public class BaseBeamBehavior : MonoBehaviour {
 	}
 
 	IEnumerator FlyOff(){
-		// hide beam on this planet
-		BeamStateTransition("Inactive");
 
 		// set flying direction
 		Transform targetPlanetTransform = surroundingPlanets[lookingPlanet].transform;
@@ -237,6 +236,9 @@ public class BaseBeamBehavior : MonoBehaviour {
 			ship.localPosition = shipLocalPos;
 			ship.localRotation = shipLocalRot;
 			
+			// hide beam on this planet
+			BeamStateTransition("Inactive");
+			
 			// set player to next planet
 			playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
 			
@@ -255,10 +257,14 @@ public class BaseBeamBehavior : MonoBehaviour {
 			targetBeam.playerScript = playerScript;
 
 			Vector3 flyTarget = targetPlanetTransform.position + new Vector3(0f, targetPlanetScript.orbitLength + 100f, 0f);
-			for(float t = 0f; t < 2f; t += Time.deltaTime){
-				player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * 4f);
+			for(float t = 0f; t < 0.8f; t += Time.deltaTime){
+				player.position = Vector3.Lerp(player.position, flyTarget, Time.deltaTime * (6f + t * 3f));
 				yield return null;
 			}
+			
+			// hide beam on this planet
+			BeamStateTransition("Inactive");
+
 			playerScript.currentPlanet = surroundingPlanets[lookingPlanet];
 			targetPlanetScript.ShowBeam();
 			targetBeam.BeamStateTransition("Space");
@@ -277,8 +283,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 	
 	void OnTriggerExit(Collider other){
 		if(other.tag == "Player" && BeamState == "Ground"){
-			beamText.enabled = false;
 			BeamState = "Inactive";
+			BeamTextUpdate();
 		}
 	}
 
@@ -335,22 +341,34 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	void BeamTextUpdate(){
 		// change text display
-		beamText.enabled = true;
-		if(BeamState == "Ground"){
-			beamText.pixelOffset = Vector2.zero;
-			beamText.color = Color.black;
-			if(shopEnabled){
-				beamText.text = "[Space]: Engage Planar Drive\n    [P]     : Open Shop";
+		for(int i = 0; i < 5; i++){
+			beamTexts[i].enabled = true;
+			if(BeamState == "Ground"){
+				beamTexts[i].pixelOffset = Vector2.zero;
+				if(shopEnabled){
+					beamTexts[0].color = new Color(29f/255f, 1f, 242f/255f);
+					beamTexts[i].text = "[Space]\nEngage Planar Drive\n\n[P]\nOpen Shop";
+				} else{
+					beamTexts[0].color = Color.yellow;
+					beamTexts[i].text = "[Space]\nEngage Planar Drive";
+				}
+			} else if(BeamState == "Space"){
+				beamTexts[0].color = new Color(190f/255f, 230f/255f, 230f/255f);
+				beamTexts[i].pixelOffset = new Vector2(0f, -Screen.height/2 + 60f);
+				beamTexts[i].text = "[Space]: Onward!\n    [S]     : Drop Down";
 			} else{
-				beamText.text = "[Space]: Engage Planar Drive";
+				beamTexts[i].enabled = false;
 			}
-		} else if(BeamState == "Space"){
-			beamText.pixelOffset = new Vector2(0f, -Screen.height/2 + 60f);
-			beamText.color = Color.white;
-			beamText.text = "[Space]: Onward!\n    [S]     : Drop Down";
-		} else{
-			beamText.enabled = false;
 		}
+
+		SetTextOutlineOffsets();
+	}
+
+	void SetTextOutlineOffsets(){
+		beamTexts[1].pixelOffset = beamTexts[0].pixelOffset + new Vector2(0f, 1f);
+		beamTexts[2].pixelOffset = beamTexts[0].pixelOffset + new Vector2(1f, 0f);
+		beamTexts[3].pixelOffset = beamTexts[0].pixelOffset + new Vector2(0f, -1f);
+		beamTexts[4].pixelOffset = beamTexts[0].pixelOffset + new Vector2(-1f, 0f);
 	}
 	
 	void LockPlayer(){

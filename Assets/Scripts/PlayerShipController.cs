@@ -75,6 +75,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GUIText enemyText;
 	GUIText allyText;
 	GUIText gameText;
+	GUIText[] planetClearedOutline = new GUIText[4];
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
@@ -85,6 +86,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public AudioClip transmissionSound;
 
 	public AudioSource audio2;
+	public AudioSource audio3;
 
 	int soundCount = 0;
 
@@ -218,6 +220,26 @@ public class PlayerShipController : ShipOrbitBehavior {
 		enemyText.fontSize = 18;
 		enemyText.font = GUIFont;
 		enemyText.color = Color.red;
+
+
+		// outlines
+		for(int i = 0; i < 4; i ++){
+			GameObject planetTextOutlineObj = new GameObject("HUD_Outline");
+			planetTextOutlineObj.transform.position = new Vector3(0.5f,0.5f,0f);
+			GUIText planetTextOutline = (GUIText)planetTextOutlineObj.AddComponent(typeof(GUIText));
+			planetTextOutline.anchor = TextAnchor.MiddleCenter;
+			planetTextOutline.pixelOffset = new Vector2(0f, Screen.height/2 - 30f);
+			planetTextOutline.fontSize = 18;
+			planetTextOutline.font = GUIFont;
+			planetTextOutline.color = Color.black;
+			planetTextOutline.text = "Planet Cleared!";
+			planetClearedOutline[i] = planetTextOutline;
+		}
+		planetClearedOutline[0].pixelOffset = enemyText.pixelOffset + new Vector2(0f, 1f);
+		planetClearedOutline[1].pixelOffset = enemyText.pixelOffset + new Vector2(1f, 0f);
+		planetClearedOutline[2].pixelOffset = enemyText.pixelOffset + new Vector2(0f, -1f);
+		planetClearedOutline[3].pixelOffset = enemyText.pixelOffset + new Vector2(-1f, 0f);
+
 		
 		// ally counter for current planet
 		GameObject allyTextObj = new GameObject("HUD_allyCounter");
@@ -245,6 +267,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		DisplayTextInstant("INCOMING TRANSMISSION:\n\n", 5f);
 		DisplayAdditionalText("\"...You're our last ship with an\noperational planar drive now.\n\n......It's time to make them pay!!!\"", 3f);
+
 	}
 	
 	// Update is called once per frame
@@ -373,8 +396,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// tail particle effect
 		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z;
 		if(forwardVelocity > 0f){
-			shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
-			shipTransform.FindChild("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.3f * forwardVelocity;
+			shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.2f * forwardVelocity;
+			shipTransform.FindChild("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.2f * forwardVelocity;
 		}
 		
 
@@ -396,9 +419,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// enemy and ally counters
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
 		if(isFinalStage){
+			SetOutlinesActive(false);
 			enemyText.color = Color.red;
 			enemyText.text = "Enemies: " + enemyCounter;
 		} else if(enemyCounter > 0){
+			SetOutlinesActive(false);
 			if(enemyCounter > 1){
 				enemyText.color = Color.red;
 				enemyText.text = "Enemies Left: " + enemyCounter;
@@ -411,6 +436,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 				compass.transform.rotation = Quaternion.LookRotation(lastEnemy.position - transform.position, transform.up);
 			}
 		} else{
+			SetOutlinesActive(true);
 			lastEnemy = null;
 			compass.SetActive(false);
 			enemyText.color = Color.cyan;
@@ -816,6 +842,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		DeactivateDeathRay();
 		DeactivateEMP();
 		RemoveDisplayText();
+		SetOutlinesActive(false);
 		overHeatMeter = 0f;
 		enemyText.text = "";
 		allyText.text = "";
@@ -874,6 +901,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		default:
 			break;
+		}
+	}
+	
+	void SetOutlinesActive(bool isActive){
+		for(int i = 0; i < 4; i++){
+			planetClearedOutline[i].enabled = isActive;
 		}
 	}
 	
@@ -1014,8 +1047,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.enabled = false;
 		enemyText.enabled = false;
 		allyText.enabled = false;
+		SetOutlinesActive(false);
 		transform.FindChild("Heat Bar").gameObject.SetActive(false);
 		transform.FindChild("Health Bar").gameObject.SetActive(false);
+		shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.2f * 20f;
+		shipTransform.FindChild("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.2f * 20f;
 	}
 
 	public void EngineOff(){
@@ -1055,10 +1091,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		for(int i = 0; i < text.Length; i++){
 			gameText.text += text[i];
 			yield return new WaitForSeconds(0.08f);
-			audio.PlayOneShot (transmissionSound);
+			audio3.Play();
 	
 		}
-		audio.Stop ();
+		audio3.Stop ();
 	}
 	
 	public void RemoveDisplayText(){

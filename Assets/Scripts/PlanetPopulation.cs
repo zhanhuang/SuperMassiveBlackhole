@@ -170,7 +170,7 @@ public class PlanetPopulation : MonoBehaviour {
 			audio2.PlayDelayed (5f);
 			ActivateBeam();
 			if(planetType == -2){
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
 				audio3.Stop ();
 				ShowBeam();
 			}
@@ -187,19 +187,20 @@ public class PlanetPopulation : MonoBehaviour {
 			if(planetType == -2){
 				// boss planet
 				transform.Find("ClearPulse").renderer.enabled = false;
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
+				BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(false);
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(1f, 0f, 0f, 0.25f));
 				BaseBeam.collider.enabled = true;
 				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop ();
 			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.yellow);
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(1f, 1f, 0f, 0.25f));
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
 			} else if(planetType == 0){
 				// final stage planet
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
 			} else{
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.green);
+				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 			
@@ -223,6 +224,7 @@ public class PlanetPopulation : MonoBehaviour {
 		// animate the activation of the beam
 		if(planetType != -2){
 			transform.FindChild("ClearPulse").renderer.enabled = true;
+			BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(true);
 			transform.FindChild ("ClearPulse").audio.Play ();
 		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
@@ -241,6 +243,7 @@ public class PlanetPopulation : MonoBehaviour {
 		BaseBeam.renderer.enabled = false;
 		BaseBeam.collider.enabled = false;
 		transform.FindChild("ClearPulse").renderer.enabled = false;
+		BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(false);
 		transform.FindChild ("Outline").renderer.enabled = true;
 	}
 
@@ -248,6 +251,7 @@ public class PlanetPopulation : MonoBehaviour {
 		BaseBeam.renderer.enabled = true;
 		BaseBeam.collider.enabled = true;
 		transform.FindChild("ClearPulse").renderer.enabled = true;
+		BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(true);
 		transform.FindChild("Outline").renderer.enabled = false;
 	}
 	

@@ -103,6 +103,13 @@ public class GalaxyPopulation : MonoBehaviour {
 		if(Input.GetKey(KeyCode.BackQuote) && Input.GetKey(KeyCode.Equals)){
 			Application.LoadLevel(0);
 		}
+
+////		// test - take a screenshot, comment out for release
+//		if(Input.GetKeyDown(KeyCode.Backspace)){
+//			string filename = Application.dataPath + "/screenshots" + System.DateTime.Now.ToString("MM-dd_HH-mm-ss") + ".png"; 
+//			Application.CaptureScreenshot(filename);
+//		}
+
 	}
 
 	// check all 8 accessible places on grid and return a list of planets
