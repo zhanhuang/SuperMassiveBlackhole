@@ -1065,14 +1065,15 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	IEnumerator CameraShake(){
 		float decrease = 60f;
-		float magnitude = 0.05f;
+		float magnitude = 0.000001f;
 		Quaternion origRot = cameraTransform.transform.localRotation;
 		for(float t = 0f; t < 0.1f; t += Time.deltaTime){
 			magnitude -= decrease * Time.deltaTime;
 			float xMod = Random.Range(-magnitude, magnitude);
 			float yMod = Random.Range(-magnitude, magnitude);
 			float zMod = Random.Range(-magnitude, magnitude);
-			cameraTransform.transform.localRotation =  cameraTransform.transform.localRotation * Quaternion.Euler(new Vector3(0f,yMod,0f));
+			Quaternion targetQuat = cameraTransform.transform.localRotation * Quaternion.Euler(new Vector3(0f,yMod,0f));
+			cameraTransform.transform.localRotation =  Quaternion.Lerp(cameraTransform.transform.localRotation, targetQuat, Random.Range(0f,0.5f));
 			yield return null;
 		}
 		cameraTransform.transform.localRotation = origRot;

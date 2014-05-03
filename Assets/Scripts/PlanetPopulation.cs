@@ -203,10 +203,10 @@ public class PlanetPopulation : MonoBehaviour {
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 			
-			// test code: port straight to boss fight. comment out in production
-			if(planetType == -1){
-				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
-			}
+//			// test code: port straight to boss fight. comment out in production
+//			if(planetType == -1){
+//				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+//			}
 
 //			// test code: start with shop. comment out in production
 //			if(planetType == -1){
