@@ -38,6 +38,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 	Material heatMat;
 	Material heatWordMat;
 
+	public float healthBarLimit = 5f;
+	Material healthMat;
+	Material healthWordMat;
+
 	// ship stat variables
 	float acceleration = 50f;
 	float turnAcceleration = 20f;
@@ -53,7 +57,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 	GameObject Mine;
 
 	GameObject MoveJoint;
-	GameObject BaseJoint;
+
+	GameObject HealthMoveJoint;
 
 	bool dmgFlashing = false;
 	bool heatFlashing = false;
@@ -95,6 +100,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// setup joint for heat bar
 		MoveJoint = transform.FindChild("Heat Bar").FindChild("BaseJoint").FindChild("MoveJoint").gameObject;
 
+		// setup joint for health bar
+		HealthMoveJoint = transform.FindChild("Health Bar").FindChild("BaseJoint").FindChild("MoveJoint").gameObject;
+
 		// set camera culling to spherical
 		transform.GetComponentInChildren<Camera>().layerCullSpherical = true;
 
@@ -122,14 +130,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 		
 		// health counter 
 		// TODO: Have a bar for this
-		GameObject healthTextObj = new GameObject("HUD_healthCounter");
-		healthTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		healthText = (GUIText)healthTextObj.AddComponent(typeof(GUIText));
-		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 30f);
-		healthText.fontSize = 18;
-		healthText.font = GUIFont;
-		healthText.color = Color.green;
-		healthText.text = "HEALTH: " + health;
+//		GameObject healthTextObj = new GameObject("HUD_healthCounter");
+//		healthTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+//		healthText = (GUIText)healthTextObj.AddComponent(typeof(GUIText));
+//		healthText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 30f);
+//		healthText.fontSize = 18;
+//		healthText.font = GUIFont;
+//		healthText.color = Color.green;
+//		healthText.text = "HEALTH: " + health;
 		
 		GameObject currencyTextObj = new GameObject("HUD_currencyCounter");
 		currencyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
@@ -154,6 +162,11 @@ public class PlayerShipController : ShipOrbitBehavior {
 		heatMat = transform.FindChild("Heat Bar").FindChild("Bar").renderer.material;
 		heatWordMat = transform.FindChild("Heat Bar").FindChild("HeatText").renderer.materials[1];
 		heatWordMat.color = new Color(1f, 0.25f, 0f);
+
+		healthMat = transform.FindChild("Health Bar").FindChild("Bar").renderer.material;
+		healthWordMat = transform.FindChild("Health Bar").Find("HealthWord").renderer.materials[1];
+		healthWordMat.color = new Color(1f, 1f, 0f);
+
 
 		// shield counter
 		GameObject shieldTextObj = new GameObject("HUD_shieldCounter");
@@ -236,7 +249,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	
 	// Update is called once per frame
 	void Update () {
-		
+
 		// reset
 		if (health == 0 && Input.GetKey(KeyCode.R)){
 			Application.LoadLevel(0);
@@ -419,6 +432,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 				allyText.enabled = false;
 			}
 		}
+
 	}
 
 	void FixedUpdate () {
@@ -475,25 +489,37 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(health <= 0){
 			return;
 		}
+
 		health -= damage;
 		if(health < 0){
 			health = 0;
 		}
-		healthText.text = "HEALTH: " + health;
+//		healthText.text = "HEALTH: " + health;
 
 		if(health <= 0){
-			healthText.color = Color.red;
+//			healthText.color = Color.red;
 			Die();
 		} else{
-			if(health <= 2){
-				healthText.color = new Color(1f, 0.5f, 0f);
-			}
+//			if(health <= 2){
+//				healthText.color = new Color(1f, 0.5f, 0f);
+//			}
 			if(!dmgFlashing){
 				dmgFlashing = true;
 				StartCoroutine("DamageFlash");
 			}
 		}
+		UpdateHealth();
 	}
+
+	public void UpdateHealth(){
+		if (health <= 0){
+			Destroy(transform.FindChild("Health Bar").FindChild("Bar").gameObject);
+		}
+		else{
+			HealthMoveJoint.transform.localPosition = new Vector3(health*-2, MoveJoint.transform.localPosition.y, MoveJoint.transform.localPosition.z);
+		}
+	}
+
 
 	IEnumerator OverheatFlash(){
 		Color origColor = new Color(1f, 0.25f, 0f);
@@ -785,9 +811,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 		lastEnemy = null;
 	}
 	
-	public void GetLoot(string lootType, int lootValue){
+	public bool GetLoot(string lootType, int lootValue){
 		if(lootValue < 0){
-			return;
+			return false;
 		}
 		
 		switch (lootType){
@@ -795,24 +821,37 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		case "InstantShield":
 			break;
+		case "Health":
+			if(health >= 5){
+				return false;
+			}
+			goto default;
 		default:
 			StartCoroutine(LootDisplay(lootType, lootValue));
 			break;
 		}
+		return true;
 	}
 
 	public IEnumerator LootDisplay(string lootType, int lootValue){
 		switch (lootType){
 		case "Health":
-			health += lootValue;
+
 			audio.PlayOneShot (healthSound);
-			for(float t = 0f; t < 1f; t += Time.deltaTime){
-				healthText.text = "HEALTH: " + (health - lootValue).ToString() + "  + " + lootValue;
-				yield return null;
+//			for(float t = 0f; t < 1f; t += Time.deltaTime){
+//				healthText.text = "HEALTH: " + (health - lootValue).ToString() + "  + " + lootValue;
+//				yield return null;
+//			}
+//			healthText.text = "HEALTH: " + health;
+//			if(health > 2){
+//				healthText.color = Color.green;
+//			}
+			if (health >= 5){
+				break;
 			}
-			healthText.text = "HEALTH: " + health;
-			if(health > 2){
-				healthText.color = Color.green;
+			else{
+				health += lootValue;
+				UpdateHealth();
 			}
 			break;
 		case "Currency":

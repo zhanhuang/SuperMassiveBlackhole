@@ -17,8 +17,9 @@ public class Loot : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if (other.tag == "Player") {
-			other.transform.GetComponent<PlayerShipController>().GetLoot(lootType, lootValue);
-			Destroy(gameObject);
+			if(other.transform.GetComponent<PlayerShipController>().GetLoot(lootType, lootValue)){
+				Destroy(gameObject);
+			}
 		}
 	}
 }

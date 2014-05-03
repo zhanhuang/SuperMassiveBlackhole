@@ -14,6 +14,8 @@ ModelImporter:
     100016: polySurface8
     100018: //RootNode
     100020: HealthWord
+    100022: ffd1Base
+    100024: ffd1Lattice
     400000: Bar
     400002: BaseJoint
     400004: MoveJoint
@@ -25,6 +27,8 @@ ModelImporter:
     400016: polySurface8
     400018: //RootNode
     400020: HealthWord
+    400022: ffd1Base
+    400024: ffd1Lattice
     2300000: Bar
     2300002: polySurface10
     2300004: polySurface12
