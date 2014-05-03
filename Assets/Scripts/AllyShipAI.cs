@@ -15,7 +15,11 @@ public class AllyShipAI : ShipOrbitBehavior {
 
 	GameObject Laser;
 	GameObject Explosion;
-	
+
+	bool planetCleared = false;
+	float rotationDir = 1f;
+	float rotationTime = 0f;
+
 	// Use this for initialization
 	void Start () {
 		OrbitSetup();
@@ -29,6 +33,22 @@ public class AllyShipAI : ShipOrbitBehavior {
 	
 	// Update is called once per frame
 	void Update () {
+		if(planetCleared){
+			// random walk
+			transform.RotateAround(currentPlanet.transform.position,transform.right, Time.deltaTime * 4f);
+			rotationTime += Time.deltaTime;
+			if(rotationTime > 10f){
+				if(Random.Range(0,2) == 0){
+					rotationDir = -rotationDir;
+					rotationTime = 0f;
+				} else{
+					rotationTime -= Random.Range(8f,10f);
+				}
+			}
+			transform.Rotate(new Vector3(0f, Random.Range(0f,0.5f) * rotationDir, 0f));
+			return;
+		}
+
 		fireCoolDownRemaining -= Time.deltaTime;
 
 		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
@@ -38,14 +58,25 @@ public class AllyShipAI : ShipOrbitBehavior {
 		}
 
 		if(enemyCounter <= 0){
+			// vanish after planet clear
+			Destroy(gameObject);
+
+			// OR
+
 			// after you clear the planet, no more shooting allies for loot
+			planetCleared = true;
+			Destroy(GetComponent<ConfigurableJoint>());
+			rigidbody.velocity = Vector3.zero;
+			rigidbody.constraints = RigidbodyConstraints.FreezeAll;
 			transform.collider.enabled = false;
 		}
 	}
 	
 	void FixedUpdate () {
-		rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
-		rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
+		if(!planetCleared){
+			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
+			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
+		}
 	}
 	
 	
