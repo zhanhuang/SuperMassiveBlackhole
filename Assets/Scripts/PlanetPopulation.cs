@@ -203,10 +203,10 @@ public class PlanetPopulation : MonoBehaviour {
 				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
 			}
 			
-//			// test code: port straight to boss fight. comment out in production
-//			if(planetType == -1){
-//				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
-//			}
+			// test code: port straight to boss fight. comment out in production
+			if(planetType == -1){
+				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
+			}
 
 //			// test code: start with shop. comment out in production
 //			if(planetType == -1){
@@ -255,15 +255,15 @@ public class PlanetPopulation : MonoBehaviour {
 		// auto corrects for position of objects on planet surface. choose loot based on level
 		Vector3 direction = (location - transform.position).normalized;
 		float rnd = Random.Range(0f,100f);
-		if(rnd < 40f){
+		if(rnd < 10f){
 			GameObject nextLoot = (GameObject)Instantiate(Loot_Health, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Health";
 			nextLoot.GetComponent<Loot>().lootValue = 1;
 			nextLoot.transform.up = nextLoot.transform.position - transform.position;
-		} else if(rnd < 40f){
+		} else if(rnd < 75f){
 			GameObject nextLoot = (GameObject)Instantiate(Loot_Currency, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Currency";
-			nextLoot.GetComponent<Loot>().lootValue = level * 10 + planetRow * 5 + Random.Range(5,15);
+			nextLoot.GetComponent<Loot>().lootValue = level * 5 + planetRow * 3 + Random.Range(5,15);
 			nextLoot.transform.up = nextLoot.transform.position - transform.position;
 		}
 	}
