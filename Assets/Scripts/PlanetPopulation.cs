@@ -254,7 +254,7 @@ public class PlanetPopulation : MonoBehaviour {
 		// auto corrects for position of objects on planet surface. choose loot based on level
 		Vector3 direction = (location - transform.position).normalized;
 		float rnd = Random.Range(0f,100f);
-		if(rnd < 10f){
+		if(rnd < 40f){
 			GameObject nextLoot = (GameObject)Instantiate(Loot_Health, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Health";
 			nextLoot.GetComponent<Loot>().lootValue = 1;
