@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 // Inherits from ShipOrbitBehavior
@@ -94,7 +94,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	// Use this for initialization
 	void Start () {
-//		currentPlanet = GameObject.Find("Planet");
+
 		OrbitSetup();
 
 		// setup joint for heat bar
@@ -417,7 +417,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			enemyText.text = "Planet Cleared!";
 			if(allyText.enabled == true){
 				allyText.enabled = false;
-				int reward = 50 + Random.Range(5,15);
+				int reward = 35 + Random.Range(5,15);
 				GetLoot("Currency", reward);
 				DisplayText(reward + " CURRENCY RECEIVED\n\n\n\"This is a token of our gratitude.\nThank you for your aid, friend.\"", 3f);
 			}
@@ -502,7 +502,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 			Die();
 		} else{
 //			if(health <= 2){
-//				healthText.color = new Color(1f, 0.5f, 0f);
+////				healthText.color = new Color(1f, 0.5f, 0f);
+//				healthMat.color = new Color(1f, 0.5f, 0f);
+//			} else if(health <= 1){
+//				healthMat.color = new Color(1f, 0f, 0f);
 //			}
 			if(!dmgFlashing){
 				dmgFlashing = true;
@@ -517,6 +520,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 			Destroy(transform.FindChild("Health Bar").FindChild("Bar").gameObject);
 		}
 		else{
+			if(health > 2){
+				//				healthText.color = Color.green;
+				healthMat.color = Color.green;
+			} else if (health  > 1){
+				healthMat.color = new Color(1f, 0.5f, 0f);
+			} else{
+				healthMat.color = new Color(1f, 0f, 0f);
+			}
 			HealthMoveJoint.transform.localPosition = new Vector3(health*-2, MoveJoint.transform.localPosition.y, MoveJoint.transform.localPosition.z);
 		}
 	}
@@ -729,12 +740,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 		float countDown = 0f;
 
 		float deathRayDuration = 2f;
-		for(float t = 0f; t < (deathRayDuration + 1f); t += Time.deltaTime){
+		for(float t = 0f; t < deathRayDuration; t += Time.deltaTime){
 			line1.SetPosition(0, deathRay1.position);
 			line2.SetPosition(0, deathRay2.position);
 
 //			// pattern A: death ray swings upwards
-//			Vector3 rayDirection = Quaternion.AngleAxis(-45f * Mathf.Clamp01(1f - t/deathRayDuration), -transform.right) * transform.forward;
+//			Vector3 rayDirection = Quaternion.AngleAxis(-45f * Mathf.Clamp01(1f - t/(deathRayDuration - 1f)), -transform.right) * transform.forward;
 
 			// pattern B: death ray focuses on the ground
 			Vector3 rayDirection = Quaternion.AngleAxis(-30f, -transform.right) * transform.forward;
@@ -747,7 +758,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 					} else{
 						hit.transform.SendMessage("TakeDamage", 1);
 						lastTarget = hit.transform;
-						countDown = 1f/deathRayLevel;
+						countDown = 0.7f/deathRayLevel;
 					}
 				}
 				line1.SetPosition(1, hit.point - transform.right.normalized * 0.2f);
@@ -844,9 +855,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 //				yield return null;
 //			}
 //			healthText.text = "HEALTH: " + health;
-//			if(health > 2){
-//				healthText.color = Color.green;
-//			}
 			if (health >= 5){
 				break;
 			}
@@ -999,7 +1007,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	// ENDING SEQUENCE
 	public void HUDOff(){
-		healthText.enabled = false;
 		currencyText.enabled = false;
 		shieldText.enabled = false;
 		mineText.enabled = false;
@@ -1008,6 +1015,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		enemyText.enabled = false;
 		allyText.enabled = false;
 		transform.FindChild("Heat Bar").gameObject.SetActive(false);
+		transform.FindChild("Health Bar").gameObject.SetActive(false);
 	}
 
 	public void EngineOff(){

@@ -106,6 +106,7 @@ public class FinalStageScript : PlanetPopulation {
 	}
 
 	void Win(){
+		audio3.Stop ();
 		audio.Stop ();
 		audio.PlayOneShot (victorySound);
 		audio2.PlayDelayed (5f);

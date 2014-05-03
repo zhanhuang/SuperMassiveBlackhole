@@ -16,7 +16,7 @@ public class PlanetPopulation : MonoBehaviour {
 	public float surfaceLength;
 
 	public Transform BaseBeam;
-	bool beamActivated = false;
+	public bool beamActivated = false;
 
 	public int EnemyCounter = 0;
 	public int AllyCounter = 0;
@@ -263,7 +263,7 @@ public class PlanetPopulation : MonoBehaviour {
 		} else if(rnd < 75f){
 			GameObject nextLoot = (GameObject)Instantiate(Loot_Currency, transform.position + direction.normalized * orbitLength, Quaternion.identity);
 			nextLoot.GetComponent<Loot>().lootType = "Currency";
-			nextLoot.GetComponent<Loot>().lootValue = level * 5 + planetRow * 3 + Random.Range(5,15);
+			nextLoot.GetComponent<Loot>().lootValue = level * 4 + planetRow * 2 + Random.Range(5,12);
 			nextLoot.transform.up = nextLoot.transform.position - transform.position;
 		}
 	}
