@@ -186,6 +186,7 @@ public class PlanetPopulation : MonoBehaviour {
 			// decide whether there is a shop
 			if(planetType == -2){
 				// boss planet
+				transform.Find("ClearPulse").renderer.enabled = false;
 				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", Color.red);
 				BaseBeam.collider.enabled = true;
 				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;

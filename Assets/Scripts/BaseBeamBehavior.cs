@@ -149,6 +149,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 				liftOff = false;
 				inSpace = false;
 				audio.Stop();
+				// set rotation on moving
+				player.rotation = targetRotation;
 				StartCoroutine(FlyOff());
 			}
 		}

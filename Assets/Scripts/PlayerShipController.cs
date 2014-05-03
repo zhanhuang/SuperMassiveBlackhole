@@ -20,7 +20,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float shieldLimit = 3f;
 	public float shieldTimeRemaining = 0f;
 	// death ray
-	int deathRayLevel = 3;
+	int deathRayLevel = 0;
 	bool deathRayActivated = false;
 	// mine
 	int mineCharges = 2;
@@ -47,7 +47,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	float turnAcceleration = 20f;
 
 	public Transform shipTransform;
-	GameObject playerCamera;
+	Transform cameraTransform;
 	GameObject Explosion;
 
 	Vector3 cameraStartingLocalPosition;
@@ -117,8 +117,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 		// set camera
 		shipTransform = transform.FindChild("Ship");
-		playerCamera = transform.FindChild("Camera").gameObject;
-		cameraStartingLocalPosition = playerCamera.transform.localPosition;
+		cameraTransform = transform.FindChild("Camera");
+		cameraStartingLocalPosition = cameraTransform.localPosition;
 
 		// set emp
 		EMPTransform = transform.FindChild("EMP");
@@ -494,6 +494,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		if(health < 0){
 			health = 0;
 		}
+		StartCoroutine(CameraShake());
 //		healthText.text = "HEALTH: " + health;
 
 		if(health <= 0){
@@ -1060,5 +1061,20 @@ public class PlayerShipController : ShipOrbitBehavior {
 	IEnumerator RemoveDisplayTextWithDelay(float time){
 		yield return new WaitForSeconds(time);
 		RemoveDisplayText();
+	}
+
+	IEnumerator CameraShake(){
+		float decrease = 60f;
+		float magnitude = 0.05f;
+		Quaternion origRot = cameraTransform.transform.localRotation;
+		for(float t = 0f; t < 0.1f; t += Time.deltaTime){
+			magnitude -= decrease * Time.deltaTime;
+			float xMod = Random.Range(-magnitude, magnitude);
+			float yMod = Random.Range(-magnitude, magnitude);
+			float zMod = Random.Range(-magnitude, magnitude);
+			cameraTransform.transform.localRotation =  cameraTransform.transform.localRotation * Quaternion.Euler(new Vector3(0f,yMod,0f));
+			yield return null;
+		}
+		cameraTransform.transform.localRotation = origRot;
 	}
 }
