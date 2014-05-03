@@ -110,7 +110,7 @@ public class FinalStageScript : PlanetPopulation {
 		audio.PlayOneShot (victorySound);
 		audio2.PlayDelayed (5f);
 		// called only when no enemy or portals are left
-		transform.FindChild("ClearPulse").renderer.material.color = Color.green;
+		transform.FindChild("ClearPulse").renderer.material.SetColor("_TintColor", Color.green);
 		StartCoroutine(DisableDome());
 	}
 
