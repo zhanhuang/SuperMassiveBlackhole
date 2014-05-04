@@ -606,13 +606,13 @@ public class BaseBeamBehavior : MonoBehaviour {
 			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
-		playerScript.DisplayText("MODELING\n\n\nJAMES ZHANG", 5f);
+		playerScript.DisplayText("3D MODEL ARTIST\n\n\nJAMES ZHANG", 5f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
 			timeElapsed += Time.deltaTime;
 			player.position = startPos + lookDirection * timeElapsed / 50f;
 			yield return null;
 		}
-		playerScript.DisplayText("SOUNDS\n\n\nBEN WALTHALL", 5f);
+		playerScript.DisplayText("SOUND DESIGNER\n\n\nBEN WALTHALL", 5f);
 		for(float t = 0f; t < 10f; t += Time.deltaTime){
 			timeElapsed += Time.deltaTime;
 			player.position = startPos + lookDirection * timeElapsed / 50f;
