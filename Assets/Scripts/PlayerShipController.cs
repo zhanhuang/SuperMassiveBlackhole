@@ -622,6 +622,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 			if(health > 1){
 				//				healthText.color = Color.green;
 				healthMat.color = Color.green;
+			} else if (health  > 1){
+				healthMat.color = new Color(1f, 0.5f, 0f);
 			} else{
 				healthMat.color = new Color(1f, 0f, 0f);
 			}
@@ -919,6 +921,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		allyText.text = "";
 		compass.SetActive(false);
 		lastEnemy = null;
+		
+		konamiIndex = 10;
 	}
 	
 	public bool GetLoot(string lootType, int lootValue){

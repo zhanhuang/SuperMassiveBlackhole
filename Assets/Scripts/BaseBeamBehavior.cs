@@ -200,7 +200,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			playerScript.currentPlanet = finalPlanet;
 			playerScript.OrbitSetup();
 			playerScript.isFinalStage = true;
-			playerScript.DisplayText("WARNING!\n\nENEMY SHIPS INCOMING!!!", 1f);
+			playerScript.DisplayText("WARNING!\n\nENEMY SHIPS INCOMING!!!", 2f);
 			finalPlanet.GetComponent<FinalStageScript>().StageStart();
 		} else{
 			BeamStateTransition("Space");
@@ -587,7 +587,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 		startPlanet.GetComponent<PlanetPopulation>().ShowBeam();
 		
 		// turn first
-		for(float t = 0f; t < 2f; t += Time.deltaTime){
+		for(float t = 0f; t < 1f; t += Time.deltaTime){
 			player.rotation = Quaternion.Lerp(player.rotation, targetRotation, Time.deltaTime * 6f);
 			yield return null;
 		}

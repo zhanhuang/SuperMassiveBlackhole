@@ -96,10 +96,8 @@ public class FinalStageScript : PlanetPopulation {
 		if(portalCount <= 0){
 			StopCoroutine("EnemyWaveStart");
 			if(nextEnemy != null){
-				Destroy(nextEnemy);
-				EnemyCounter--;
-			}
-			if(EnemyCounter == 0){
+				nextEnemy.SendMessage("Die");
+			} else if(EnemyCounter == 0){
 				Win();
 			}
 		}
