@@ -619,7 +619,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			Destroy(transform.FindChild("Health Bar").FindChild("Bar").gameObject);
 		}
 		else{
-			if(health > 1){
+			if(health > 2){
 				//				healthText.color = Color.green;
 				healthMat.color = Color.green;
 			} else if (health  > 1){
