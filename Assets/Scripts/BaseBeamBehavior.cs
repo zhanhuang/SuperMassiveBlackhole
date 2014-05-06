@@ -22,8 +22,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 	// shop
 	string[] items = new string[6];
 	int[] prices = new int[6];
-	GUIText[] itemTexts = new GUIText[7];
-	GUIText[] priceTexts = new GUIText[6];
+	GUIOutlinedText[] itemTexts = new GUIOutlinedText[6];
+	GUIOutlinedText[] priceTexts = new GUIOutlinedText[6];
 	int selectedIndex = 0;
 
 	Font GUIFont;
@@ -50,7 +50,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 		beamText = new GUIOutlinedText("HUD_beamText");
 		beamText.fontSize = 24;
 		beamText.font = GUIFont;
-		beamText.color = Color.black;
+		beamText.color = Color.yellow;
 		beamText.alignment = TextAlignment.Center;
 		beamText.anchor = TextAnchor.MiddleCenter;
 		beamText.text = "[Space]:\nEngage Planar Drive";
@@ -201,7 +201,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 	}
 
 	IEnumerator FlyOff(){
-
+		playerScript.Galaxy.HidePaths();
 		// set flying direction
 		Transform targetPlanetTransform = surroundingPlanets[lookingPlanet].transform;
 		PlanetPopulation targetPlanetScript = surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>();
@@ -324,6 +324,12 @@ public class BaseBeamBehavior : MonoBehaviour {
 			GalaxyPopulation galaxy = playerScript.Galaxy;
 			PlanetPopulation currentPlanet = playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>();
 			surroundingPlanets = galaxy.GetSurroundingPlanets(currentPlanet);
+			galaxy.ShowPathsForPlanet(currentPlanet);
+			foreach(GameObject planet in surroundingPlanets){
+				if(planet != null){
+					galaxy.ShowPathsForPlanet(planet.GetComponent<PlanetPopulation>());
+				}
+			}
 			lookingPlanet = 0;
 		}
 		
@@ -348,6 +354,10 @@ public class BaseBeamBehavior : MonoBehaviour {
 			beamText.color = new Color(190f/255f, 230f/255f, 230f/255f);
 			beamText.pixelOffset = new Vector2(0f, -Screen.height/2 + 60f);
 			beamText.text = "[Space]: Onward!\n    [S]     : Drop Down";
+		} else if(BeamState == "Shop"){
+			beamText.color = new Color(29f/255f, 1f, 242f/255f);
+			beamText.pixelOffset = new Vector2(0f, - Screen.height/2 + 30f);
+			beamText.text = "[J]: Purchase \n[P]: Close Shop";
 		} else{
 			beamText.enabled = false;
 		}
@@ -400,34 +410,24 @@ public class BaseBeamBehavior : MonoBehaviour {
 		}
 		
 		// populate shop item text
-		for(int i = 0; i < 7; i ++){
-			GameObject itemTextObj = new GameObject("HUD_itemText");
-			itemTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-			GUIText nextItemText = (GUIText)itemTextObj.AddComponent(typeof(GUIText));
+		for(int i = 0; i < 6; i ++){
+			GUIOutlinedText nextItemText = new GUIOutlinedText("HUD_itemText");
 			nextItemText.anchor = TextAnchor.MiddleLeft;
 			nextItemText.fontSize = 24;
 			nextItemText.font = GUIFont;
-			nextItemText.color = Color.black;
-			if(i < 6){
-				nextItemText.pixelOffset = new Vector2(-160f, 90f - (i * 30f));
-				nextItemText.text = items[i];
-			} else{
-				nextItemText.anchor = TextAnchor.MiddleCenter;
-				nextItemText.pixelOffset = new Vector2(0f, - Screen.height/2 + 30f);
-				nextItemText.text = "[J]: Purchase \n[P]: Close Shop";
-			}
+			nextItemText.color = Color.white;
+			nextItemText.pixelOffset = new Vector2(-160f, 90f - (i * 30f));
+			nextItemText.text = items[i];
 			nextItemText.enabled = false;
 			itemTexts[i] = nextItemText;
 		}
 		
 		for(int i = 0; i < 6; i ++){
-			GameObject priceTextObj = new GameObject("HUD_priceText");
-			priceTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-			GUIText nextPriceText = (GUIText)priceTextObj.AddComponent(typeof(GUIText));
+			GUIOutlinedText nextPriceText = new GUIOutlinedText("HUD_priceText");
 			nextPriceText.anchor = TextAnchor.MiddleRight;
 			nextPriceText.fontSize = 24;
 			nextPriceText.font = GUIFont;
-			nextPriceText.color = Color.black;
+			nextPriceText.color = Color.white;
 			nextPriceText.pixelOffset = new Vector2(160f, 90f - (i * 30f));
 			nextPriceText.text = "20";
 			nextPriceText.enabled = false;
@@ -443,19 +443,19 @@ public class BaseBeamBehavior : MonoBehaviour {
 			UpdateItem(i);
 		}
 		
-		foreach(GUIText text in itemTexts){
+		foreach(GUIOutlinedText text in itemTexts){
 			text.enabled = true;
 		}
-		foreach(GUIText text in priceTexts){
+		foreach(GUIOutlinedText text in priceTexts){
 			text.enabled = true;
 		}
 	}
 	
 	void CloseDownShop(){
-		foreach(GUIText text in itemTexts){
+		foreach(GUIOutlinedText text in itemTexts){
 			text.enabled = false;
 		}
-		foreach(GUIText text in priceTexts){
+		foreach(GUIOutlinedText text in priceTexts){
 			text.enabled = false;
 		}
 		RemoveHighLight(selectedIndex);
@@ -519,8 +519,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 			itemTexts[index].color = Color.red;
 			priceTexts[index].text = "";
 		} else if(index != selectedIndex){
-			itemTexts[index].color = Color.black;
-			priceTexts[index].color = Color.black;
+			itemTexts[index].color = beamText.color;
+			priceTexts[index].color = beamText.color;
 		} else{
 			itemTexts[index].color = Color.green;
 			priceTexts[index].color = Color.green;
@@ -540,8 +540,8 @@ public class BaseBeamBehavior : MonoBehaviour {
 		itemTexts[index].fontSize = 24;
 		priceTexts[index].fontSize = 24;
 		if(itemTexts[selectedIndex].text != "Sold Out"){
-			itemTexts[index].color = Color.black;
-			priceTexts[index].color = Color.black;
+			itemTexts[index].color = beamText.color;
+			priceTexts[index].color = beamText.color;
 		}
 	}
 

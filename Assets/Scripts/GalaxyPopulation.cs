@@ -17,6 +17,9 @@ public class GalaxyPopulation : MonoBehaviour {
 	float planetDistance = 800f;
 	float planetHeightVariation = 400f;
 
+	LineRenderer[,] pathLines = new LineRenderer[5,5];
+	int planetCount = 0;
+	Material pathMat;
 
 	// Use this for initialization
 	void Start () {
@@ -52,6 +55,7 @@ public class GalaxyPopulation : MonoBehaviour {
 					// no planet, skip over
 					continue;
 				}
+
 				Vector3 nextLocation = new Vector3(planetDistance * r, Random.Range(-planetHeightVariation, planetHeightVariation), planetDistance * c);
 				GameObject nextPlanet = Instantiate(planet, nextLocation, Quaternion.identity) as GameObject;
 				PlanetPopulation nextPlanetScript = nextPlanet.GetComponent<PlanetPopulation>();
@@ -94,8 +98,12 @@ public class GalaxyPopulation : MonoBehaviour {
 				}
 
 				planetGrid[r,c] = nextPlanet;
+				planetCount++;
 			}
 		}
+
+		pathMat = Resources.Load("PlanetPathMat") as Material;
+		BuildPaths();
 
 		// SET PLAYER PLANET
 		thePlayer.transform.position = startingPlanet.transform.position + new Vector3(0f,200f,-100f);
@@ -292,6 +300,53 @@ public class GalaxyPopulation : MonoBehaviour {
 				} // end if(planetTypeArray[r, c] == 1)
 			}
 		}
+	}
 
+	void BuildPaths(){
+		int pathIndex = 0;
+		GameObject planetPaths = new GameObject("planetPaths");
+		for(int r = 0; r < 5; r++){
+			for(int c = 0; c < 5; c++){
+				if(planetTypeArray[r, c] != 0){
+					PlanetPopulation nextPlanet = planetGrid[r,c].GetComponent<PlanetPopulation>();
+					GameObject[] surroundingPlanets = GetSurroundingPlanets(nextPlanet);
+					GameObject path = new GameObject("path");
+					path.transform.parent = planetPaths.transform;
+					LineRenderer line = (LineRenderer)path.AddComponent(typeof(LineRenderer));
+					line.material = pathMat;
+					line.SetWidth(3f,3f);
+					line.SetVertexCount(17);
+					line.useWorldSpace = true;
+					line.SetPosition(0, nextPlanet.transform.position);
+					int lineIndexCounter = 0;
+					foreach(GameObject planet in surroundingPlanets){
+						if(planet != null){
+							line.SetPosition(lineIndexCounter + 1, planet.transform.position);
+							line.SetPosition(lineIndexCounter + 2, nextPlanet.transform.position);
+							lineIndexCounter += 2;
+						}
+					}
+					line.SetVertexCount(lineIndexCounter);
+					pathLines[r,c] = line;
+					line.enabled = false;
+					pathIndex ++;
+				}
+			}
+		}
+	}
+
+	public void ShowPathsForPlanet(PlanetPopulation planet){
+		Debug.Log("Row" + planet.planetRow + "Col" + planet.planetCol);
+		pathLines[planet.planetRow,planet.planetCol].enabled = true;
+	}
+	
+	public void HidePaths(){
+		for(int r = 0; r < 5; r++){
+			for(int c = 0; c < 5; c++){
+				if(pathLines[r,c] != null){
+					pathLines[r,c].enabled = false;
+				}
+			}
+		}
 	}
 }

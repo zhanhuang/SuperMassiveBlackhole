@@ -150,6 +150,16 @@ public class GUIOutlinedText : MonoBehaviour {
 		
 		set{
 			main.material = value;
+		}
+	}
+	
+	public Material outlineMaterial
+	{
+		get{
+			return outline[0].material;
+		}
+		
+		set{
 			for(int i = 0; i < 4; i ++){
 				outline[i].material = value;
 			}
