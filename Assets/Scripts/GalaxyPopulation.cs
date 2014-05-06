@@ -336,7 +336,7 @@ public class GalaxyPopulation : MonoBehaviour {
 	}
 
 	public void ShowPathsForPlanet(PlanetPopulation planet){
-		Debug.Log("Row" + planet.planetRow + "Col" + planet.planetCol);
+//		Debug.Log("Row" + planet.planetRow + "Col" + planet.planetCol);
 		pathLines[planet.planetRow,planet.planetCol].enabled = true;
 	}
 	
