@@ -6,7 +6,6 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	public Transform player;
 	public PlayerShipController playerScript;
-	public GUIText beamText;
 
 	/* States:
 	 * Inactive
@@ -40,7 +39,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 	public AudioClip storeCantBuy;
 	public AudioClip takeoff;
 	
-	public GUIText[] beamTexts = new GUIText[5];
+	public GUIOutlinedText beamText;
 
 	// Use this for initialization
 	void Start () {
@@ -48,21 +47,14 @@ public class BaseBeamBehavior : MonoBehaviour {
 		// load font
 		GUIFont = (Font)Resources.Load("AirStrike");
 
-		for(int i = 0; i < 5; i++){
-			GameObject beamTextObj = new GameObject("HUD_beamText");
-			beamTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-			beamText = (GUIText)beamTextObj.AddComponent(typeof(GUIText));
-			beamText.fontSize = 24;
-			beamText.font = GUIFont;
-			beamText.color = Color.black;
-			beamText.alignment = TextAlignment.Center;
-			beamText.anchor = TextAnchor.MiddleCenter;
-			beamText.text = "[Space]:\nEngage Planar Drive";
-			beamText.enabled = false;
-			beamTexts[i] = beamText;
-		}
-		beamTexts[0].color = Color.yellow;
-		SetTextOutlineOffsets();
+		beamText = new GUIOutlinedText("HUD_beamText");
+		beamText.fontSize = 24;
+		beamText.font = GUIFont;
+		beamText.color = Color.black;
+		beamText.alignment = TextAlignment.Center;
+		beamText.anchor = TextAnchor.MiddleCenter;
+		beamText.text = "[Space]:\nEngage Planar Drive";
+		beamText.enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -195,6 +187,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			
 			// teleport player to boss level
 			GameObject finalPlanet = GameObject.Find("FinalPlanet");
+			finalPlanet.GetComponent<FinalStageScript>().PlayerScript = playerScript;
 			player.position = finalPlanet.transform.position + new Vector3(0f,-finalPlanet.GetComponent<FinalStageScript>().orbitLength,0.9f);
 			playerScript.enabled = true;
 			playerScript.currentPlanet = finalPlanet;
@@ -214,7 +207,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 		PlanetPopulation targetPlanetScript = surroundingPlanets[lookingPlanet].transform.GetComponent<PlanetPopulation>();
 
 
-		if(targetPlanetScript.beamActivated == false || targetPlanetScript.planetType == -2){
+		if(targetPlanetScript.beamActivated == false || targetPlanetScript.planetType == -2 || targetPlanetScript.planetType == 2){
 			// ANIMATION for enemy/conflicting planet
 			Vector3 flyTarget = targetPlanetTransform.position;
 			audio.PlayOneShot (takeoff);
@@ -341,34 +334,23 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 	void BeamTextUpdate(){
 		// change text display
-		for(int i = 0; i < 5; i++){
-			beamTexts[i].enabled = true;
-			if(BeamState == "Ground"){
-				beamTexts[i].pixelOffset = Vector2.zero;
-				if(shopEnabled){
-					beamTexts[0].color = new Color(29f/255f, 1f, 242f/255f);
-					beamTexts[i].text = "[Space]\nEngage Planar Drive\n\n[P]\nOpen Shop";
-				} else{
-					beamTexts[0].color = Color.yellow;
-					beamTexts[i].text = "[Space]\nEngage Planar Drive";
-				}
-			} else if(BeamState == "Space"){
-				beamTexts[0].color = new Color(190f/255f, 230f/255f, 230f/255f);
-				beamTexts[i].pixelOffset = new Vector2(0f, -Screen.height/2 + 60f);
-				beamTexts[i].text = "[Space]: Onward!\n    [S]     : Drop Down";
+		beamText.enabled = true;
+		if(BeamState == "Ground"){
+			beamText.pixelOffset = Vector2.zero;
+			if(shopEnabled){
+				beamText.color = new Color(29f/255f, 1f, 242f/255f);
+				beamText.text = "[Space]\nEngage Planar Drive\n\n[P]\nOpen Shop";
 			} else{
-				beamTexts[i].enabled = false;
+				beamText.color = Color.yellow;
+				beamText.text = "[Space]\nEngage Planar Drive";
 			}
+		} else if(BeamState == "Space"){
+			beamText.color = new Color(190f/255f, 230f/255f, 230f/255f);
+			beamText.pixelOffset = new Vector2(0f, -Screen.height/2 + 60f);
+			beamText.text = "[Space]: Onward!\n    [S]     : Drop Down";
+		} else{
+			beamText.enabled = false;
 		}
-
-		SetTextOutlineOffsets();
-	}
-
-	void SetTextOutlineOffsets(){
-		beamTexts[1].pixelOffset = beamTexts[0].pixelOffset + new Vector2(0f, 1f);
-		beamTexts[2].pixelOffset = beamTexts[0].pixelOffset + new Vector2(1f, 0f);
-		beamTexts[3].pixelOffset = beamTexts[0].pixelOffset + new Vector2(0f, -1f);
-		beamTexts[4].pixelOffset = beamTexts[0].pixelOffset + new Vector2(-1f, 0f);
 	}
 	
 	void LockPlayer(){

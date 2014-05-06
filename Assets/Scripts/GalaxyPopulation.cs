@@ -39,6 +39,11 @@ public class GalaxyPopulation : MonoBehaviour {
 		// figure out where we want to have planets
 		MarkPlanetTypes();
 
+		// CREATE PLAYER
+		GameObject thePlayer = Instantiate(player, Vector3.zero, Quaternion.identity) as GameObject;
+		PlayerShipController playerCtrl =  thePlayer.transform.GetComponent<PlayerShipController>();
+		playerCtrl.Galaxy = this;
+
 		// CREATE PLANETS
 		// Axis: Rows -- X+ ; Columns -- Z+
 		for(int r = 0; r < 5; r++){
@@ -53,6 +58,7 @@ public class GalaxyPopulation : MonoBehaviour {
 				nextPlanetScript.planetType = planetTypeArray[r,c];
 				nextPlanetScript.planetRow = r;
 				nextPlanetScript.planetCol = c;
+				nextPlanetScript.PlayerScript = playerCtrl;
 				nextPlanetScript.GenerateBase();
 
 				// set textures
@@ -91,10 +97,8 @@ public class GalaxyPopulation : MonoBehaviour {
 			}
 		}
 
-		// CREATE PLAYER
-		GameObject thePlayer = Instantiate(player, startingPlanet.transform.position + new Vector3(0f,200f,-100f), Quaternion.identity) as GameObject;
-		PlayerShipController playerCtrl =  thePlayer.transform.GetComponent<PlayerShipController>();
-		playerCtrl.Galaxy = this;
+		// SET PLAYER PLANET
+		thePlayer.transform.position = startingPlanet.transform.position + new Vector3(0f,200f,-100f);
 		playerCtrl.currentPlanet = startingPlanet;
 	}
 	

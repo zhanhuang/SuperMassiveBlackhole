@@ -20,6 +20,8 @@ public class PlanetPopulation : MonoBehaviour {
 
 	public int EnemyCounter = 0;
 	public int AllyCounter = 0;
+	
+	public PlayerShipController PlayerScript;
 
 	// Prefabs
 	GameObject AllyShip;
@@ -85,7 +87,11 @@ public class PlanetPopulation : MonoBehaviour {
 		// generate destructable structures
 		Crater = (GameObject)Resources.Load("Crater");
 		for(int i = 0; i < Random.Range(1,3); i++){
-			Vector3 startDir = Random.insideUnitSphere.normalized;
+			Vector3 startDir = new Vector3(0f, 1f, 0f);
+			while(Vector3.Angle(transform.up, startDir) < 30f){
+				// make sure crater doesn't appear on the base
+				startDir = Random.insideUnitSphere.normalized;
+			}
 			GameObject nextCrater = (GameObject)Instantiate(Crater, transform.position + startDir * surfaceLength, transform.rotation);
 			nextCrater.transform.up = nextCrater.transform.position - transform.position;
 			GenerateLootAt(nextCrater.transform.position,planetRow + 1);
@@ -156,10 +162,15 @@ public class PlanetPopulation : MonoBehaviour {
 			audio3.Play ();
 		}
 
+		if(EnemyCounter > 0){
+			PlayerScript.UpdateEnemyCounter(EnemyCounter);
+			PlayerScript.UpdateAllyCounter(AllyCounter);
+		}
 	}
 	
 	public void AllyDied(){
 		AllyCounter--;
+		PlayerScript.UpdateAllyCounter(AllyCounter);
 	}
 
 	public virtual void EnemyDied(){
@@ -175,6 +186,7 @@ public class PlanetPopulation : MonoBehaviour {
 				ShowBeam();
 			}
 		}
+		PlayerScript.UpdateEnemyCounter(EnemyCounter);
 	}
 
 	public void ActivateBeam(){

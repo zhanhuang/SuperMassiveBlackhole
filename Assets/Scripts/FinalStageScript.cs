@@ -22,6 +22,7 @@ public class FinalStageScript : PlanetPopulation {
 		surfaceLength = transform.localScale.x / 2 - 0.02f;
 
 		for(int i = 0; i < 8; i++){
+			portals[i].SetActive(false);
 			portals[i].GetComponent<PortalScript>().currentPlanet = gameObject;
 		}
 		// so they don't interfere with the compass
@@ -49,9 +50,12 @@ public class FinalStageScript : PlanetPopulation {
 		audio3.Play ();
 
 		for(int i = 0; i < 8; i++){
+			portals[i].SetActive(true);
 			portalPowers[i].SetActive(true);
 		}
-
+		
+		PlayerScript.UpdateEnemyCounter(EnemyCounter);
+		
 		StartCoroutine("EnemyWaveStart");
 		
 //		// Test - win, Comment out for release
@@ -66,7 +70,9 @@ public class FinalStageScript : PlanetPopulation {
 				portalIndex = Random.Range(0,8);
 				yield return null;
 			}
+			nextEnemy = null;
 			EnemyCounter ++;
+			PlayerScript.UpdateEnemyCounter(EnemyCounter);
 			yield return new WaitForSeconds(6f);
 		}
 		while(true){
@@ -77,7 +83,9 @@ public class FinalStageScript : PlanetPopulation {
 					portalIndex = Random.Range(0,8);
 					yield return null;
 				}
+				nextEnemy = null;
 				EnemyCounter ++;
+				PlayerScript.UpdateEnemyCounter(EnemyCounter);
 			}
 			yield return new WaitForSeconds(4f);
 		}
@@ -88,6 +96,8 @@ public class FinalStageScript : PlanetPopulation {
 		if(portalCount <= 0){
 			Win();
 		}
+
+		PlayerScript.UpdateEnemyCounter(EnemyCounter);
 	}
 
 	public void PortalDestroyed(){
@@ -96,8 +106,10 @@ public class FinalStageScript : PlanetPopulation {
 		if(portalCount <= 0){
 			StopCoroutine("EnemyWaveStart");
 			if(nextEnemy != null){
-				nextEnemy.SendMessage("Die");
-			} else if(EnemyCounter == 0){
+				Destroy(nextEnemy);
+			}
+
+			if(EnemyCounter == 0){
 				Win();
 			}
 		}

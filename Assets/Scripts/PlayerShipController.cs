@@ -65,17 +65,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	Font GUIFont;
 
-	GUIText healthText;
-	GUIText currencyText;
-	GUIText heatText;
-	GUIText shieldText;
-	GUIText mineText;
-	GUIText movementText;
-	GUIText weaponText;
-	GUIText enemyText;
-	GUIText allyText;
-	GUIText gameText;
-	GUIText[] planetClearedOutline = new GUIText[4];
+//	GUIText healthText;
+//	GUIText heatText;
+	
+	GUIOutlinedText currencyText;
+	GUIOutlinedText shieldText;
+	GUIOutlinedText mineText;
+	GUIOutlinedText movementText;
+	GUIOutlinedText weaponText;
+	GUIOutlinedText enemyText;
+	GUIOutlinedText allyText;
+	GUIOutlinedText gameText;
 
 	public AudioClip gunSound;
 	public AudioClip bombSound;
@@ -91,7 +91,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	int soundCount = 0;
 
 	GameObject compass;
-	Transform lastEnemy;
+	public Transform lastEnemy;
 	public bool isFinalStage = false;
 
 	int konamiIndex = 0;
@@ -144,15 +144,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 //		healthText.color = Color.green;
 //		healthText.text = "HEALTH: " + health;
 		
-		GameObject currencyTextObj = new GameObject("HUD_currencyCounter");
-		currencyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		currencyText = (GUIText)currencyTextObj.AddComponent(typeof(GUIText));
-		currencyText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 60f);
-		currencyText.fontSize = 18;
-		currencyText.font = GUIFont;
-		currencyText.color = Color.yellow;
-		currencyText.text = "CURRENCY: " + currency;
-		
 		// overheat meter
 		// TODO: Have a bar for this
 //		GameObject heatTextObj = new GameObject("HUD_heatMeter");
@@ -164,19 +155,27 @@ public class PlayerShipController : ShipOrbitBehavior {
 //		heatText.font = GUIFont;
 //		heatText.color = Color.white;
 //		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
-		heatMat = transform.FindChild("Heat Bar").FindChild("Bar").renderer.material;
-		heatWordMat = transform.FindChild("Heat Bar").FindChild("HeatText").renderer.materials[1];
-		heatWordMat.color = new Color(1f, 0.25f, 0f);
 
 		healthMat = transform.FindChild("Health Bar").FindChild("Bar").renderer.material;
 		healthWordMat = transform.FindChild("Health Bar").Find("HealthWord").renderer.materials[1];
 		healthWordMat.color = new Color(1f, 1f, 0f);
+		
+		heatMat = transform.FindChild("Heat Bar").FindChild("Bar").renderer.material;
+		heatWordMat = transform.FindChild("Heat Bar").FindChild("HeatText").renderer.materials[1];
+		heatWordMat.color = new Color(1f, 0.25f, 0f);
+
+		// currency counter
+		currencyText = new GUIOutlinedText("HUD_currencyCounter");
+		currencyText.pixelOffset = new Vector2(-Screen.width/2 + 40f, Screen.height/2 - 60f);
+		currencyText.fontSize = 18;
+		currencyText.font = GUIFont;
+		currencyText.color = Color.yellow;
+		currencyText.outlineColor = Color.black;
+		currencyText.text = "CURRENCY: " + currency;
 
 
 		// shield counter
-		GameObject shieldTextObj = new GameObject("HUD_shieldCounter");
-		shieldTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		shieldText = (GUIText)shieldTextObj.AddComponent(typeof(GUIText));
+		shieldText = new GUIOutlinedText("HUD_shieldCounter");
 		shieldText.anchor = TextAnchor.UpperRight;
 		shieldText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 60f);
 		shieldText.fontSize = 18;
@@ -184,9 +183,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		shieldText.text = "";
 
 		// mine counter
-		GameObject mineTextObj = new GameObject("HUD_mineCounter");
-		mineTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		mineText = (GUIText)mineTextObj.AddComponent(typeof(GUIText));
+		mineText = new GUIOutlinedText("HUD_mineCounter");
 		mineText.anchor = TextAnchor.UpperRight;
 		mineText.pixelOffset = new Vector2(Screen.width/2 - 40f, Screen.height/2 - 90f);
 		mineText.fontSize = 18;
@@ -194,9 +191,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		mineText.text = "";
 		
 		// movement text
-		GameObject moveTextObj = new GameObject("HUD_moveText");
-		moveTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		movementText = (GUIText)moveTextObj.AddComponent(typeof(GUIText));
+		movementText = new GUIOutlinedText("HUD_moveText");
 		movementText.anchor = TextAnchor.LowerLeft;
 		movementText.pixelOffset = new Vector2(-Screen.width/2 + 40f, -Screen.height/2 + 30f);
 		movementText.fontSize = 18;
@@ -205,9 +200,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		movementText.text = "Move: \n[Q][W][E]\n[A][S][D]";
 		
 		// weapon text
-		GameObject weaponTextObj = new GameObject("HUD_weaponText");
-		weaponTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		weaponText = (GUIText)weaponTextObj.AddComponent(typeof(GUIText));
+		weaponText = new GUIOutlinedText("HUD_weaponText");
 		weaponText.anchor = TextAnchor.LowerRight;
 		weaponText.pixelOffset = new Vector2(Screen.width/2 - 40f, -Screen.height/2 + 30f);
 		weaponText.fontSize = 18;
@@ -215,39 +208,16 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.color = Color.magenta;
 		
 		// enemy counter for current planet
-		GameObject enemyTextObj = new GameObject("HUD_enemyCounter");
-		enemyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		enemyText = (GUIText)enemyTextObj.AddComponent(typeof(GUIText));
+		enemyText = new GUIOutlinedText("HUD_enemyCounter");
 		enemyText.anchor = TextAnchor.MiddleCenter;
 		enemyText.pixelOffset = new Vector2(0f, Screen.height/2 - 30f);
 		enemyText.fontSize = 18;
 		enemyText.font = GUIFont;
 		enemyText.color = Color.red;
 
-
-		// outlines
-		for(int i = 0; i < 4; i ++){
-			GameObject planetTextOutlineObj = new GameObject("HUD_Outline");
-			planetTextOutlineObj.transform.position = new Vector3(0.5f,0.5f,0f);
-			GUIText planetTextOutline = (GUIText)planetTextOutlineObj.AddComponent(typeof(GUIText));
-			planetTextOutline.anchor = TextAnchor.MiddleCenter;
-			planetTextOutline.pixelOffset = new Vector2(0f, Screen.height/2 - 30f);
-			planetTextOutline.fontSize = 18;
-			planetTextOutline.font = GUIFont;
-			planetTextOutline.color = Color.black;
-			planetTextOutline.text = "Planet Cleared!";
-			planetClearedOutline[i] = planetTextOutline;
-		}
-		planetClearedOutline[0].pixelOffset = enemyText.pixelOffset + new Vector2(0f, 1f);
-		planetClearedOutline[1].pixelOffset = enemyText.pixelOffset + new Vector2(1f, 0f);
-		planetClearedOutline[2].pixelOffset = enemyText.pixelOffset + new Vector2(0f, -1f);
-		planetClearedOutline[3].pixelOffset = enemyText.pixelOffset + new Vector2(-1f, 0f);
-
 		
 		// ally counter for current planet
-		GameObject allyTextObj = new GameObject("HUD_allyCounter");
-		allyTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		allyText = (GUIText)allyTextObj.AddComponent(typeof(GUIText));
+		allyText = new GUIOutlinedText("HUD_allyCounter");
 		allyText.anchor = TextAnchor.MiddleCenter;
 		allyText.pixelOffset = new Vector2(0f, Screen.height/2 - 70f);
 		allyText.fontSize = 18;
@@ -256,9 +226,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 		allyText.enabled = false;
 		
 		// game text
-		GameObject gameTextObj = new GameObject("HUD_gameText");
-		gameTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
-		gameText = (GUIText)gameTextObj.AddComponent(typeof(GUIText));
+//		GameObject gameTextObj = new GameObject("HUD_gameText");
+//		gameTextObj.transform.position = new Vector3(0.5f,0.5f,0f);
+		gameText = new GUIOutlinedText("HUD_gameText");
 		gameText.anchor = TextAnchor.UpperCenter;
 		gameText.alignment = TextAlignment.Center;
 		gameText.pixelOffset = new Vector2(0, Screen.height/2 - 100f);
@@ -430,107 +400,23 @@ public class PlayerShipController : ShipOrbitBehavior {
 			MoveJoint.transform.localPosition = new Vector3(-overHeatMeter, MoveJoint.transform.localPosition.y, MoveJoint.transform.localPosition.z);
 		}
 
-		// enemy and ally counters
-		int enemyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().EnemyCounter;
-		if(isFinalStage){
-			SetOutlinesActive(false);
-			enemyText.color = Color.red;
-			enemyText.text = "Enemies: " + enemyCounter;
-		} else if(enemyCounter > 0){
-			SetOutlinesActive(false);
-			if(enemyCounter > 1){
-				enemyText.color = Color.red;
-				enemyText.text = "Enemies Left: " + enemyCounter;
-			} else{
-				enemyText.text = "";
-				if(lastEnemy == null){
-					compass.SetActive(true);
-					lastEnemy = GameObject.FindGameObjectWithTag("Enemy").transform;
-				}
+		// look at enemy if active
+		if(compass.activeSelf){
+			if(lastEnemy != null){
 				compass.transform.rotation = Quaternion.LookRotation(lastEnemy.position - transform.position, transform.up);
-			}
-		} else{
-			SetOutlinesActive(true);
-			lastEnemy = null;
-			compass.SetActive(false);
-			enemyText.color = Color.cyan;
-			enemyText.text = "Planet Cleared!";
-			if(allyText.enabled == true){
-				allyText.enabled = false;
-				int reward = 35 + Random.Range(5,15);
-				GetLoot("Currency", reward);
-				DisplayText(reward + " CURRENCY RECEIVED\n\n\n\"This is a token of our gratitude.\nThank you for your aid, friend.\"", 3f);
+			}else{
+				lastEnemy = GameObject.FindGameObjectWithTag("Enemy").transform;
+				if(lastEnemy == null){
+					compass.SetActive(false);
+				} else{
+					compass.transform.rotation = Quaternion.LookRotation(lastEnemy.position - transform.position, transform.up);
+				}
 			}
 		}
 
-		if(!isFinalStage && enemyCounter > 0){
-			int allyCounter = currentPlanet.transform.GetComponent<PlanetPopulation>().AllyCounter;
-			if(allyCounter > 0){
-				allyText.enabled = true;
-				allyText.text = "Allies Left: " + allyCounter;
-			} else{
-				allyText.enabled = false;
-			}
-		}
-
+		// konami cheat
 		if(konamiIndex < 10){
-			if(Input.GetKeyDown(KeyCode.UpArrow)){
-				if(konamiCode[konamiIndex] != KeyCode.UpArrow){
-					konamiIndex = 0;
-				} else{
-					konamiIndex ++;
-				}
-			}
-			
-			if(Input.GetKeyDown(KeyCode.DownArrow)){
-				if(konamiCode[konamiIndex] != KeyCode.DownArrow){
-					konamiIndex = 0;
-				} else{
-					konamiIndex ++;
-				}
-			}
-			if(Input.GetKeyDown(KeyCode.LeftArrow)){
-				if(konamiCode[konamiIndex] != KeyCode.LeftArrow){
-					konamiIndex = 0;
-				} else{
-					konamiIndex ++;
-				}
-			}
-			if(Input.GetKeyDown(KeyCode.RightArrow)){
-				if(konamiCode[konamiIndex] != KeyCode.RightArrow){
-					konamiIndex = 0;
-				} else{
-					konamiIndex ++;
-				}
-			}
-			if(Input.GetKeyDown(KeyCode.B)){
-				if(konamiCode[konamiIndex] != KeyCode.B){
-					konamiIndex = 0;
-				} else{
-					konamiIndex ++;
-				}
-			}
-			if(Input.GetKeyDown(KeyCode.A)){
-				if(konamiCode[konamiIndex] != KeyCode.A){
-					konamiIndex = 0;
-				} else{
-					konamiIndex ++;
-				}
-			}
-//			Debug.Log(konamiIndex);
-			if(konamiIndex == 10){
-				health = 10000000;
-				UpdateHealth();
-				GetLoot("Currency", 9001 - currency);
-				overHeatLimit = 100000000000f;
-				laserLevel = 5;
-				bombLevel = 3;
-				shieldCharges = 100;
-				deathRayLevel = 3;
-				mineCharges = 100;
-				EMPLevel = 3;
-				UpdateWeaponText();
-			}
+			KonamiCheck();
 		}
 	}
 
@@ -915,7 +801,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		DeactivateDeathRay();
 		DeactivateEMP();
 		RemoveDisplayText();
-		SetOutlinesActive(false);
 		overHeatMeter = 0f;
 		enemyText.text = "";
 		allyText.text = "";
@@ -976,12 +861,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		default:
 			break;
-		}
-	}
-	
-	void SetOutlinesActive(bool isActive){
-		for(int i = 0; i < 4; i++){
-			planetClearedOutline[i].enabled = isActive;
 		}
 	}
 	
@@ -1122,7 +1001,6 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.enabled = false;
 		enemyText.enabled = false;
 		allyText.enabled = false;
-		SetOutlinesActive(false);
 		transform.FindChild("Heat Bar").gameObject.SetActive(false);
 		transform.FindChild("Health Bar").gameObject.SetActive(false);
 		shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.2f * 20f;
@@ -1198,5 +1076,104 @@ public class PlayerShipController : ShipOrbitBehavior {
 			yield return null;
 		}
 		cameraTransform.transform.localRotation = origRot;
+	}
+
+	// enemy and ally counters, called by planetpopulation
+	public void UpdateEnemyCounter(int enemyCounter){
+		if(isFinalStage){
+			enemyText.color = Color.red;
+			enemyText.text = "Enemies: " + enemyCounter;
+		} else if(enemyCounter > 0){
+			if(enemyCounter > 1){
+				enemyText.color = Color.red;
+				enemyText.text = "Enemies Left: " + enemyCounter;
+			} else{
+				enemyText.text = "";
+				if(lastEnemy == null){
+					compass.SetActive(true);
+					lastEnemy = GameObject.FindGameObjectWithTag("Enemy").transform;
+				}
+			}
+		} else{
+			lastEnemy = null;
+			compass.SetActive(false);
+			enemyText.color = Color.cyan;
+			enemyText.text = "Planet Cleared!";
+			if(allyText.enabled == true){
+				allyText.enabled = false;
+				int reward = 35 + Random.Range(5,15);
+				GetLoot("Currency", reward);
+				DisplayText(reward + " CURRENCY RECEIVED\n\n\n\"This is a token of our gratitude.\nThank you for your aid, friend.\"", 3f);
+			}
+		}
+	}
+	
+	public void UpdateAllyCounter(int allyCounter){
+		if(allyCounter > 0){
+			allyText.enabled = true;
+			allyText.text = "Allies Left: " + allyCounter;
+		} else{
+			allyText.enabled = false;
+		}
+	}
+	
+	void KonamiCheck(){
+		if(Input.GetKeyDown(KeyCode.UpArrow)){
+			if(konamiCode[konamiIndex] != KeyCode.UpArrow){
+				konamiIndex = 0;
+			} else{
+				konamiIndex ++;
+			}
+		}
+		
+		if(Input.GetKeyDown(KeyCode.DownArrow)){
+			if(konamiCode[konamiIndex] != KeyCode.DownArrow){
+				konamiIndex = 0;
+			} else{
+				konamiIndex ++;
+			}
+		}
+		if(Input.GetKeyDown(KeyCode.LeftArrow)){
+			if(konamiCode[konamiIndex] != KeyCode.LeftArrow){
+				konamiIndex = 0;
+			} else{
+				konamiIndex ++;
+			}
+		}
+		if(Input.GetKeyDown(KeyCode.RightArrow)){
+			if(konamiCode[konamiIndex] != KeyCode.RightArrow){
+				konamiIndex = 0;
+			} else{
+				konamiIndex ++;
+			}
+		}
+		if(Input.GetKeyDown(KeyCode.B)){
+			if(konamiCode[konamiIndex] != KeyCode.B){
+				konamiIndex = 0;
+			} else{
+				konamiIndex ++;
+			}
+		}
+		if(Input.GetKeyDown(KeyCode.A)){
+			if(konamiCode[konamiIndex] != KeyCode.A){
+				konamiIndex = 0;
+			} else{
+				konamiIndex ++;
+			}
+		}
+		
+		if(konamiIndex == 10){
+			health = 10000000;
+			UpdateHealth();
+			GetLoot("Currency", 9001 - currency);
+			overHeatLimit = 100000000000f;
+			laserLevel = 5;
+			bombLevel = 3;
+			shieldCharges = 100;
+			deathRayLevel = 3;
+			mineCharges = 100;
+			EMPLevel = 3;
+			UpdateWeaponText();
+		}
 	}
 }

@@ -160,13 +160,13 @@ public class EnemyTurretAI : MonoBehaviour {
 	}
 	
 	public void Die(){
-		currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 		turretDeathAudioSource = (GameObject)Resources.Load ("turretdeathprefab");
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(Instantiate (turretDeathAudioSource, transform.position, transform.rotation), turretDeadSound.length);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
+		currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 	}
 	
 	IEnumerator DamageFlash(){

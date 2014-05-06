@@ -173,13 +173,13 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 		Explosion = (GameObject)Resources.Load("Explosion_Player");
 		deathAudioSource = (GameObject)Resources.Load ("enemydeathprefab");
 		currentPlanet.GetComponent<PlanetPopulation>().GenerateLootAt(transform.position, level);
 		Destroy(Instantiate (deathAudioSource, transform.position, transform.rotation), deathSound.length);
 		Destroy(gameObject);
 		Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
+		currentPlanet.GetComponent<PlanetPopulation>().EnemyDied();
 	}
 	
 	IEnumerator DamageFlash(){
