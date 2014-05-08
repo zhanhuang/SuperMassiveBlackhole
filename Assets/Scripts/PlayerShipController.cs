@@ -23,7 +23,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	int deathRayLevel = 0;
 	bool deathRayActivated = false;
 	// mine
-	int mineCharges = 2;
+	int mineCharges = 5;
 	// EMP
 	int EMPLevel = 0;
 	bool EMPActivated = false;
@@ -90,10 +90,16 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	int soundCount = 0;
 
+
+	// compass
 	GameObject compass;
 	public Transform lastEnemy;
 	public bool isFinalStage = false;
 
+	// text to direct player toward red beam
+	bool objectiveDisplayed = false;
+
+	// konami code
 	int konamiIndex = 0;
 	KeyCode[] konamiCode = new KeyCode[11];
 
@@ -870,27 +876,42 @@ public class PlayerShipController : ShipOrbitBehavior {
 		
 		switch(item){
 		case "Laser":
+			DisplayText("LASER UPGRADED.",1f);
 			laserLevel ++;
 			break;
 		case "Bomb":
+			DisplayText("BOMB UPGRADED.",1f);
 			bombLevel++;
 			break;
 		case "Shield":
+			DisplayText("SHIELD CHARGE PURCHASED.",1f);
 			shieldCharges++;
 			break;
 		case "Death Ray":
+			if(deathRayLevel == 0){
+				DisplayText("DEATH RAY INSTALLED. ACTIVATION:[U]\n",1f);
+			} else{
+				DisplayText("DEATH RAY UPGRADED.",1f);
+			}
 			deathRayLevel++;
 			break;
 		case "Mine":
+			DisplayText("MINE CHARGE PURCHASED.",1f);
 			mineCharges++;
 			break;
 		case "EMP":
+			if(EMPLevel == 0){
+				DisplayText("EMP INSTALLED. ACTIVATION:[O]\nUSAGE CONSUMES SHIELD CHARGES.",1f);
+			} else{
+				DisplayText("EMP UPGRADED.",1f);
+			}
 			EMPLevel++;
 			break;
 		default:
 			break;
 		}
 		UpdateWeaponText();
+
 	}
 
 	void UpdateWeaponText(){
@@ -1104,6 +1125,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 				int reward = 35 + Random.Range(5,15);
 				GetLoot("Currency", reward);
 				DisplayText(reward + " CURRENCY RECEIVED\n\n\n\"This is a token of our gratitude.\nThank you for your aid, friend.\"", 3f);
+			} else if(!objectiveDisplayed){
+				objectiveDisplayed = true;
+				DisplayTextInstant("INCOMING TRANSMISSION:\n\n", 5f);
+				DisplayAdditionalText("\"Well done, Captain.\n\n" +
+				                      "But it's not over yet. We have found\n" +
+				                      "a planet with a RED transport beam,\n" +
+				                      "which is very likely to be their base.\n" +
+				                      "\nGood luck, and Godspeed.\"", 3f);
 			}
 		}
 	}

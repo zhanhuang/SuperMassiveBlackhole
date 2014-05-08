@@ -21,7 +21,7 @@ public class MineExplosion : MonoBehaviour {
 		if(other.tag == "Player" && other.GetComponent<PlayerShipController>().shieldTimeRemaining <= 0f){
 			other.gameObject.SendMessage("TakeDamage", 2);
 		} else if(other.tag == "Enemy" || other.tag == "Ally"){
-			other.gameObject.SendMessage("TakeDamage", 2);
+			other.gameObject.SendMessage("TakeDamage", 4);
 		} else if(other.tag == "Destructible"){
 			dustCloud = (GameObject)Resources.Load ("Crater_Dust");
 //			Debug.Log("destruction!");

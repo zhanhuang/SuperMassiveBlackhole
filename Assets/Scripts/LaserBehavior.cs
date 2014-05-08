@@ -66,8 +66,11 @@ public class LaserBehavior : MonoBehaviour {
 				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
 				Destroy(gameObject);
 			}  else if(other.transform.GetComponent<MineMovement>() != null && other.transform.GetComponent<MineMovement>().mineOrigin != laserOrigin){
-				Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
-				Destroy(gameObject);
+				if(laserOrigin == "Player"){
+					// player laser destroys enemy mines
+					Destroy(Instantiate (Explosion, transform.position, transform.rotation), 2f);
+					Destroy(gameObject);
+				}
 			} 
 		}
 	}
