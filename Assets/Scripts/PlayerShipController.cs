@@ -1120,6 +1120,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 			compass.SetActive(false);
 			enemyText.color = Color.cyan;
 			enemyText.text = "Planet Cleared!";
+			if(health <= 0){
+				// don't display text if player died
+				return;
+			}
 			if(allyText.enabled == true){
 				allyText.enabled = false;
 				int reward = 35 + Random.Range(5,15);
