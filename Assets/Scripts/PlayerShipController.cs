@@ -109,10 +109,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		OrbitSetup();
 
 		// setup joint for heat bar
-		MoveJoint = transform.FindChild("Heat Bar").FindChild("BaseJoint").FindChild("MoveJoint").gameObject;
+		MoveJoint = transform.Find("Heat Bar").Find("BaseJoint").Find("MoveJoint").gameObject;
 
 		// setup joint for health bar
-		HealthMoveJoint = transform.FindChild("Health Bar").FindChild("BaseJoint").FindChild("MoveJoint").gameObject;
+		HealthMoveJoint = transform.Find("Health Bar").Find("BaseJoint").Find("MoveJoint").gameObject;
 
 		// set camera culling to spherical
 		transform.GetComponentInChildren<Camera>().layerCullSpherical = true;
@@ -127,16 +127,16 @@ public class PlayerShipController : ShipOrbitBehavior {
 		GUIFont = (Font)Resources.Load("AirStrike");
 
 		// set camera
-		shipTransform = transform.FindChild("Ship");
-		cameraTransform = transform.FindChild("Camera");
+		shipTransform = transform.Find("Ship");
+		cameraTransform = transform.Find("Camera");
 		cameraStartingLocalPosition = cameraTransform.localPosition;
 
 		// set emp
-		EMPTransform = transform.FindChild("EMP");
+		EMPTransform = transform.Find("EMP");
 		EMPStartingScale = EMPTransform.localScale;
 
 		// set compass
-		compass = transform.FindChild("Arrow").gameObject;
+		compass = transform.Find("Arrow").gameObject;
 		compass.SetActive(false);
 		
 		// health counter 
@@ -162,12 +162,12 @@ public class PlayerShipController : ShipOrbitBehavior {
 //		heatText.color = Color.white;
 //		heatText.text = "WEAPON SYS HEAT: " + overHeatMeter.ToString("F2") + "/" + overHeatLimit.ToString("F2");
 
-		healthMat = transform.FindChild("Health Bar").FindChild("Bar").renderer.material;
-		healthWordMat = transform.FindChild("Health Bar").Find("HealthWord").renderer.materials[1];
+		healthMat = transform.Find("Health Bar").Find("Bar").GetComponent<Renderer>().material;
+		healthWordMat = transform.Find("Health Bar").Find("HealthWord").GetComponent<Renderer>().materials[1];
 		healthWordMat.color = new Color(1f, 1f, 0f);
 		
-		heatMat = transform.FindChild("Heat Bar").FindChild("Bar").renderer.material;
-		heatWordMat = transform.FindChild("Heat Bar").FindChild("HeatText").renderer.materials[1];
+		heatMat = transform.Find("Heat Bar").Find("Bar").GetComponent<Renderer>().material;
+		heatWordMat = transform.Find("Heat Bar").Find("HeatText").GetComponent<Renderer>().materials[1];
 		heatWordMat.color = new Color(1f, 0.25f, 0f);
 
 		// currency counter
@@ -268,7 +268,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			Application.LoadLevel(0);
 		}
 
-		if(transform.collider.enabled == false){
+		if(transform.GetComponent<Collider>().enabled == false){
 			return;
 		}
 
@@ -298,7 +298,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		//sound plays on initial player movement
 		if (soundCount == 0) {
 			if (Input.GetKeyDown (KeyCode.W)) {
-				audio.Play();
+				GetComponent<AudioSource>().Play();
 				soundCount += 1;
 				}
 			}
@@ -334,7 +334,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			// death ray
 			if (Input.GetKeyDown (KeyCode.U)) {
 				if(deathRayLevel > 0 && !deathRayActivated){
-					audio.PlayOneShot (deathRaySound);
+					GetComponent<AudioSource>().PlayOneShot (deathRaySound);
 					deathRayActivated = true;
 					StartCoroutine("ActivateDeathRay");
 					overHeatMeter += 8f;
@@ -355,7 +355,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			// EMP
 			if (Input.GetKeyDown (KeyCode.O)) {
 				if(shieldCharges > 0 && EMPLevel > 0 && !EMPActivated && shieldTimeRemaining <= 0f){
-					audio.PlayOneShot (empSound);
+					GetComponent<AudioSource>().PlayOneShot (empSound);
 					EMPActivated = true;
 					shieldCharges --;
 					UpdateWeaponText();
@@ -384,10 +384,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		}
 			
 		// tail particle effect
-		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z;
+		float forwardVelocity = transform.InverseTransformDirection(GetComponent<Rigidbody>().velocity).z;
 		if(forwardVelocity > 0f){
-			shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.2f * forwardVelocity;
-			shipTransform.FindChild("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.2f * forwardVelocity;
+			shipTransform.Find("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.2f * forwardVelocity;
+			shipTransform.Find("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.2f * forwardVelocity;
 		}
 		
 
@@ -427,33 +427,33 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	void FixedUpdate () {
-		if(transform.collider.enabled == false){
+		if(transform.GetComponent<Collider>().enabled == false){
 			return;
 		}
 
 
 		// moving
 		if (Input.GetKey(KeyCode.W)){
-				rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+				GetComponent<Rigidbody>().AddForce(transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
 		}
 		if (Input.GetKey(KeyCode.S)){
-				rigidbody.AddForce(-transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+				GetComponent<Rigidbody>().AddForce(-transform.forward.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
 		}
 
 		// strafe
 		if (Input.GetKey(KeyCode.E)){
-			rigidbody.AddForce(transform.right.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+			GetComponent<Rigidbody>().AddForce(transform.right.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
 		}
 		if (Input.GetKey(KeyCode.Q)){
-			rigidbody.AddForce(-transform.right.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
+			GetComponent<Rigidbody>().AddForce(-transform.right.normalized * Time.deltaTime * acceleration, ForceMode.VelocityChange);
 		}
 
 		// turning
 		if (Input.GetKey(KeyCode.D)){
-				rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
+				GetComponent<Rigidbody>().AddTorque(transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
 		}
 		if (Input.GetKey(KeyCode.A)){
-				rigidbody.AddTorque(-transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
+				GetComponent<Rigidbody>().AddTorque(-transform.up.normalized * Time.deltaTime * turnAcceleration, ForceMode.VelocityChange);
 		}
 
 		
@@ -508,7 +508,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	public void UpdateHealth(){
 		if (health <= 0){
-			Destroy(transform.FindChild("Health Bar").FindChild("Bar").gameObject);
+			Destroy(transform.Find("Health Bar").Find("Bar").gameObject);
 		}
 		else{
 			if(health > 2){
@@ -563,7 +563,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	IEnumerator DamageFlash(){
-		Material targetMat = shipTransform.FindChild("MainBody").renderer.material;
+		Material targetMat = shipTransform.Find("MainBody").GetComponent<Renderer>().material;
 		Color origColor = targetMat.color;
 		targetMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
@@ -576,14 +576,14 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	public void Die(){
-		currentPlanet.GetComponent<PlanetPopulation>().audio.Stop ();
+		currentPlanet.GetComponent<PlanetPopulation>().GetComponent<AudioSource>().Stop ();
 		if (currentPlanet.GetComponent<PlanetPopulation> ().planetType == -2) {
 			currentPlanet.GetComponent<PlanetPopulation> ().audio3.Stop ();
 		}
-		audio.PlayOneShot (gameOverSound);
+		GetComponent<AudioSource>().PlayOneShot (gameOverSound);
 		DeactivateAllWeapons();
 		shipTransform.gameObject.SetActive(false);
-		transform.collider.enabled = false;
+		transform.GetComponent<Collider>().enabled = false;
 		Instantiate (Explosion, transform.position, transform.rotation);
 		
 		GameObject loseTextObj = new GameObject("HUD_loseText");
@@ -613,7 +613,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		// take damage upon hitting a ship
 		if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Ally"){
 			Vector3 collisionDir = (collision.transform.position -  transform.position).normalized;
-			rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
+			GetComponent<Rigidbody>().AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
 			if(shieldTimeRemaining <= 0f){
 				TakeDamage(1);
 			}
@@ -621,7 +621,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	void FireLaser(){
-		audio.PlayOneShot (gunSound);
+		GetComponent<AudioSource>().PlayOneShot (gunSound);
 
 		switch(laserLevel){
 		case 1:
@@ -668,9 +668,9 @@ public class PlayerShipController : ShipOrbitBehavior {
 	}
 
 	void DropBomb(){
-		audio.PlayOneShot (bombSound);
+		GetComponent<AudioSource>().PlayOneShot (bombSound);
 
-		float forwardVelocity = transform.InverseTransformDirection(rigidbody.velocity).z;
+		float forwardVelocity = transform.InverseTransformDirection(GetComponent<Rigidbody>().velocity).z;
 		switch(bombLevel){
 		case 1:
 			CreateBomb(0f, 0f, forwardVelocity);
@@ -699,21 +699,21 @@ public class PlayerShipController : ShipOrbitBehavior {
 	public void ActivateShield(float shieldTime){
 		audio2.Play ();
 		shieldText.color = Color.cyan;
-		transform.FindChild("Shield").renderer.enabled = true;
-		transform.FindChild("Shield").collider.enabled = true;
+		transform.Find("Shield").GetComponent<Renderer>().enabled = true;
+		transform.Find("Shield").GetComponent<Collider>().enabled = true;
 		shieldTimeRemaining = shieldTime;
 	}
 	
 	void DisableShield(){
 		audio2.Stop ();
-		transform.FindChild("Shield").renderer.enabled = false;
-		transform.FindChild("Shield").collider.enabled = false;
+		transform.Find("Shield").GetComponent<Renderer>().enabled = false;
+		transform.Find("Shield").GetComponent<Collider>().enabled = false;
 		UpdateWeaponText();
 	}
 
 	IEnumerator ActivateDeathRay(){
-		Transform deathRay1 = shipTransform.FindChild("DeathRay1");
-		Transform deathRay2 = shipTransform.FindChild("DeathRay2");
+		Transform deathRay1 = shipTransform.Find("DeathRay1");
+		Transform deathRay2 = shipTransform.Find("DeathRay2");
 		LineRenderer line1 = deathRay1.GetComponent<LineRenderer>();
 		LineRenderer line2 = deathRay2.GetComponent<LineRenderer>();
 		line1.enabled = true;
@@ -722,8 +722,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 		line1.SetWidth(width,width);
 		line2.SetWidth(width,width);
 
-		Transform spark1 = deathRay1.FindChild("Sparks");
-		Transform spark2 = deathRay2.FindChild("Sparks");
+		Transform spark1 = deathRay1.Find("Sparks");
+		Transform spark2 = deathRay2.Find("Sparks");
 		spark1.gameObject.SetActive(true);
 		spark2.gameObject.SetActive(true);
 
@@ -769,17 +769,17 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	void DeactivateDeathRay(){
 		StopCoroutine("ActivateDeathRay");
-		shipTransform.FindChild("DeathRay1").GetComponent<LineRenderer>().enabled = false;
-		shipTransform.FindChild("DeathRay2").GetComponent<LineRenderer>().enabled = false;
-		shipTransform.FindChild("DeathRay1").FindChild("Sparks").gameObject.SetActive(false);
-		shipTransform.FindChild("DeathRay2").FindChild("Sparks").gameObject.SetActive(false);
+		shipTransform.Find("DeathRay1").GetComponent<LineRenderer>().enabled = false;
+		shipTransform.Find("DeathRay2").GetComponent<LineRenderer>().enabled = false;
+		shipTransform.Find("DeathRay1").Find("Sparks").gameObject.SetActive(false);
+		shipTransform.Find("DeathRay2").Find("Sparks").gameObject.SetActive(false);
 		deathRayActivated = false;
 	}
 	
 	IEnumerator ActivateEMP(){
 		EMPTransform.GetComponent<EMPBehavior>().EMPDamage = EMPLevel;
-		EMPTransform.renderer.enabled = true;
-		EMPTransform.collider.enabled = true;
+		EMPTransform.GetComponent<Renderer>().enabled = true;
+		EMPTransform.GetComponent<Collider>().enabled = true;
 		Vector3 startingScale = EMPTransform.localScale;
 		for(float t = 0f; t < 0.5f; t += Time.deltaTime){
 			EMPTransform.localScale = startingScale * (1f + t * 5f);
@@ -795,8 +795,8 @@ public class PlayerShipController : ShipOrbitBehavior {
 
 	void DeactivateEMP(){
 		StopCoroutine("ActivateEMP");
-		EMPTransform.renderer.enabled = false;
-		EMPTransform.collider.enabled = false;
+		EMPTransform.GetComponent<Renderer>().enabled = false;
+		EMPTransform.GetComponent<Collider>().enabled = false;
 		EMPTransform.localScale = EMPStartingScale;
 		EMPActivated = false;
 		UpdateWeaponText();
@@ -842,7 +842,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 		switch (lootType){
 		case "Health":
 
-			audio.PlayOneShot (healthSound);
+			GetComponent<AudioSource>().PlayOneShot (healthSound);
 //			for(float t = 0f; t < 1f; t += Time.deltaTime){
 //				healthText.text = "HEALTH: " + (health - lootValue).ToString() + "  + " + lootValue;
 //				yield return null;
@@ -858,7 +858,7 @@ public class PlayerShipController : ShipOrbitBehavior {
 			break;
 		case "Currency":
 			currency += lootValue;
-			audio.PlayOneShot (healthSound);
+			GetComponent<AudioSource>().PlayOneShot (healthSound);
 			for(float t = 0f; t < 1f; t += Time.deltaTime){
 				currencyText.text = "CURRENCY: " + (currency - lootValue).ToString() + "  + " + lootValue;
 				yield return null;
@@ -1022,10 +1022,10 @@ public class PlayerShipController : ShipOrbitBehavior {
 		weaponText.enabled = false;
 		enemyText.enabled = false;
 		allyText.enabled = false;
-		transform.FindChild("Heat Bar").gameObject.SetActive(false);
-		transform.FindChild("Health Bar").gameObject.SetActive(false);
-		shipTransform.FindChild("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.2f * 20f;
-		shipTransform.FindChild("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.2f * 20f;
+		transform.Find("Heat Bar").gameObject.SetActive(false);
+		transform.Find("Health Bar").gameObject.SetActive(false);
+		shipTransform.Find("_TailFlameLeft").GetComponent<ParticleSystem>().startSpeed = 0.2f * 20f;
+		shipTransform.Find("_TailFlameRight").GetComponent<ParticleSystem>().startSpeed = 0.2f * 20f;
 	}
 
 	public void EngineOff(){

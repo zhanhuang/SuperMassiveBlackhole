@@ -67,7 +67,7 @@ public class PlanetPopulation : MonoBehaviour {
 	public void GenerateBase(){
 		BasePrefab = (GameObject)Resources.Load("Base");
 		GameObject Base = (GameObject)Instantiate(BasePrefab, transform.position + new Vector3(0f,1f,0f) * surfaceLength, transform.rotation);
-		BaseBeam = Base.transform.FindChild("BaseBeam");
+		BaseBeam = Base.transform.Find("BaseBeam");
 	}
 
 	// Called From GalaxyPopulation
@@ -76,7 +76,7 @@ public class PlanetPopulation : MonoBehaviour {
 			HideBeam();
 		} else{
 			// turn off outline upon entering planet
-			transform.FindChild("Outline").renderer.enabled = false;
+			transform.Find("Outline").GetComponent<Renderer>().enabled = false;
 			if(beamActivated){
 				// planet cleared
 				ShowBeam();
@@ -156,7 +156,7 @@ public class PlanetPopulation : MonoBehaviour {
 		}
 
 		if (planetType == 1 || planetType == 3) {
-			audio.Play ();
+			GetComponent<AudioSource>().Play ();
 		} 
 		else if (planetType == -2) {
 			audio3.Play ();
@@ -176,12 +176,12 @@ public class PlanetPopulation : MonoBehaviour {
 	public virtual void EnemyDied(){
 		EnemyCounter--;
 		if(EnemyCounter <= 0){
-			audio.Stop ();
-			audio.PlayOneShot (victorySound);
+			GetComponent<AudioSource>().Stop ();
+			GetComponent<AudioSource>().PlayOneShot (victorySound);
 			audio2.PlayDelayed (5f);
 			ActivateBeam();
 			if(planetType == -2){
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
+				BaseBeam.gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
 				audio3.Stop ();
 				ShowBeam();
 			}
@@ -193,27 +193,27 @@ public class PlanetPopulation : MonoBehaviour {
 		if(!beamActivated){
 			// run activation animation only once
 			beamActivated = true;
-			BaseBeam.audio.PlayOneShot (beamAwake);
+			BaseBeam.GetComponent<AudioSource>().PlayOneShot (beamAwake);
 			
 			// decide whether there is a shop
 			if(planetType == -2){
 				// boss planet
-				transform.Find("ClearPulse").renderer.enabled = false;
+				transform.Find("ClearPulse").GetComponent<Renderer>().enabled = false;
 				BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(false);
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(1f, 0f, 0f, 0.25f));
-				BaseBeam.collider.enabled = true;
+				BaseBeam.gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", new Color(1f, 0f, 0f, 0.25f));
+				BaseBeam.GetComponent<Collider>().enabled = true;
 				BaseBeam.GetComponent<BaseBeamBehavior>().isFinalBeam = true;
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop ();
 			} else if(planetType == 2 || (planetType == 3 && AllyCounter > 0)){
 				BaseBeam.GetComponent<BaseBeamBehavior>().EnableShop();
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(1f, 1f, 0f, 0.25f));
-				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.yellow);
+				BaseBeam.gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", new Color(1f, 1f, 0f, 0.25f));
+				transform.Find("Outline").GetComponent<Renderer>().material.SetColor("_Color", Color.yellow);
 			} else if(planetType == 0){
 				// final stage planet
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
+				BaseBeam.gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
 			} else{
-				BaseBeam.gameObject.renderer.material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
-				transform.FindChild("Outline").renderer.material.SetColor("_Color", Color.green);
+				BaseBeam.gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", new Color(0f, 1f, 0f, 0.25f));
+				transform.Find("Outline").GetComponent<Renderer>().material.SetColor("_Color", Color.green);
 			}
 			
 //			// test code: port straight to boss fight. comment out in production
@@ -235,9 +235,9 @@ public class PlanetPopulation : MonoBehaviour {
 	IEnumerator ExpandBeam() {
 		// animate the activation of the beam
 		if(planetType != -2){
-			transform.FindChild("ClearPulse").renderer.enabled = true;
+			transform.Find("ClearPulse").GetComponent<Renderer>().enabled = true;
 			BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(true);
-			transform.FindChild ("ClearPulse").audio.Play ();
+			transform.Find ("ClearPulse").GetComponent<AudioSource>().Play ();
 		}
 		for(float counter = 0f; counter < 1f; counter += Time.deltaTime){
 			BaseBeam.localPosition = new Vector3(BaseBeam.localPosition.x, BaseBeam.localPosition.y + Time.deltaTime * 150f, BaseBeam.localPosition.z);
@@ -252,19 +252,19 @@ public class PlanetPopulation : MonoBehaviour {
 	}
 	
 	public void HideBeam(){
-		BaseBeam.renderer.enabled = false;
-		BaseBeam.collider.enabled = false;
-		transform.FindChild("ClearPulse").renderer.enabled = false;
+		BaseBeam.GetComponent<Renderer>().enabled = false;
+		BaseBeam.GetComponent<Collider>().enabled = false;
+		transform.Find("ClearPulse").GetComponent<Renderer>().enabled = false;
 		BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(false);
-		transform.FindChild ("Outline").renderer.enabled = true;
+		transform.Find ("Outline").GetComponent<Renderer>().enabled = true;
 	}
 
 	public void ShowBeam(){
-		BaseBeam.renderer.enabled = true;
-		BaseBeam.collider.enabled = true;
-		transform.FindChild("ClearPulse").renderer.enabled = true;
+		BaseBeam.GetComponent<Renderer>().enabled = true;
+		BaseBeam.GetComponent<Collider>().enabled = true;
+		transform.Find("ClearPulse").GetComponent<Renderer>().enabled = true;
 		BaseBeam.parent.transform.Find("Sparkles").gameObject.SetActive(true);
-		transform.FindChild("Outline").renderer.enabled = false;
+		transform.Find("Outline").GetComponent<Renderer>().enabled = false;
 	}
 	
 	public virtual void GenerateLootAt(Vector3 location, int level) {

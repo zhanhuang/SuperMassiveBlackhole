@@ -7,7 +7,7 @@ public class BasePulse : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		pulseMat = transform.renderer.material;
+		pulseMat = transform.GetComponent<Renderer>().material;
 
 	}
 	

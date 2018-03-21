@@ -16,7 +16,7 @@ public class MineMovement : MonoBehaviour {
 	void Start () {
 		Explosion = (GameObject)Resources.Load ("Explosion_Mine");
 		trackingRange = transform.GetComponent<SphereCollider>().radius * 2f;
-		targetMat = transform.FindChild("Mine").renderer.material;
+		targetMat = transform.Find("Mine").GetComponent<Renderer>().material;
 		origColor = targetMat.color;
 	}
 	

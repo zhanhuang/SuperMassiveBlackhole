@@ -105,11 +105,11 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	void FixedUpdate () {
 		if(!chasing || (player.transform.position - transform.position).magnitude > 15f){
 			// random walk if chasing or not in range
-			if(rigidbody.velocity.z < 10f){
-				rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
+			if(GetComponent<Rigidbody>().velocity.z < 10f){
+				GetComponent<Rigidbody>().AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
 			}
 		} else if (chasing){
-			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * 4f, ForceMode.Force);
+			GetComponent<Rigidbody>().AddForce(transform.forward.normalized * Time.deltaTime * speed * 4f, ForceMode.Force);
 		}
 		if(chasing){
 			// chase player
@@ -123,11 +123,11 @@ public class EnemyShipAI : ShipOrbitBehavior {
 				angle = 0f;
 			}
 			if(angle != 0f){
-				rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * angle, ForceMode.Force);
+				GetComponent<Rigidbody>().AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * angle, ForceMode.Force);
 			}
 		} else{
 			// random walk
-			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
+			GetComponent<Rigidbody>().AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
 		}
 	}
 
@@ -139,8 +139,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 				// check if the player is in front
 				if (hit.transform.tag != "Player" && hit.transform.tag != "Shield" && hit.transform.tag != "Ally"){
 //					Debug.Log("Avoid Obstacle At:" + hit.transform.position);
-					rigidbody.AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
-					rigidbody.AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
+					GetComponent<Rigidbody>().AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
+					GetComponent<Rigidbody>().AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
 				}
 			}
 			yield return new WaitForSeconds(1f);
@@ -149,8 +149,8 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	
 	void OnCollisionEnter(Collision collision){
 		Vector3 collisionDir = (collision.transform.position -  transform.position).normalized;
-		rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
-		rigidbody.AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
+		GetComponent<Rigidbody>().AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
+		GetComponent<Rigidbody>().AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
 	}
 	
 	public void TakeDamage(int damage){
@@ -183,7 +183,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	}
 	
 	IEnumerator DamageFlash(){
-		Material targetMat = transform.FindChild("Ship").renderer.materials[0];
+		Material targetMat = transform.Find("Ship").GetComponent<Renderer>().materials[0];
 		Color origColor = targetMat.color;
 		targetMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);
@@ -198,7 +198,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 	void AutoFire(){
 		if(level < 2){
 			GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-			audio.PlayOneShot(enemyGunSound);
+			GetComponent<AudioSource>().PlayOneShot(enemyGunSound);
 			nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 			nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 			nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;
@@ -208,7 +208,7 @@ public class EnemyShipAI : ShipOrbitBehavior {
 		} else{
 			for(int i = -1; i < 2; i++){
 				GameObject nextLaser = (GameObject)Instantiate(Laser, transform.position, transform.rotation);
-				audio.PlayOneShot(enemyGunSound);
+				GetComponent<AudioSource>().PlayOneShot(enemyGunSound);
 				nextLaser.transform.Rotate(new Vector3(90f,30f * i,0f));
 				nextLaser.GetComponent<LaserBehavior>().laserPath = "orbit";
 				nextLaser.GetComponent<LaserBehavior>().gravityCenter = currentPlanet.transform.position;

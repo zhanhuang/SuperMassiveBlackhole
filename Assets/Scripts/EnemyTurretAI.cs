@@ -53,7 +53,7 @@ public class EnemyTurretAI : MonoBehaviour {
 			if((playerDir).magnitude < 20f && Vector3.Angle(playerDir, transform.up) < 75f){
 				// player seen, fire laser
 				GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(player.transform.position - LaserStartPosition));
-				audio.PlayOneShot(turretGunSound);
+				GetComponent<AudioSource>().PlayOneShot(turretGunSound);
 				nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 				nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
 				nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
@@ -74,7 +74,7 @@ public class EnemyTurretAI : MonoBehaviour {
 				if(level > 0){
 					// fires straight up when idle
 					GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
-					audio.PlayOneShot(turretGunSound);
+					GetComponent<AudioSource>().PlayOneShot(turretGunSound);
 					nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 					nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
 					nextLaser.GetComponent<LaserBehavior>().laserOrigin = "Enemy";
@@ -83,7 +83,7 @@ public class EnemyTurretAI : MonoBehaviour {
 					// fires at 45 degree angles when idle
 					for(int i = 0; i < 4; i++){
 						GameObject nextLaser = (GameObject)Instantiate(Laser, LaserStartPosition, Quaternion.LookRotation(transform.up));
-						audio.PlayOneShot(turretGunSound);
+						GetComponent<AudioSource>().PlayOneShot(turretGunSound);
 						nextLaser.transform.Rotate(new Vector3(90f,0f,0f));
 						nextLaser.transform.Rotate(new Vector3(45f,90f*i,0f));
 						nextLaser.GetComponent<LaserBehavior>().laserPath = "straight";
@@ -172,9 +172,9 @@ public class EnemyTurretAI : MonoBehaviour {
 	IEnumerator DamageFlash(){
 		Material targetMat = null;
 		if(level == 0){
-			targetMat = transform.FindChild("TurretTop").FindChild("polySurface14").renderer.material;
+			targetMat = transform.Find("TurretTop").Find("polySurface14").GetComponent<Renderer>().material;
 		} else if(level == 1){
-			targetMat = transform.FindChild("Tank_Body").renderer.material;
+			targetMat = transform.Find("Tank_Body").GetComponent<Renderer>().material;
 		}
 		Color origColor = targetMat.color;
 		targetMat.color = Color.white;

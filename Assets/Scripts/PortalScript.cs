@@ -38,7 +38,7 @@ public class PortalScript : MonoBehaviour {
 
 	IEnumerator EnemyEmergence(){
 		enemy.transform.position = startingPosition;
-		enemy.rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+		enemy.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 		if(enemy.GetComponent<EnemyTurretAI>() != null){
 			// start tanks on the ground
 			PlanetPopulation planet = currentPlanet.GetComponent<PlanetPopulation>();
@@ -60,7 +60,7 @@ public class PortalScript : MonoBehaviour {
 				// store the rotation so OrbitSetup doesn't mess it up
 				enemy.GetComponent<EnemyShipAI>().snapRotation = enemy.transform.rotation;
 				enemy.GetComponent<EnemyShipAI>().enabled = true;
-				enemy.rigidbody.constraints = RigidbodyConstraints.None;
+				enemy.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
 			} else if(enemy.GetComponent<EnemyTurretAI>() != null){
 				enemy.GetComponent<EnemyTurretAI>().enabled = true;
 			}
@@ -102,6 +102,6 @@ public class PortalScript : MonoBehaviour {
 		} else if(Vector3.Dot(cross, enemy.transform.up) == 0f){
 			angle = 0f;
 		}
-		rigidbody.AddTorque(enemy.transform.up.normalized * angle, ForceMode.Force);
+		GetComponent<Rigidbody>().AddTorque(enemy.transform.up.normalized * angle, ForceMode.Force);
 	}
 }

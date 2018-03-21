@@ -13,7 +13,7 @@ public class MineExplosion : MonoBehaviour {
 	void Update () {
 		countDown -= Time.deltaTime;
 		if(countDown <= 0f){
-			transform.collider.enabled = false;
+			transform.GetComponent<Collider>().enabled = false;
 		}
 	}
 

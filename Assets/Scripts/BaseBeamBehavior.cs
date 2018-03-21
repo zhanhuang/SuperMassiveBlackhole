@@ -74,7 +74,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			// adjust rotation so camera faces target planet
 			Vector3 lookDirection = surroundingPlanets[lookingPlanet].transform.position - player.position;
 			Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
-			targetRotation *= Quaternion.Inverse(player.FindChild("Camera").localRotation);
+			targetRotation *= Quaternion.Inverse(player.Find("Camera").localRotation);
 			player.rotation = Quaternion.Lerp(player.rotation, targetRotation, Time.deltaTime * 6f);
 			if (Input.GetKeyDown(KeyCode.A)){
 				if(lookingPlanet == 0){
@@ -104,7 +104,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 			if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){
 				BeamStateTransition("Ground");
 			} else if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)){
-				audio.PlayOneShot (storeScroll);
+				GetComponent<AudioSource>().PlayOneShot (storeScroll);
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex --;
@@ -114,7 +114,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 				HighLight(selectedIndex);
 			} else if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)){
-				audio.PlayOneShot (storeScroll);
+				GetComponent<AudioSource>().PlayOneShot (storeScroll);
 				RemoveHighLight(selectedIndex);
 
 				selectedIndex ++;
@@ -126,12 +126,12 @@ public class BaseBeamBehavior : MonoBehaviour {
 			} else if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.J)){
 				// purchased an item
 				if(playerScript.currency >= prices[selectedIndex] && itemTexts[selectedIndex].text != "Sold Out"){
-					audio.PlayOneShot (storeBuy);
+					GetComponent<AudioSource>().PlayOneShot (storeBuy);
 					playerScript.PurchaseItem(items[selectedIndex], prices[selectedIndex]);
 					UpdateItem(selectedIndex);
 				}
 				else{
-					audio.PlayOneShot (storeCantBuy);
+					GetComponent<AudioSource>().PlayOneShot (storeCantBuy);
 				}
 			}
 		}
@@ -159,13 +159,13 @@ public class BaseBeamBehavior : MonoBehaviour {
 		LockPlayer();
 
 		// play beam audio
-		player.audio.Stop ();
+		player.GetComponent<AudioSource>().Stop ();
 		playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
-		playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
-		audio.Play ();
+		playerScript.currentPlanet.transform.Find ("ClearPulse").GetComponent<AudioSource>().Stop ();
+		GetComponent<AudioSource>().Play ();
 
 		if(isFinalBeam){
-			gameObject.renderer.material.SetColor("_TintColor", Color.red);
+			gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", Color.red);
 		}
 
 		// beaming
@@ -210,9 +210,9 @@ public class BaseBeamBehavior : MonoBehaviour {
 		if(targetPlanetScript.beamActivated == false || targetPlanetScript.planetType == -2 || targetPlanetScript.planetType == 2){
 			// ANIMATION for enemy/conflicting planet
 			Vector3 flyTarget = targetPlanetTransform.position;
-			audio.PlayOneShot (takeoff);
+			GetComponent<AudioSource>().PlayOneShot (takeoff);
 			// detach ship body from camera
-			Transform ship = player.transform.FindChild("Ship");
+			Transform ship = player.transform.Find("Ship");
 			Vector3 shipLocalPos = ship.localPosition;
 			Quaternion shipLocalRot = ship.localRotation;
 			ship.parent = null;
@@ -291,24 +291,24 @@ public class BaseBeamBehavior : MonoBehaviour {
 
 		// sound
 		if(toState == "Space"){
-			audio.Play();
+			GetComponent<AudioSource>().Play();
 		}else if(toState == "Shop"){
-			player.audio.Stop ();
+			player.GetComponent<AudioSource>().Stop ();
 			playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Stop ();
-			playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Stop ();
+			playerScript.currentPlanet.transform.Find ("ClearPulse").GetComponent<AudioSource>().Stop ();
 			audio2.Play ();
 		} else if (toState == "Ground"){
-			audio.Stop();
+			GetComponent<AudioSource>().Stop();
 			audio2.Stop ();
 			if(playerScript.currentPlanet.GetComponent<PlanetPopulation>().planetType == -1){
-				player.audio.Play ();
-				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Play ();}
+				player.GetComponent<AudioSource>().Play ();
+				playerScript.currentPlanet.transform.Find ("ClearPulse").GetComponent<AudioSource>().Play ();}
 			else{
 				playerScript.currentPlanet.transform.GetComponent<PlanetPopulation>().audio2.Play ();
-				playerScript.currentPlanet.transform.FindChild ("ClearPulse").audio.Play ();
+				playerScript.currentPlanet.transform.Find ("ClearPulse").GetComponent<AudioSource>().Play ();
 			}
 		} else{
-			audio.Stop();
+			GetComponent<AudioSource>().Stop();
 		}
 
 		// shop
@@ -366,7 +366,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 	void LockPlayer(){
 		playerScript.DeactivateAllWeapons();
 		playerScript.enabled = false;
-		player.rigidbody.velocity = Vector3.zero;
+		player.GetComponent<Rigidbody>().velocity = Vector3.zero;
 		player.position = new Vector3(transform.position.x, player.transform.position.y, transform.position.z);
 		playerScript.shipTransform.localRotation = Quaternion.identity;
 	}
@@ -563,7 +563,7 @@ public class BaseBeamBehavior : MonoBehaviour {
 		// get target rotation
 		Vector3 lookDirection = flyTarget - startPos;
 		Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
-		targetRotation *= Quaternion.Inverse(player.FindChild("Camera").localRotation);
+		targetRotation *= Quaternion.Inverse(player.Find("Camera").localRotation);
 		
 		// show beacon on starting planet
 		startPlanet.GetComponent<PlanetPopulation>().ShowBeam();

@@ -89,7 +89,7 @@ public class GalaxyPopulation : MonoBehaviour {
 					nextPlanetScript.HideBeam();
 					goto default;
 				case 3:
-					nextPlanet.transform.FindChild("Outline").renderer.material.SetColor("_Color", new Color(1f, 0.5f, 0f));
+					nextPlanet.transform.Find("Outline").GetComponent<Renderer>().material.SetColor("_Color", new Color(1f, 0.5f, 0f));
 					goto default;
 				default:
 					// other planet

@@ -66,16 +66,16 @@ public class AllyShipAI : ShipOrbitBehavior {
 			// after you clear the planet, no more shooting allies for loot
 			planetCleared = true;
 			Destroy(GetComponent<ConfigurableJoint>());
-			rigidbody.velocity = Vector3.zero;
-			rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-			transform.collider.enabled = false;
+			GetComponent<Rigidbody>().velocity = Vector3.zero;
+			GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+			transform.GetComponent<Collider>().enabled = false;
 		}
 	}
 	
 	void FixedUpdate () {
 		if(!planetCleared){
-			rigidbody.AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
-			rigidbody.AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
+			GetComponent<Rigidbody>().AddForce(transform.forward.normalized * Time.deltaTime * speed * Random.Range(-1f,4f), ForceMode.VelocityChange);
+			GetComponent<Rigidbody>().AddTorque(transform.up.normalized * Time.deltaTime * turnSpeed * Random.Range(-10f,10f), ForceMode.Force);
 		}
 	}
 	
@@ -86,8 +86,8 @@ public class AllyShipAI : ShipOrbitBehavior {
 			if(Physics.Raycast(transform.position, transform.forward, out hit, 15f)){
 				// check if the player is in front
 				if (hit.transform.tag != "Enemy"){
-					rigidbody.AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
-					rigidbody.AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
+					GetComponent<Rigidbody>().AddForce(-transform.forward.normalized * speed * 1f, ForceMode.VelocityChange);
+					GetComponent<Rigidbody>().AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
 				}
 			}
 			yield return new WaitForSeconds(1f);
@@ -96,8 +96,8 @@ public class AllyShipAI : ShipOrbitBehavior {
 	
 	void OnCollisionEnter(Collision collision){
 		Vector3 collisionDir = (collision.transform.position -  transform.position).normalized;
-		rigidbody.AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
-		rigidbody.AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
+		GetComponent<Rigidbody>().AddForce(-collisionDir * 20f, ForceMode.VelocityChange);
+		GetComponent<Rigidbody>().AddTorque(transform.up.normalized * turnSpeed * 0.5f, ForceMode.VelocityChange);
 	}
 	
 	public void TakeDamage(int damage){
@@ -123,7 +123,7 @@ public class AllyShipAI : ShipOrbitBehavior {
 	}
 	
 	IEnumerator DamageFlash(){
-		Material targetMat = transform.FindChild("Ship").FindChild("MainBody").renderer.material;
+		Material targetMat = transform.Find("Ship").Find("MainBody").GetComponent<Renderer>().material;
 		Color origColor = targetMat.color;
 		targetMat.color = Color.white;
 		yield return new WaitForSeconds(0.1f);

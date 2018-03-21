@@ -117,16 +117,16 @@ public class FinalStageScript : PlanetPopulation {
 
 	void Win(){
 		audio3.Stop ();
-		audio.Stop ();
-		audio.PlayOneShot (victorySound);
+		GetComponent<AudioSource>().Stop ();
+		GetComponent<AudioSource>().PlayOneShot (victorySound);
 		audio2.PlayDelayed (5f);
 		// called only when no enemy or portals are left
-		transform.FindChild("ClearPulse").renderer.material.SetColor("_TintColor", Color.green);
+		transform.Find("ClearPulse").GetComponent<Renderer>().material.SetColor("_TintColor", Color.green);
 		StartCoroutine(DisableDome());
 	}
 
 	IEnumerator DisableDome(){
-		Transform dome = transform.FindChild("Dome");
+		Transform dome = transform.Find("Dome");
 		Vector3 origScale = dome.transform.localScale;
 		for(float t = 0f; t < 1f; t+= Time.deltaTime){
 			dome.transform.localScale = (1 - t) * origScale;
